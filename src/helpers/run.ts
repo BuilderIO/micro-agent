@@ -1,5 +1,6 @@
 import { generate } from './generate';
 import { test } from './test';
+import { writeFile } from 'fs/promises';
 
 type Options = {
   promptFile: string;
@@ -9,7 +10,10 @@ type Options = {
 };
 
 export async function runOne(options: Options) {
+  // TODO: parse any imports in the prompt file and include them in the prompt as context
   const result = await generate(options);
+
+  await writeFile(options.promptFile, result);
 
   const testResult = await test(options.testCommand);
   console.log('testResult', testResult);
