@@ -6,14 +6,14 @@ import update from './commands/update';
 import chat from './commands/run';
 import { commandName } from './helpers/constants';
 import { handleCliError } from './helpers/error';
-import { run } from './helpers/run';
+import { runAll } from './helpers/run';
 
 cli(
   {
     name: commandName,
     version: version,
     flags: {
-      prmopt: {
+      prompt: {
         type: String,
         description: 'Prompt to run',
         alias: 'p',
@@ -33,7 +33,12 @@ cli(
       if (promptText.trim() === 'update') {
         update.callback?.(argv);
       } else {
-        await run();
+        // TODO: throw errors if flags not provided or move
+        // them to parameters https://github.com/privatenumber/cleye?tab=readme-ov-file#about
+        await runAll({
+          promptFile: argv.flags.prompt!,
+          testCommand: argv.flags.test!,
+        });
       }
     } catch (error: any) {
       console.error(`\n${red('✖')} ${error.message || error}`);

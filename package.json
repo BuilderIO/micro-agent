@@ -11,7 +11,7 @@
     "dedent": "^0.7.0",
     "execa": "^9.1.0",
     "kolorist": "^1.7.0",
-    "openai": "^3.2.1"
+    "openai": "^4.47.1"
   },
   "repository": {
     "type": "git",
