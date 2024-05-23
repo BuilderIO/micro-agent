@@ -4,8 +4,6 @@ An AI CLI that writes code for you.
 
 Point Micro Agent at a file (either that exists or is empty) and a prompt, and it will write code for you. It will then run a test command to ensure the code works as expected. If the test fails, it will continue to iterate on the code until the test passes.
 
-Useful for saving brain cycles letting Micro Agent write code for you.
-
 ## Installation
 
 ```bash
