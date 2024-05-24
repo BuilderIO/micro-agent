@@ -29,6 +29,11 @@ cli(
         description: 'The test file to run',
         alias: 'f',
       },
+      maxRuns: {
+        type: Number,
+        description: 'The maximum number of runs to attempt',
+        alias: 'm',
+      },
     },
     commands: [config, run, update],
   },
@@ -47,6 +52,7 @@ cli(
           testCommand: argv.flags.test!,
           testFile: argv.flags.testFile!,
           lastRunError: '',
+          maxRuns: argv.flags.maxRuns,
         });
       }
     } catch (error: any) {

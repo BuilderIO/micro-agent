@@ -44,6 +44,7 @@ export type RunOptions = Options & {
 };
 
 export async function* run(options: RunOptions) {
+  let passed = false;
   const maxRuns = options.maxRuns ?? 10;
   for (let i = 0; i < maxRuns; i++) {
     const result = await runOne(options);
@@ -51,9 +52,13 @@ export async function* run(options: RunOptions) {
 
     if (result.testResult.type === 'success') {
       outro(green('All tests passed!'));
+      passed = true;
       break;
     }
     options.lastRunError = result.testResult.message;
+  }
+  if (!passed) {
+    outro(yellow('Max runs reached, stopping.'));
   }
 }
 

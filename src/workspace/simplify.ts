@@ -22,12 +22,16 @@ function extractTernaries(node: ts.Node, sourceFile: ts.SourceFile, ternaries: C
   }
 }
 
-function combineConditions(conditions: string[]): string {
-  return conditions.length > 1 ? `(${conditions.join(' || ')})` : conditions[0];
-}
-
-function removeRedundantConditions(conditions: string[]): string[] {
-  return [...new Set(conditions)];
+function removeRedundantConditions(ternaries: ConditionalObject[]): ConditionalObject[] {
+  const uniqueConditions = new Set<string>();
+  const result = ternaries.filter(({ condition }) => {
+    if (uniqueConditions.has(condition)) {
+      return false;
+    }
+    uniqueConditions.add(condition);
+    return true;
+  });
+  return result;
 }
 
 function groupConditionsByResult(ternaries: ConditionalObject[]): Record<string, string[]> {
@@ -46,34 +50,34 @@ function groupConditionsByResult(ternaries: ConditionalObject[]): Record<string,
 function getSimpleCondition(resultMap: Record<string, string[]>): string {
   const keys = Object.keys(resultMap);
   if (keys.length === 1) {
-    const soleKey = keys[0];
-    return `${combineConditions(removeRedundantConditions(resultMap[soleKey])) ? combineConditions(removeRedundantConditions(resultMap[soleKey])) + ' ? ' : ''}${soleKey}`;
+    return keys[0];
   }
 
-  if (keys.length === 0) {
-    throw new Error("No conditions found to simplify.");
-  }
-
-  const mostFrequentResult = keys.reduce(
-    (a, b) => (resultMap[a].length > resultMap[b].length ? a : b)
-  );
+  const mostFrequentResult = keys.reduce((a, b) => (resultMap[a].length > resultMap[b].length ? a : b));
 
   const simplifiedTernaryParts = keys
     .filter((result) => result !== mostFrequentResult)
     .map((result) => {
-      const combinedConditions = combineConditions(removeRedundantConditions(resultMap[result]));
-      return `${combinedConditions} ? ${result} :`;
+      const combinedConditions = resultMap[result].join(' || ');
+      return `(${combinedConditions}) ? ${result} :`;
     });
 
   return `${simplifiedTernaryParts.join(' ')} ${mostFrequentResult}`;
 }
 
 export function simplify(inputCode: string): string {
+  inputCode = inputCode.trim().replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ');
+
   const sourceFile = ts.createSourceFile('temp.tsx', inputCode, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
   const ternaries: ConditionalObject[] = [];
 
   ts.forEachChild(sourceFile, (node) => extractTernaries(node, sourceFile, ternaries));
 
-  const resultMap = groupConditionsByResult(ternaries);
-  return getSimpleCondition(resultMap);
+  if (ternaries.length === 0) {
+    return inputCode;
+  }
+
+  const uniqueTernaries = removeRedundantConditions(ternaries);
+  const resultMap = groupConditionsByResult(uniqueTernaries);
+  return getSimpleCondition(resultMap).replace(/\s+/g, ' ').trim();
 }
