@@ -46,6 +46,7 @@ cli(
           promptFile: argv.flags.prompt!,
           testCommand: argv.flags.test!,
           testFile: argv.flags.testFile!,
+          lastRunError: '',
         });
       }
     } catch (error: any) {

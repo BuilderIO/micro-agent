@@ -21,6 +21,11 @@ export default command(
         description: 'The test script to run',
         alias: 't',
       },
+      testFile: {
+        type: String,
+        description: 'The test file to run',
+        alias: 'f',
+      },
     },
   },
   async (argv) => {
@@ -31,6 +36,8 @@ export default command(
         outputFile: argv._.filePath,
         promptFile: argv.flags.prompt!,
         testCommand: argv.flags.test!,
+        testFile: argv.flags.testFile!,
+        lastRunError: '',
       });
     } catch (error: any) {
       console.error(`\n${red('✖')} ${error.message || error}`);

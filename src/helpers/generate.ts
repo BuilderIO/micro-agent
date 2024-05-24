@@ -7,7 +7,7 @@ export async function generate(options: {
   promptFile: string;
   outputFile: string;
   testFile: string;
-  lastRunError?: string;
+  lastRunError: string;
 }) {
   const prompt = await readFile(options.promptFile, 'utf-8');
   const priorCode = await readFile(options.outputFile, 'utf-8').catch(() => '');
@@ -48,7 +48,7 @@ export async function generate(options: {
       {
         role: 'system',
         content:
-          'You take a prompt and test and generate code accordingly. You only output typescript code and nothing else. Output just a typescript string, like "const hello = \'world\'", not markdown. Be sure your code exports function that can be called by an external test file. Make sure your code is reusable and not overly hardcoded to match the promt.',
+          'You take a prompt and test and generate code accordingly. You only output typescript code and nothing else. Output just a typescript string, like "const hello = \'world\'", not markdown (aka do NOT put three backticks around the code). Be sure your code exports function that can be called by an external test file. Make sure your code is reusable and not overly hardcoded to match the promt.',
       },
       {
         role: 'user',

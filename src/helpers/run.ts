@@ -9,7 +9,7 @@ type Options = {
   promptFile: string;
   testCommand: string;
   testFile: string;
-  lastRunError?: string;
+  lastRunError: string;
   priorCode?: string;
 };
 
@@ -53,7 +53,7 @@ export async function* run(options: RunOptions) {
       outro(green('All tests passed!'));
       break;
     }
-    options.lastRunError = result.code;
+    options.lastRunError = result.testResult.message;
   }
 }
 
