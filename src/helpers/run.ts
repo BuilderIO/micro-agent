@@ -25,7 +25,11 @@ export async function runOne(options: Options) {
   const testResult = await test(options.testCommand);
 
   if (testResult.type === 'fail') {
-    console.log('Test result', options.testCommand, testResult.message);
+    console.log(
+      'Test failed with error:',
+      options.testCommand,
+      testResult.message
+    );
   }
 
   return {

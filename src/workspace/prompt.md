@@ -1,10 +1,11 @@
-import { expect, test } from 'vitest';
-import { simplify } from './simplify';
+Write a function called "simplify" that converts a complex and redundant ternary to a simpler one.
 
-test('simplifies the ternary correctly', () => {
-  expect(
-    simplify(`
-    type === 'Default' && status === 'Default'
+It takes code as a string and converts it to new code as a string.
+
+For example, this
+
+```ts
+type === 'Default' && status === 'Default'
   ? '71px'
   : type === 'With Icon' && status === 'Default'
   ? '79px'
@@ -23,6 +24,12 @@ test('simplifies the ternary correctly', () => {
   : type === 'Default' && status === 'Alert'
   ? '71px'
   : '71px'
-  `)
-  ).toBe(`type === 'With Icon' ? '79px' : '71px'`);
-});
+```
+
+should convert to this
+
+```ts
+type === 'With Icon' ? '79px' : '71px'
+```
+
+You can use typescript for parsing.
