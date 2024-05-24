@@ -19,65 +19,53 @@ function extractTernaries(node: ts.Node, sourceFile: ts.SourceFile, ternaries: C
       const elseResult = whenFalse.getText(sourceFile).trim();
       ternaries.push({ condition: 'else', result: elseResult });
     }
+  } else {
+    ts.forEachChild(node, child => extractTernaries(child, sourceFile, ternaries));
   }
 }
 
-function removeRedundantConditions(ternaries: ConditionalObject[]): ConditionalObject[] {
-  const uniqueConditions = new Set<string>();
-  const result = ternaries.filter(({ condition }) => {
-    if (uniqueConditions.has(condition)) {
-      return false;
-    }
-    uniqueConditions.add(condition);
-    return true;
-  });
-  return result;
-}
-
-function groupConditionsByResult(ternaries: ConditionalObject[]): Record<string, string[]> {
-  const resultMap: Record<string, string[]> = {};
-  ternaries.forEach(({ condition, result }) => {
-    if (!resultMap[result]) {
-      resultMap[result] = [];
-    }
-    if (condition !== 'else') {
-      resultMap[result].push(condition);
-    }
-  });
-  return resultMap;
-}
-
-function getSimpleCondition(resultMap: Record<string, string[]>): string {
-  const keys = Object.keys(resultMap);
-  if (keys.length === 1) {
-    return keys[0];
-  }
-
-  const mostFrequentResult = keys.reduce((a, b) => (resultMap[a].length > resultMap[b].length ? a : b));
-
-  const simplifiedTernaryParts = keys
-    .filter((result) => result !== mostFrequentResult)
-    .map((result) => {
-      const combinedConditions = resultMap[result].join(' || ');
-      return `(${combinedConditions}) ? ${result} :`;
-    });
-
-  return `${simplifiedTernaryParts.join(' ')} ${mostFrequentResult}`;
-}
-
-export function simplify(inputCode: string): string {
-  inputCode = inputCode.trim().replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ');
-
+function simplify(inputCode: string): string {
   const sourceFile = ts.createSourceFile('temp.tsx', inputCode, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
   const ternaries: ConditionalObject[] = [];
 
-  ts.forEachChild(sourceFile, (node) => extractTernaries(node, sourceFile, ternaries));
+  extractTernaries(sourceFile, sourceFile, ternaries);
 
-  if (ternaries.length === 0) {
-    return inputCode;
+  if (ternaries.length === 0) return inputCode;
+
+  const resultMap: Record<string, Set<string>> = {};
+
+  ternaries.forEach(({ condition, result }) => {
+    if (!resultMap[result]) resultMap[result] = new Set();
+    if (condition === 'else') {
+      resultMap[result].add('1');
+    } else {
+      resultMap[result].add(condition);
+    }
+  });
+
+  const primaryResult = Object.keys(resultMap)
+    .reduce((a, b) => (resultMap[a].size > resultMap[b].size ? a : b));
+
+  if (resultMap[primaryResult].size === 1 && resultMap[primaryResult].has('1')) {
+    return primaryResult;
   }
 
-  const uniqueTernaries = removeRedundantConditions(ternaries);
-  const resultMap = groupConditionsByResult(uniqueTernaries);
-  return getSimpleCondition(resultMap).replace(/\s+/g, ' ').trim();
+  const primaryConditions = Array.from(resultMap[primaryResult]);
+
+  if (primaryConditions.length === 1 && primaryConditions[0] === '1') {
+    return primaryResult;
+  }
+
+  const simplifiedConditions = primaryConditions.filter(cond => cond !== '1').join(' || ');
+
+  const remainingResults = Object.keys(resultMap)
+    .filter(res => res !== primaryResult)
+    .map(res => {
+      const conditions = Array.from(resultMap[res]).filter(cond => cond !== '1').join(' || ');
+      return conditions ? `${conditions} ? ${res}` : res;
+    });
+
+  return simplifiedConditions ? `${simplifiedConditions} ? ${primaryResult} : ${remainingResults.join(' : ')}` : `${primaryResult} : ${remainingResults.join(' : ')}`;
 }
+
+export { simplify };
