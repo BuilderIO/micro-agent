@@ -33,3 +33,5 @@ type === 'With Icon' ? '79px' : '71px'
 ```
 
 You can use typescript for parsing.
+
+This should work with any ternary provided, not just the one in the example. You need to find the simplest final output for any ternary given and return that. Remove all redundancies in them.
