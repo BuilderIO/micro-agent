@@ -24,7 +24,7 @@ const configParsers = {
   },
   MODEL(model?: string) {
     if (!model || model.length === 0) {
-      return 'gpt-3.5-turbo';
+      return 'gpt-4o';
     }
 
     return model as TiktokenModel;
@@ -120,21 +120,14 @@ export const showConfigUI = async () => {
             : '(not set)',
         },
         {
-          label: 'Silent Mode',
-          value: 'SILENT_MODE',
-          hint: hasOwn(config, 'SILENT_MODE')
-            ? config.SILENT_MODE.toString()
-            : '(not set)',
-        },
-        {
           label: 'Model',
           value: 'MODEL',
           hint: hasOwn(config, 'MODEL') ? config.MODEL : '(not set)',
         },
         {
-          label: 'Cancel',
+          label: 'Done',
           value: 'cancel',
-          hint: 'Exit the program',
+          hint: 'Exit',
         },
       ],
     })) as ConfigKeys | 'cancel' | symbol;

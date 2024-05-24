@@ -16,7 +16,7 @@ export async function runOne(options: Options) {
   await writeFile(options.promptFile, result);
 
   const testResult = await test(options.testCommand);
-  console.log('testResult', testResult);
+
   return {
     code: result,
     testResult,

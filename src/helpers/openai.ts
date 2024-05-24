@@ -1,16 +1,21 @@
 import OpenAI from 'openai';
 import { getConfig } from './config';
+import { KnownError } from './error';
+import { commandName } from './constants';
 
-const openaiKeyEnvVarName = 'OPENAI_KEY';
 const defaultModel = 'gpt-4o';
 
 export const getOpenAi = async function () {
-  const { OPENAI_KEY: openaiKey } = await getConfig();
+  const { OPENAI_KEY: openaiKey, OPENAI_API_ENDPOINT: endpoint } =
+    await getConfig();
   if (!openaiKey) {
-    throw new Error(`Missing environment variable: ${openaiKeyEnvVarName}`);
+    throw new KnownError(
+      `Missing OpenAI key. Use \`${commandName} config\` to set it.`
+    );
   }
   const openai = new OpenAI({
     apiKey: openaiKey,
+    baseURL: endpoint,
   });
   return openai;
 };

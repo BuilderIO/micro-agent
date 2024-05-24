@@ -13,7 +13,7 @@ npm install -g @builder.io/micro-agent
 ## Running
 
 ```bash
-mi run ./src/file-to-edit.ts -p ./prompt.md -t "npm test"
+ma run ./src/file-to-edit.ts -p ./prompt.md -t "npm test"
 ```
 
 This will read the prompt in `./prompt.md`, and write the output to `./src/file-to-edit.ts`. It will then run the command `npm test` to test the output, and if the test fails, it will continue to iterate on the output until the test passes.
