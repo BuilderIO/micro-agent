@@ -1,6 +1,8 @@
+import { intro, outro, spinner } from '@clack/prompts';
 import { generate } from './generate';
 import { test } from './test';
 import { writeFile } from 'fs/promises';
+import { green } from 'kolorist';
 
 type Options = {
   outputFile: string;
@@ -11,12 +13,20 @@ type Options = {
 };
 
 export async function runOne(options: Options) {
+  const s = spinner();
+  s.start('Generating code...');
+
   // TODO: parse any imports in the prompt file and include them in the prompt as context
   const result = await generate(options);
 
   await writeFile(options.outputFile, result);
+  s.stop('Updated code');
 
   const testResult = await test(options.testCommand);
+
+  if (testResult.type === 'fail') {
+    console.log('Test result', options.testCommand, testResult.message);
+  }
 
   return {
     code: result,
@@ -35,6 +45,7 @@ export async function* run(options: RunOptions) {
     yield result;
 
     if (result.testResult.type === 'success') {
+      outro(green('All tests passed!'));
       break;
     }
     options.lastRunError = result.code;
@@ -42,6 +53,7 @@ export async function* run(options: RunOptions) {
 }
 
 export async function runAll(options: RunOptions) {
+  intro('Running agent...');
   const results = [];
   for await (const result of run(options)) {
     results.push(result);

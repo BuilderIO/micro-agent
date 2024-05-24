@@ -3,7 +3,7 @@ import { red } from 'kolorist';
 import { version } from '../package.json';
 import config from './commands/config';
 import update from './commands/update';
-import chat from './commands/run';
+import run from './commands/run';
 import { commandName } from './helpers/constants';
 import { handleCliError } from './helpers/error';
 import { runAll } from './helpers/run';
@@ -25,7 +25,7 @@ cli(
         alias: 't',
       },
     },
-    commands: [config, chat, update],
+    commands: [config, run, update],
   },
   async (argv) => {
     try {

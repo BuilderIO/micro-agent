@@ -31,7 +31,6 @@ export const isFail = (result: unknown): result is Fail => {
 export async function test(testScript: string): Promise<Result> {
   try {
     const result = await execaCommand(testScript, {
-      stdio: 'inherit',
       shell: process.env.SHELL || true,
     });
 
