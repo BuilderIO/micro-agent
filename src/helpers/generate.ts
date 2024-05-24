@@ -4,10 +4,11 @@ import { readFile } from 'fs/promises';
 
 export async function generate(options: {
   promptFile: string;
-  priorCode?: string;
+  outputFile: string;
   lastRunError?: string;
 }) {
   const prompt = await readFile(options.promptFile, 'utf-8');
+  const priorCode = await readFile(options.outputFile, 'utf-8').catch(() => '');
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return (await getCompletion({
@@ -28,7 +29,7 @@ export async function generate(options: {
 
           The previous code you generated was:
           <code>
-          ${options.priorCode || 'None'}
+          ${priorCode || 'None'}
           </code>
 
           The error you received on that code was:

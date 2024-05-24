@@ -12,6 +12,7 @@ cli(
   {
     name: commandName,
     version: version,
+    parameters: ['<file path>'],
     flags: {
       prompt: {
         type: String,
@@ -36,6 +37,7 @@ cli(
         // TODO: throw errors if flags not provided or move
         // them to parameters https://github.com/privatenumber/cleye?tab=readme-ov-file#about
         await runAll({
+          outputFile: argv._.filePath,
           promptFile: argv.flags.prompt!,
           testCommand: argv.flags.test!,
         });

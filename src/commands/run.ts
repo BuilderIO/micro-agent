@@ -9,6 +9,7 @@ export default command(
     help: {
       description: 'Run the micro agent from the given prompt and test script.',
     },
+    parameters: ['<file path>'],
     flags: {
       prompt: {
         type: String,
@@ -27,6 +28,7 @@ export default command(
       // TODO: throw errors if flags not provided or move
       // them to parameters https://github.com/privatenumber/cleye?tab=readme-ov-file#about
       await runAll({
+        outputFile: argv._.filePath,
         promptFile: argv.flags.prompt!,
         testCommand: argv.flags.test!,
       });
