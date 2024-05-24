@@ -5,7 +5,11 @@ interface ConditionalObject {
   result: string;
 }
 
-function extractTernaries(node: ts.Node, sourceFile: ts.SourceFile, ternaries: ConditionalObject[]) {
+function extractTernaries(
+  node: ts.Node, 
+  sourceFile: ts.SourceFile, 
+  ternaries: ConditionalObject[]
+): void {
   if (ts.isConditionalExpression(node)) {
     const condition = node.condition.getText(sourceFile).trim();
     const whenTrue = node.whenTrue.getText(sourceFile).trim();
@@ -37,15 +41,16 @@ function simplifyConditions(ternaries: ConditionalObject[]): string {
     return `${keys[0]}`;
   }
 
-  const mostFrequentResult = keys.reduce((a, b) =>
-    resultMap[a].length > resultMap[b].length ? a : b
+  const mostFrequentResult = keys.reduce(
+    (a, b) => (resultMap[a].length > resultMap[b].length ? a : b),
+    ''
   );
 
   const simplifiedTernaryParts: string[] = [];
-  keys.forEach(result => {
+  keys.forEach((result) => {
     if (result !== mostFrequentResult) {
       const combinedConditions = resultMap[result]
-        .filter(cond => cond !== 'else')
+        .filter((cond) => cond !== 'else')
         .join(' || ');
       if (combinedConditions) {
         simplifiedTernaryParts.push(`(${combinedConditions}) ? ${result}`);
@@ -53,11 +58,7 @@ function simplifyConditions(ternaries: ConditionalObject[]): string {
     }
   });
 
-  simplifiedTernaryParts.push(`${mostFrequentResult}`);
-
-  return simplifiedTernaryParts.length === 1
-    ? `${mostFrequentResult}`
-    : simplifiedTernaryParts.join(' : ');
+  return `(${simplifiedTernaryParts.join(' : ')}) : ${mostFrequentResult}`;
 }
 
 export function simplify(inputCode: string): string {
@@ -70,7 +71,9 @@ export function simplify(inputCode: string): string {
   );
   const ternaries: ConditionalObject[] = [];
 
-  ts.forEachChild(sourceFile, node => extractTernaries(node, sourceFile, ternaries));
+  ts.forEachChild(sourceFile, (node) =>
+    extractTernaries(node, sourceFile, ternaries)
+  );
 
   return simplifyConditions(ternaries);
 }

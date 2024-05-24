@@ -1,6 +1,7 @@
 import dedent from 'dedent';
 import { getCompletion } from './openai';
 import { readFile } from 'fs/promises';
+import { blue } from 'kolorist';
 
 export async function generate(options: {
   promptFile: string;
@@ -38,7 +39,7 @@ export async function generate(options: {
   `;
 
   if (process.env.DEBUG) {
-    console.log('Prompt:', userPrompt);
+    console.log(`\n\n\n${blue('Prompt:')}`, userPrompt, '\n\n\n');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

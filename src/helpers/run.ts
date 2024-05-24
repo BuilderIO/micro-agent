@@ -2,7 +2,7 @@ import { intro, outro, spinner } from '@clack/prompts';
 import { generate } from './generate';
 import { test } from './test';
 import { writeFile } from 'fs/promises';
-import { green } from 'kolorist';
+import { green, yellow } from 'kolorist';
 
 type Options = {
   outputFile: string;
@@ -27,9 +27,9 @@ export async function runOne(options: Options) {
 
   if (testResult.type === 'fail') {
     console.log(
-      'Test failed with error:',
-      options.testCommand,
-      testResult.message
+      `\n\n\n${yellow('Test failed with error:')}`,
+      testResult.message,
+      '\n\n\n'
     );
   }
 
