@@ -24,6 +24,11 @@ cli(
         description: 'The test script to run',
         alias: 't',
       },
+      testFile: {
+        type: String,
+        description: 'The test file to run',
+        alias: 'f',
+      },
     },
     commands: [config, run, update],
   },
@@ -40,6 +45,7 @@ cli(
           outputFile: argv._.filePath,
           promptFile: argv.flags.prompt!,
           testCommand: argv.flags.test!,
+          testFile: argv.flags.testFile!,
         });
       }
     } catch (error: any) {

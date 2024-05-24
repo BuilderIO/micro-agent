@@ -8,6 +8,7 @@ type Options = {
   outputFile: string;
   promptFile: string;
   testCommand: string;
+  testFile: string;
   lastRunError?: string;
   priorCode?: string;
 };
