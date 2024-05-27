@@ -23,14 +23,12 @@ export async function runOne(options: Options) {
   await writeFile(options.outputFile, result);
   s.stop('Updated code');
 
+  s.start('Running tests...');
+  console.log('\n\n\n');
   const testResult = await test(options.testCommand);
 
   if (testResult.type === 'fail') {
-    console.log(
-      `\n\n\n${yellow('Test failed with error:')}`,
-      testResult.message,
-      '\n\n\n'
-    );
+    console.log('\n\n\n');
   }
 
   return {

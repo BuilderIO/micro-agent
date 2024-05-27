@@ -32,6 +32,7 @@ export async function test(testScript: string): Promise<Result> {
   try {
     const result = await execaCommand(testScript, {
       shell: process.env.SHELL || true,
+      stdio: 'inherit',
     });
 
     if (result.stderr) {
