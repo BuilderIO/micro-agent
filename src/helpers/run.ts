@@ -2,7 +2,7 @@ import { intro, note, outro, spinner, log } from '@clack/prompts';
 import { generate } from './generate';
 import { test } from './test';
 import { writeFile } from 'fs/promises';
-import { green, yellow } from 'kolorist';
+import { blue, green, yellow } from 'kolorist';
 import { commandName } from './constants';
 
 type Options = {
@@ -22,12 +22,14 @@ export async function runOne(options: Options) {
   // TODO: parse any imports in the prompt file and include them in the prompt as context
   const result = await generate(options);
 
+  if (process.env.DEBUG) {
+    console.log(`\n\n${blue('Output:')}`, result, '\n\n');
+  }
+
   await writeFile(options.outputFile, result);
   generatingSpinner.stop('Updated code');
 
   log.step('Running tests...');
-  console.log('◇');
-  console.log('\n');
   const testResult = await test(options.testCommand);
   console.log('◇');
   return {
@@ -84,12 +86,12 @@ export async function* run(options: RunOptions) {
     options.lastRunError = result.testResult.message;
   }
   if (!passed) {
-    log.message(yellow(`Max runs of ${maxRuns} reached, stopping.`));
+    log.message(yellow(`Max runs of ${maxRuns} reached.`));
     note(
       `${createCommandString(options)}`,
       'You can resume with this command with:'
     );
-    outro();
+    outro(yellow('Stopping.'));
   }
 }
 
@@ -97,7 +99,6 @@ export async function runAll(options: RunOptions) {
   intro('Running agent...');
   const results = [];
   log.step('Running tests...');
-  console.log('\n');
   const testResult = await test(options.testCommand);
 
   console.log('◇');

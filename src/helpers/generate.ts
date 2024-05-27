@@ -38,7 +38,7 @@ export async function generate(options: RunOptions) {
   `;
 
   if (process.env.DEBUG) {
-    console.log(`\n\n\n${blue('Prompt:')}`, userPrompt, '\n\n\n');
+    console.log(`\n\n${blue('Prompt:')}`, userPrompt, '\n\n');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

@@ -45,14 +45,20 @@ function simplify(inputCode: string): string {
   }
 
   const resultCountMap = groupByResult(conditions);
-  const primaryResult = Object.keys(resultCountMap).reduce((a, b) =>
+
+  // Find the primary result (the result with the most conditions associated with it)
+  const primaryResult = Object.keys(resultCountMap).reduce((a, b) => 
     resultCountMap[a].size >= resultCountMap[b].size ? a : b
   );
 
+  // Build the primary condition string
   const primaryConditions = Array.from(resultCountMap[primaryResult]);
-  const primaryCondition = primaryConditions.length > 0 ? primaryConditions.map(c => `(${c})`).join(' || ') : 'true';
+  const primaryCondition = primaryConditions.length > 0 ? primaryConditions.join(' || ') : 'true';
 
+  // Find the default condition result (the last "else" condition or the primary result)
   const defaultConditionResult = conditions.find(({ condition }) => condition === 'else')?.result || primaryResult;
+
+  // Find the secondary result (first result that's not the primary result) or the default condition
   const secondaryResults = Object.keys(resultCountMap).filter(result => result !== primaryResult);
   const secondaryResult = secondaryResults.length > 0 ? secondaryResults[0] : defaultConditionResult;
 

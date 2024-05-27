@@ -62,16 +62,20 @@ export const getCompletion = async function (options: {
       threadId = thread.id;
     }
     options.options.threadId = threadId;
-    const run = await openai.beta.threads.runs.createAndPoll(threadId, {
-      instructions: systemPrompt,
-      assistant_id: assistantId,
-      additional_messages: options.messages.filter(
-        (message) => message.role !== 'system'
-      ) as RunCreateParams.AdditionalMessage[],
+
+    let result = '';
+    return new Promise<string>((resolve) => {
+      openai.beta.threads.runs
+        .stream(threadId, {
+          instructions: systemPrompt,
+          assistant_id: assistantId,
+          additional_messages: options.messages.filter(
+            (message) => message.role !== 'system'
+          ) as RunCreateParams.AdditionalMessage[],
+        })
+        .on('textDelta', (textDelta) => (result += textDelta.value))
+        .on('textDone', () => resolve(result));
     });
-    const messages = await openai.beta.threads.messages.list(run.thread_id);
-    const latestMessage = messages.data[0].content[0];
-    return latestMessage.type === 'text' ? latestMessage.text.value : '';
   } else {
     const completion = await openai.chat.completions.create({
       model: model || defaultModel,
