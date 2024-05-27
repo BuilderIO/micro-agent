@@ -8,6 +8,7 @@ import { RunOptions } from './run';
 import { log } from '@clack/prompts';
 import { green } from 'kolorist';
 import { formatMessage } from './test';
+import { removeBackticks } from './remove-backticks';
 
 const defaultModel = 'gpt-4o';
 export const USE_ASSISTANT = true;
@@ -88,7 +89,7 @@ export const getCompletion = async function (options: {
         })
         .on('textDone', () => {
           process.stdout.write('\n');
-          resolve(result);
+          resolve(removeBackticks(result));
         });
     });
   } else {

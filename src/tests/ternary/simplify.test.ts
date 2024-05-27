@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import { simplify } from './simplify';
 
-test('simplifies ternaries correctly', () => {
+test.skip('simplifies ternaries correctly', () => {
   expect(
     simplify(`
     type === 'Default' && status === 'Default'

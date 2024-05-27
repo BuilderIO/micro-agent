@@ -1,8 +1,13 @@
-```typescript
 import * as ts from 'typescript';
 
 function simplify(inputCode: string): string {
-  const sourceFile = ts.createSourceFile('temp.ts', inputCode, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+  const sourceFile = ts.createSourceFile(
+    'temp.ts',
+    inputCode,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS
+  );
 
   interface ConditionEvaluation {
     condition: string;
@@ -27,7 +32,9 @@ function simplify(inputCode: string): string {
     return conditions;
   }
 
-  function simplifyConditions(conditions: ConditionEvaluation[]): string | null {
+  function simplifyConditions(
+    conditions: ConditionEvaluation[]
+  ): string | null {
     const conditionMap: Record<string, Set<string>> = {};
     const resultMap: Record<string, string[]> = {};
     const finalResultSet = new Set<string>();
@@ -39,10 +46,12 @@ function simplify(inputCode: string): string {
         resultMap[whenTrue] = [];
       }
       resultMap[whenTrue].push(condition);
-      	finalResultSet.add(whenTrue);
+      finalResultSet.add(whenTrue);
 
-      conditionParts.forEach(part => {
-        const [key, val] = part.split(' === ').map(s => s.trim().replace(/['"]/g, ''));
+      conditionParts.forEach((part) => {
+        const [key, val] = part
+          .split(' === ')
+          .map((s) => s.trim().replace(/['"]/g, ''));
         if (!conditionMap[key]) {
           conditionMap[key] = new Set();
         }
@@ -66,9 +75,11 @@ function simplify(inputCode: string): string {
       return null;
     }
 
-    const primaryResult = Array.from(finalResultSet).find(res => res !== resultMap[primaryKey][0]);
+    const primaryResult = Array.from(finalResultSet).find(
+      (res) => res !== resultMap[primaryKey][0]
+    );
     const primaryConditions = Array.from(conditionMap[primaryKey])
-      .map(val => `${primaryKey} === '${val}'`)
+      .map((val) => `${primaryKey} === '${val}'`)
       .join(' || ');
 
     return `${primaryConditions} ? ${resultMap[primaryKey][0]} : ${primaryResult}`;
@@ -85,4 +96,3 @@ function simplify(inputCode: string): string {
 }
 
 export { simplify };
-```
