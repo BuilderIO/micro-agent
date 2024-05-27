@@ -5,6 +5,8 @@ import { commandName } from './constants';
 import { systemPrompt } from './generate';
 import { RunCreateParams } from 'openai/resources/beta/threads/runs/runs';
 import { RunOptions } from './run';
+import { log } from '@clack/prompts';
+import { green } from 'kolorist';
 
 const defaultModel = 'gpt-4o';
 export const USE_ASSISTANT = true;
@@ -60,6 +62,7 @@ export const getCompletion = async function (options: {
     if (!threadId) {
       const thread = await openai.beta.threads.create();
       threadId = thread.id;
+      log.info(`Create thread: ${green(threadId)}`);
     }
     options.options.threadId = threadId;
 
