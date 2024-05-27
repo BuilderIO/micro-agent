@@ -1,4 +1,4 @@
-import { intro, note, outro, spinner } from '@clack/prompts';
+import { intro, note, outro, spinner, log } from '@clack/prompts';
 import { generate } from './generate';
 import { test } from './test';
 import { writeFile } from 'fs/promises';
@@ -16,23 +16,20 @@ type Options = {
 };
 
 export async function runOne(options: Options) {
-  const s = spinner();
-  s.start('Generating code...');
+  const generatingSpinner = spinner();
+  generatingSpinner.start('Generating code...');
 
   // TODO: parse any imports in the prompt file and include them in the prompt as context
   const result = await generate(options);
 
   await writeFile(options.outputFile, result);
-  s.stop('Updated code');
+  generatingSpinner.stop('Updated code');
 
-  s.start('Running tests...');
-  console.log('\n\n\n');
+  log.step('Running tests...');
+  console.log('◇');
+  console.log('\n');
   const testResult = await test(options.testCommand);
-
-  if (testResult.type === 'fail') {
-    console.log('\n\n\n');
-  }
-
+  console.log('◇');
   return {
     code: result,
     testResult,
@@ -43,25 +40,30 @@ export type RunOptions = Options & {
   maxRuns?: number;
 };
 
+const useNewlinesInCommand = true;
+
 function createCommandString(options: RunOptions) {
   const command = [`${commandName}`];
   if (options.outputFile) {
     command.push(options.outputFile);
   }
+  const argPrefix = useNewlinesInCommand ? '\\\n  ' : '';
   if (options.promptFile) {
-    command.push(`-p ${options.promptFile}`);
+    command.push(argPrefix + `-p ${options.promptFile}`);
   }
   if (options.testCommand) {
-    command.push(`-t "${options.testCommand.replace(/"/g, '\\"')}"`);
+    command.push(
+      argPrefix + `-t "${options.testCommand.replace(/"/g, '\\"')}"`
+    );
   }
   if (options.testFile) {
-    command.push(`-f ${options.testFile}`);
+    command.push(argPrefix + `-f ${options.testFile}`);
   }
   if (options.maxRuns) {
-    command.push(`-m ${options.maxRuns}`);
+    command.push(argPrefix + `-m ${options.maxRuns}`);
   }
   if (options.threadId) {
-    command.push(`--thread ${options.threadId}`);
+    command.push(argPrefix + `--thread ${options.threadId}`);
   }
 
   return command.join(' ');
@@ -82,16 +84,23 @@ export async function* run(options: RunOptions) {
     options.lastRunError = result.testResult.message;
   }
   if (!passed) {
-    outro(yellow(`Max runs of ${maxRuns} reached, stopping.`));
-    note(`You can resume with ${createCommandString(options)}`);
-    note(`You can set a higher max runs with -m <number>`);
+    log.message(yellow(`Max runs of ${maxRuns} reached, stopping.`));
+    note(
+      `${createCommandString(options)}`,
+      'You can resume with this command with:'
+    );
+    outro();
   }
 }
 
 export async function runAll(options: RunOptions) {
   intro('Running agent...');
   const results = [];
+  log.step('Running tests...');
+  console.log('\n');
   const testResult = await test(options.testCommand);
+
+  console.log('◇');
   if (testResult.type === 'success') {
     outro(green('All tests passed!'));
     return;

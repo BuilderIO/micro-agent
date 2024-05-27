@@ -28,7 +28,6 @@ export const getOpenAi = async function () {
 
 export const getCompletion = async function (options: {
   messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[];
-  threadId?: string;
   options: RunOptions;
 }) {
   const { MODEL: model } = await getConfig();
@@ -49,6 +48,7 @@ export const getCompletion = async function (options: {
       assistantId = assistant.id;
     } else {
       const assistant = await openai.beta.assistants.create({
+        name: 'Micro Agent',
         model: useModel,
         metadata: {
           [assistantIdentifierMetadataKey]: assistantIdentifierMetadataValue,
@@ -56,22 +56,22 @@ export const getCompletion = async function (options: {
       });
       assistantId = assistant.id;
     }
-    let threadId = options.threadId;
+    let threadId = options.options.threadId;
     if (!threadId) {
-      const thread = await openai.beta.threads.createAndRun({
-        instructions: systemPrompt,
-        model: model || defaultModel,
-        assistant_id: assistantId,
-      });
+      const thread = await openai.beta.threads.create();
       threadId = thread.id;
     }
     options.options.threadId = threadId;
-    await openai.beta.threads.runs.create(threadId, {
+    const run = await openai.beta.threads.runs.createAndPoll(threadId, {
+      instructions: systemPrompt,
       assistant_id: assistantId,
       additional_messages: options.messages.filter(
         (message) => message.role !== 'system'
       ) as RunCreateParams.AdditionalMessage[],
     });
+    const messages = await openai.beta.threads.messages.list(run.thread_id);
+    const latestMessage = messages.data[0].content[0];
+    return latestMessage.type === 'text' ? latestMessage.text.value : '';
   } else {
     const completion = await openai.chat.completions.create({
       model: model || defaultModel,

@@ -5,11 +5,7 @@ interface ConditionResult {
   result: string;
 }
 
-function extractTernaryConditions(
-  node: ts.Node,
-  sourceFile: ts.SourceFile,
-  conditions: ConditionResult[]
-): void {
+function extractTernaryConditions(node: ts.Node, sourceFile: ts.SourceFile, conditions: ConditionResult[]): void {
   if (ts.isConditionalExpression(node)) {
     const condition = node.condition.getText(sourceFile).trim();
     const whenTrue = node.whenTrue.getText(sourceFile).trim();
@@ -25,6 +21,19 @@ function extractTernaryConditions(
   }
 }
 
+function groupByResult(conditions: ConditionResult[]): Record<string, Set<string>> {
+  const resultCountMap: Record<string, Set<string>> = {};
+  conditions.forEach(({ condition, result }) => {
+    if (!resultCountMap[result]) {
+      resultCountMap[result] = new Set();
+    }
+    if (condition !== 'else') {
+      resultCountMap[result].add(condition);
+    }
+  });
+  return resultCountMap;
+}
+
 function simplify(inputCode: string): string {
   const sourceFile = ts.createSourceFile('temp.ts', inputCode, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
   const conditions: ConditionResult[] = [];
@@ -35,27 +44,19 @@ function simplify(inputCode: string): string {
     return inputCode;
   }
 
-  const resultCountMap: Record<string, Set<string>> = {};
-  conditions.forEach(({ condition, result }) => {
-    if (!resultCountMap[result]) {
-      resultCountMap[result] = new Set();
-    }
-    if (condition !== 'else') {
-      resultCountMap[result].add(condition);
-    }
-  });
+  const resultCountMap = groupByResult(conditions);
+  const primaryResult = Object.keys(resultCountMap).reduce((a, b) =>
+    resultCountMap[a].size >= resultCountMap[b].size ? a : b
+  );
 
-  const primaryResult = Object.keys(resultCountMap).reduce((a, b) => (resultCountMap[a].size >= resultCountMap[b].size ? a : b));
-  const secondaryResult = primaryResult === 'else' ? '' : '';
+  const primaryConditions = Array.from(resultCountMap[primaryResult]);
+  const primaryCondition = primaryConditions.length > 0 ? primaryConditions.map(c => `(${c})`).join(' || ') : 'true';
 
-  if (resultCountMap[primaryResult].size === 0) {
-    return `${primaryResult}`;
-  }
+  const defaultConditionResult = conditions.find(({ condition }) => condition === 'else')?.result || primaryResult;
+  const secondaryResults = Object.keys(resultCountMap).filter(result => result !== primaryResult);
+  const secondaryResult = secondaryResults.length > 0 ? secondaryResults[0] : defaultConditionResult;
 
-  const uniqueConditions = Array.from(resultCountMap[primaryResult]);
-  const simplifiedConditions = uniqueConditions.map(c => `(${c})`).join(' || ');
-
-  return `${simplifiedConditions} ? ${primaryResult} : ${secondaryResult}`;
+  return `${primaryCondition} ? ${primaryResult} : ${secondaryResult}`;
 }
 
 export { simplify };
