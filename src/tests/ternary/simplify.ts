@@ -25,43 +25,38 @@ function parseConditions(sourceFile: ts.SourceFile): Array<{ condition: string; 
 }
 
 function simplifyTernary(parts: Array<{ condition: string; value: string }>): string {
- const valueMap = new Map<string, Set<string>>();
+ const valueConditionMap = new Map<string, Set<string>>();
  let defaultValue = '';
 
  for (const { condition, value } of parts) {
    if (condition === 'default') {
      defaultValue = value;
    } else {
-     if (!valueMap.has(value)) {
-       valueMap.set(value, new Set());
+     if (!valueConditionMap.has(value)) {
+       valueConditionMap.set(value, new Set());
      }
-     valueMap.get(value)?.add(condition);
+     valueConditionMap.get(value)?.add(condition);
    }
  }
 
- const [primaryValue, primaryConditions] = Array.from(valueMap.entries()).reduce(
+ const [primaryValue, primaryConditions] = Array.from(valueConditionMap.entries()).reduce(
    (max, curr) => (curr[1].size > max[1].size ? curr : max),
    ['', new Set<string>()]
  );
 
- const primaryConditionStr = Array.from(primaryConditions).join(' || ');
- const otherConditions = Array.from(valueMap.entries())
-   .filter(([value]) => value !== primaryValue)
-   .map(
-     ([value, conditions]) => `(${Array.from(conditions).join(' || ')}) ? ${value}`
-   )
-   .join(' : ');
+ const primaryConditionStr = Array.from(primaryConditions).map(cond => `(${cond})`).join(' || ');
 
- let simpleTernary = primaryConditions.size
-   ? `(${primaryConditionStr}) ? ${primaryValue}`
-   : '';
- if (simpleTernary && otherConditions) {
-   simpleTernary += ` : ${otherConditions}`;
- } else if (otherConditions) {
-   simpleTernary = otherConditions;
+ if (primaryConditionStr.includes(' && ')) {
+   const conditionsWithoutStatus = primaryConditionStr
+     .split(' || ')
+     .map(cond => cond.replace(/&&\s*status\s*===\s*[^)]+/g, '').trim())
+     .filter((item, index, self) => self.indexOf(item) === index)
+     .join(' || ');
+
+   return `${conditionsWithoutStatus} ? ${primaryValue} : ${defaultValue}`;
  }
 
- return simpleTernary || defaultValue;
+ return `${conditionsWithoutStatus ? conditionsWithoutStatus : 'true'} ? ${primaryValue} : ${defaultValue}`;
 }
 
 export function simplify(inputCode: string): string {
