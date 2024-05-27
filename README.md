@@ -13,12 +13,17 @@ npm install -g @builder.io/micro-agent
 ## Running
 
 ```bash
-ma run ./src/file-to-edit.ts -p ./prompt.md -t "npm test"
+micro-agent run ./file-to-edit.ts -t "npm test"
 ```
 
-This will read the prompt in `./prompt.md`, and write the output to `./src/file-to-edit.ts`. It will then run the command `npm test` to test the output, and if the test fails, it will continue to iterate on the output until the test passes.
+This will run the Micro Agent on the file `./file-to-edit.ts` running `npm test` to see if the code is correct.
 
-## Integration with Figma
+By default, Micro Agent assumes you have a test file with the same name as the editing file but with `.test.ts` appended, such as `./file-to-edit.test.ts` for the above examples.
 
-One use case for Micro Agent is to automate the process of creating code from Figma via [Visual Copilot](https://www.builder.io/c/docs/visual-copilot) that
-strictly matches your coding style (e.g. linting, formatting, etc.).
+If this is not the case, you can specify the test file with the `-f` flag, like `micro-agent run ./file-to-edit.ts -f ./file-to-edit.spec.ts`.
+
+You can also add a prompt to help guide the code generation, either at a file located at `<filename>.prompt.md` like `./file-to-edit.prompt.md` or by specifying the prompt file with the `-p` flag, like `micro-agent run ./file-to-edit.ts -p ./path-to-prompt.prompt.md`.
+
+### Max runs
+
+By default, Micro Agent will do 10 runs. If tests don't pass in 10 runs, it will stop. You can change this with the `-m` flag, like `micro-agent run ./file-to-edit.ts -m 20`.

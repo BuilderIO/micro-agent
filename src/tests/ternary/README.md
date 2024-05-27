@@ -3,9 +3,5 @@
 Run with the below command:
 
 ```bash
-npm start -- src/tests/ternary/simplify.ts \
-  -p src/tests/ternary/prompt.md \
-  -t "npm test ternary && npm run typecheck" \
-  -f src/tests/ternary/ternary.test.ts \
-  -m 20
+npm start -- src/tests/ternary/simplify.ts -t "npm test ternary && npm run typecheck"
 ```

@@ -16,7 +16,7 @@ export async function generate(options: RunOptions) {
     Here is what I need:
 
     <prompt>
-    ${prompt}
+    ${prompt || 'Pass the tests'}
     </prompt>
 
     The current code is:
@@ -24,10 +24,14 @@ export async function generate(options: RunOptions) {
     ${priorCode || 'None'}
     </code>
 
+    The file path for the above is ${options.outputFile}.
+
     The test code that needs to pass is:
     <test>
     ${testCode}
     </test>
+
+    The file path for the test is ${options.testFile}.
 
     The error you received on that code was:
     <error>
