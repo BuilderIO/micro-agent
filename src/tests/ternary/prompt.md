@@ -58,10 +58,52 @@ type === 'Default' && status === 'Default'
   : 'start';
 ```
 
-Should conver to this
+Should convert to this
 
 ```ts
 type === 'With Icon' ? 'stretch' : 'start';
+```
+
+And one more example is this:
+
+```ts
+type === 'Baseline' && size === '4px' && status === 'Default'
+  ? '400'
+  : type === 'Baseline' && size === '4px' && status === 'Complete'
+  ? undefined
+  : type === 'Baseline' && size === '4px' && status === 'Error'
+  ? undefined
+  : type === 'Baseline' && size === '8px' && status === 'Complete'
+  ? undefined
+  : type === 'Baseline' && size === '8px' && status === 'Default'
+  ? '400'
+  : type === 'Baseline' && size === '8px' && status === 'Error'
+  ? undefined
+  : type === 'Detailed' && size === '8px' && status === 'Complete'
+  ? undefined
+  : type === 'Detailed' && size === '4px' && status === 'Default'
+  ? undefined
+  : type === 'Detailed' && size === '4px' && status === 'Complete (alternate)'
+  ? undefined
+  : type === 'Detailed' && size === '8px' && status === 'Default'
+  ? undefined
+  : type === 'Detailed' && size === '8px' && status === 'Complete (alternate)'
+  ? undefined
+  : type === 'Detailed' && size === '4px' && status === 'Complete'
+  ? undefined
+  : type === 'Detailed' && size === '8px' && status === 'Error'
+  ? undefined
+  : undefined;
+```
+
+Should simplify to this:
+
+```ts
+type === 'Baseline' &&
+(size === '4px' || size === '8px') &&
+status === 'Default'
+  ? '400'
+  : undefine;
 ```
 
 This should work with any ternary provided in this format, where you have an exhaustive list of values and their results.

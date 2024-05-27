@@ -51,7 +51,7 @@ test('simplifies ternaries correctly', () => {
   ).toBe(`type === "With Icon" ? "stretch" : "start"`);
   expect(
     simplify(`
-    simplify this ternary type === "Baseline" && size === "4px" && status === "Default"
+    type === "Baseline" && size === "4px" && status === "Default"
             ? "400"
             : type === "Baseline" && size === "4px" && status === "Complete"
             ? undefined
