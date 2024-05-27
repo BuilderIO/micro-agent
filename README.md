@@ -6,10 +6,20 @@ Point Micro Agent at a file (either that exists or is empty) and a test, and it 
 
 ![Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4e8b02abb3e044118f070d9a7253003e)
 
-## Installation
+## Getting started
+
+### Installation
 
 ```bash
 npm install -g @builder.io/micro-agent
+```
+
+### Add an OpenAI API key
+
+Micro Agent uses the OpenAI API to generate code. You need to add your API key to the CLI:
+
+```bash
+micro-agent config set OPENAI_KEY=<your token>
 ```
 
 ## Running
@@ -47,10 +57,24 @@ You can configure the CLI with the `config` command, for instance to set your Op
 micro-agent config set OPENAI_KEY=<your token>
 ```
 
+By default Micro Agent uses `gpt-4o` as the model, but you can override it with the `MODEL` config option (or environment variable):
+
+```bash
+micro-agent config set MODEL=gpt-3.5-turbo
+```
+
 Or using interactive mode:
 
 ```bash
 micro-agent config
+```
+
+#### Environment variables
+
+All config options can be overriden as environment variables, for instance:
+
+```bash
+MODEL=gpt-3.5-turbo micro-agent run ./file-to-edit.ts -t "npm test"
 ```
 
 ## Usage

@@ -80,7 +80,7 @@ export const getConfig = async (
     parsedConfig[key] = parser(value);
   }
 
-  return parsedConfig as ValidConfig;
+  return { ...process.env, ...(parsedConfig as ValidConfig) };
 };
 
 export const setConfigs = async (keyValues: [key: string, value: string][]) => {
