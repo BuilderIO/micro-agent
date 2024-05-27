@@ -23,7 +23,7 @@ This will run the Micro Agent on the file `./file-to-edit.ts` running `npm test`
 The above assumes the following file structure:
 
 ```bash
-./
+some-folder
 ├──file-to-edit.ts
 ├──file-to-edit.test.ts # test file. if you need a different path, use the -t argument
 └──file-to-edit.prompt.md # optional prompt file. if you need a different path, use the -p argument
