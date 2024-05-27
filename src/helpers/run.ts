@@ -96,7 +96,7 @@ export async function* run(options: RunOptions) {
 }
 
 export async function runAll(options: RunOptions) {
-  intro('Running agent...');
+  intro('Running Micro Agent 🤖');
   const results = [];
   log.step('Running tests...');
   const testResult = await test(options.testCommand);

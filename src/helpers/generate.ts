@@ -19,7 +19,7 @@ export async function generate(options: RunOptions) {
     ${prompt}
     </prompt>
 
-    The previous code you generated was:
+    The current code is:
     <code>
     ${priorCode || 'None'}
     </code>
