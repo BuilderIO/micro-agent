@@ -62,7 +62,7 @@ export const getCompletion = async function (options: {
     if (!threadId) {
       const thread = await openai.beta.threads.create();
       threadId = thread.id;
-      log.info(`Create thread: ${green(threadId)}`);
+      log.info(`\nCreated thread: ${green(threadId)}\n`);
     }
     options.options.threadId = threadId;
 

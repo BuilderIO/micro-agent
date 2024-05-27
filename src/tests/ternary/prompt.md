@@ -23,46 +23,48 @@ type === 'Default' && status === 'Default'
   ? '71px'
   : type === 'Default' && status === 'Alert'
   ? '71px'
-  : '71px';
+  : '71px'
 ```
 
 should convert to this
 
 ```ts
-type === 'With Icon' ? '79px' : '71px';
+type === 'With Icon' ? '79px' : '71px'
 ```
 
-Note that these ternaries always use enum values that are exhaustive. For instance, in the above example, the `type` can only be `'Default'` or `'With Icon'` and the `status` can only be `'Default'`, `'Neutral'`, `'Active'`, `'Alert'`, or `'Caution'`, because that is what is used in the ternary.
+Note that these ternaries always use enum values that are exhaustive. For instance, in the above example, the `type` can only be `'Default'` or `'With Icon'` and the `status` can only be `'Default'`, `'Neutral'`, `'Active'`, `'Alert'`, or `'Caution'`, because that is what is used in the ternary. Given that `status` never changes the output, the `type` is the only thing that matters, and `status` can be removed from the ternary completley. Assume this for all ternaries passed, if their values never change the output, they can be removed.
 
 Another examples is this
 
 ```ts
-type === 'Default' && status === 'Default'
+foo === 'Default' && status === 'Default'
   ? 'start'
-  : type === 'With Icon' && status === 'Default'
+  : foo === 'Some Value' && status === 'Default'
   ? 'stretch'
-  : type === 'With Icon' && status === 'Neutral'
+  : foo === 'Some Value' && status === 'Neutral'
   ? 'stretch'
-  : type === 'With Icon' && status === 'Active'
+  : foo === 'Some Value' && status === 'Active'
   ? 'stretch'
-  : type === 'With Icon' && status === 'Alert'
+  : foo === 'Some Value' && status === 'Alert'
   ? 'stretch'
-  : type === 'With Icon' && status === 'Caution'
+  : foo === 'Some Value' && status === 'Caution'
   ? 'stretch'
-  : type === 'Default' && status === 'Neutral'
+  : foo === 'Default' && status === 'Neutral'
   ? 'start'
-  : type === 'Default' && status === 'Active'
+  : foo === 'Default' && status === 'Active'
   ? 'start'
-  : type === 'Default' && status === 'Alert'
+  : foo === 'Default' && status === 'Alert'
   ? 'start'
-  : 'start';
+  : 'start'
 ```
 
 Should convert to this
 
 ```ts
-type === 'With Icon' ? 'stretch' : 'start';
+foo === 'With Icon' ? 'stretch' : 'start'
 ```
+
+In the above case, also notice that `status` never changes the output, so it can be removed completely. Again, assume this for all ternaries passed, if their values never change the output, they can be removed.
 
 And one more example is this:
 
@@ -93,17 +95,13 @@ type === 'Baseline' && size === '4px' && status === 'Default'
   ? undefined
   : type === 'Detailed' && size === '8px' && status === 'Error'
   ? undefined
-  : undefined;
+  : undefined
 ```
 
 Should simplify to this:
 
 ```ts
-type === 'Baseline' &&
-(size === '4px' || size === '8px') &&
-status === 'Default'
-  ? '400'
-  : undefine;
+type === 'Baseline' && (size === '4px' || size === '8px') && status === 'Default' ? '400' : undefined
 ```
 
 This should work with any ternary provided in this format, where you have an exhaustive list of values and their results.
