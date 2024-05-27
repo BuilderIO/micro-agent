@@ -1,4 +1,4 @@
-Write a function called "simplify" that converts a complex and redundant ternary to a simpler one.
+Write a function called "simplify" that converts a complex and redundant ternary to a simpler one using the typescript parser.
 
 It takes code as a string and converts it to new code as a string.
 

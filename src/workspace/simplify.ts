@@ -1,65 +1,64 @@
 import * as ts from 'typescript';
 
-interface ConditionResult {
-  condition: string;
-  result: string;
-}
-
-function extractTernaryConditions(node: ts.Node, sourceFile: ts.SourceFile, conditions: ConditionResult[]): void {
-  if (ts.isConditionalExpression(node)) {
-    const condition = node.condition.getText(sourceFile).trim();
-    const whenTrue = node.whenTrue.getText(sourceFile).trim();
-    const whenFalse = node.whenFalse;
-
-    conditions.push({ condition, result: whenTrue });
-
-    if (ts.isConditionalExpression(whenFalse)) {
-      extractTernaryConditions(whenFalse, sourceFile, conditions);
-    } else {
-      conditions.push({ condition: 'else', result: whenFalse.getText(sourceFile).trim() });
-    }
-  }
-}
-
-function groupByResult(conditions: ConditionResult[]): Record<string, Set<string>> {
-  const resultCountMap: Record<string, Set<string>> = {};
-  conditions.forEach(({ condition, result }) => {
-    if (!resultCountMap[result]) {
-      resultCountMap[result] = new Set();
-    }
-    if (condition !== 'else') {
-      resultCountMap[result].add(condition);
-    }
-  });
-  return resultCountMap;
-}
-
-function simplify(inputCode: string): string {
-  const sourceFile = ts.createSourceFile('temp.ts', inputCode, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-  const conditions: ConditionResult[] = [];
-
-  ts.forEachChild(sourceFile, node => extractTernaryConditions(node, sourceFile, conditions));
-
-  if (conditions.length === 0) {
-    return inputCode;
-  }
-
-  const resultCountMap = groupByResult(conditions);
-
-  // Find the primary result with the most conditions associated with it
-  const primaryResult = Object.keys(resultCountMap).reduce((a, b) =>
-    resultCountMap[a].size >= resultCountMap[b].size ? a : b
+export function simplify(inputCode: string): string {
+  const sourceFile = ts.createSourceFile(
+    'temp.ts',
+    inputCode,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS
   );
 
-  // Build the primary condition string
-  const primaryCondition = resultCountMap[primaryResult].size > 0
-    ? Array.from(resultCountMap[primaryResult]).map(c => `(${c})`).join(' || ')
-    : 'true';
+  // Flatten the nested ternary expression into an array
+  function flattenTernary(node: ts.ConditionalExpression, expressions: { condition: string, value: string }[] = []) {
+    expressions.push({ condition: node.condition.getText(), value: node.whenTrue.getText() });
+    if (ts.isConditionalExpression(node.whenFalse)) {
+      flattenTernary(node.whenFalse, expressions);
+    } else {
+      expressions.push({ condition: '', value: node.whenFalse.getText() });
+    }
+    return expressions;
+  }
 
-  // Find the default condition result
-  const defaultConditionResult = conditions.find(({ condition }) => condition === 'else')?.result || primaryResult;
+  function traverse(node: ts.Node): { condition: string, value: string }[] | undefined {
+    if (ts.isConditionalExpression(node)) {
+      return flattenTernary(node);
+    }
+    return ts.forEachChild(node, traverse);
+  }
 
-  return `${primaryCondition} ? ${primaryResult} : ${defaultConditionResult}`;
+  const ternaryExpressions = traverse(sourceFile);
+  if (!ternaryExpressions) return inputCode;
+
+  // Group values by condition
+  const valueConditionsMap = new Map<string, string[]>();
+  ternaryExpressions.forEach(({ condition, value }) => {
+    const conditions = valueConditionsMap.get(value) || [];
+    if (condition) conditions.push(condition);
+    valueConditionsMap.set(value, conditions);
+  });
+
+  // Find the most frequent value
+  let mostFrequentValue = '';
+  let maxFrequency = 0;
+  valueConditionsMap.forEach((conditions, value) => {
+    if (conditions.length > maxFrequency) {
+      maxFrequency = conditions.length;
+      mostFrequentValue = value;
+    }
+  });
+
+  // Create simplified ternary expression
+  const simplifiedConditions: string[] = [];
+  valueConditionsMap.forEach((conditions, value) => {
+    if (value !== mostFrequentValue) {
+      simplifiedConditions.push(`(${conditions.join(' || ')}) ? ${value}`);
+    }
+  });
+
+  const simplifiedCode = simplifiedConditions.length
+    ? `${simplifiedConditions.join(' : ')} : ${mostFrequentValue}`
+    : mostFrequentValue;
+
+  return simplifiedCode;
 }
-
-export { simplify };
