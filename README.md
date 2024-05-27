@@ -1,9 +1,9 @@
-<h2 align="center">
+<h3 align="center">
    <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4d36bc052c4340f997dd61eb19c1c64b">
       <img width="400" alt="AI Shell logo" src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F1a718d297d644fce90f33e93b7e4061f">
     </picture>
-</h2>
+</h3>
 
 <h4 align="center">
    An AI agent that writes and fixes code for you until your tests pass.
