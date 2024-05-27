@@ -23,15 +23,47 @@ type === 'Default' && status === 'Default'
   ? '71px'
   : type === 'Default' && status === 'Alert'
   ? '71px'
-  : '71px'
+  : '71px';
 ```
 
 should convert to this
 
 ```ts
-type === 'With Icon' ? '79px' : '71px'
+type === 'With Icon' ? '79px' : '71px';
 ```
 
-You can use typescript for parsing.
+Note that these ternaries always use enum values that are exhaustive. For instance, in the above example, the `type` can only be `'Default'` or `'With Icon'` and the `status` can only be `'Default'`, `'Neutral'`, `'Active'`, `'Alert'`, or `'Caution'`, because that is what is used in the ternary.
 
-This should work with any ternary provided, not just the one in the example. You need to find the simplest final output for any ternary given and return that. Remove all redundancies in them.
+Another examples is this
+
+```ts
+type === 'Default' && status === 'Default'
+  ? 'start'
+  : type === 'With Icon' && status === 'Default'
+  ? 'stretch'
+  : type === 'With Icon' && status === 'Neutral'
+  ? 'stretch'
+  : type === 'With Icon' && status === 'Active'
+  ? 'stretch'
+  : type === 'With Icon' && status === 'Alert'
+  ? 'stretch'
+  : type === 'With Icon' && status === 'Caution'
+  ? 'stretch'
+  : type === 'Default' && status === 'Neutral'
+  ? 'start'
+  : type === 'Default' && status === 'Active'
+  ? 'start'
+  : type === 'Default' && status === 'Alert'
+  ? 'start'
+  : 'start';
+```
+
+Should conver to this
+
+```ts
+type === 'With Icon' ? 'stretch' : 'start';
+```
+
+This should work with any ternary provided in this format, where you have an exhaustive list of values and their results.
+
+You need to find the simplest final output for any ternary like this given.
