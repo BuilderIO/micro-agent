@@ -1,10 +1,23 @@
-# Micro Agent
+<h2 align="center">
+   <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4d36bc052c4340f997dd61eb19c1c64b">
+      <img width="300" alt="AI Shell logo" src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F1a718d297d644fce90f33e93b7e4061f">
+    </picture>
+</h2>
 
-An AI CLI that writes code for you.
-
-Point Micro Agent at a file (either that exists or is empty) and a test, and it will write code for you until your tests pass.
+<h4 align="center">
+   An AI agent that writes code for you.
+</h4>
 
 ![Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4e8b02abb3e044118f070d9a7253003e)
+
+<p align="center">
+   <a href="https://www.npmjs.com/package/@builder.io/micro-agent"><img src="https://img.shields.io/npm/v/@builder.io/micro-agent" alt="Current version"></a>
+</p>
+
+# Micro Agent
+
+Point Micro Agent at a file (either that exists or is empty) and a test, and it will write code for you until your tests pass.
 
 ## Getting started
 
@@ -63,10 +76,23 @@ By default Micro Agent uses `gpt-4o` as the model, but you can override it with 
 micro-agent config set MODEL=gpt-3.5-turbo
 ```
 
-Or using interactive mode:
+#### Config UI
+
+To use a more visual interface to view and set config options you can type:
 
 ```bash
 micro-agent config
+```
+
+To get an interactive UI like below:
+
+```bash
+◆  Set config:
+│  ○ OpenAI Key
+│  ○ OpenAI API Endpoint
+│  ● Model (gpt-3.5-turbo)
+│  ○ Done
+└
 ```
 
 #### Environment variables
@@ -98,3 +124,14 @@ Flags:
       --thread <string>           Thread ID to resume
       --version                   Show version
 ```
+
+<br><br>
+
+<p align="center">
+   <a href="https://www.builder.io/m/developers">
+      <picture>
+         <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/844291/230786554-eb225eeb-2f6b-4286-b8c2-535b1131744a.png">
+         <img width="250" alt="Made with love by Builder.io" src="https://user-images.githubusercontent.com/844291/230786555-a58479e4-75f3-4222-a6eb-74c5af953eac.png">
+       </picture>
+   </a>
+</p>
