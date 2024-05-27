@@ -8,7 +8,7 @@ export const systemPrompt =
   'You take a prompt and test and generate code accordingly. You only output typescript code and nothing else. Output just a typescript string, like "const hello = \'world\'", not markdown (aka do NOT put three backticks around the code). Be sure your code exports function that can be called by an external test file. Make sure your code is reusable and not overly hardcoded to match the promt. Use two spaces for indents.';
 
 export async function generate(options: RunOptions) {
-  const prompt = await readFile(options.promptFile, 'utf-8');
+  const prompt = await readFile(options.promptFile, 'utf-8').catch(() => '');
   const priorCode = await readFile(options.outputFile, 'utf-8').catch(() => '');
   const testCode = await readFile(options.testFile, 'utf-8');
 
