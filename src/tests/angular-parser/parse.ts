@@ -14,44 +14,40 @@ export function parse(componentString: string) {
     if (ts.isClassDeclaration(node)) {
       component.name = node.name?.getText();
 
-      node.decorators?.forEach((decorator) => {
-        if (ts.isCallExpression(decorator.expression)) {
-          const callExpression = decorator.expression;
-          if (callExpression.expression.getText() === 'Component') {
-            callExpression.arguments.forEach((arg) => {
-              if (ts.isObjectLiteralExpression(arg)) {
-                arg.properties.forEach((prop) => {
-                  if (ts.isPropertyAssignment(prop)) {
-                    const initializer = prop.initializer;
-                    if (ts.isStringLiteral(initializer)) {
-                      component[prop.name.getText()] = initializer.text;
-                    }
-                  }
-                });
-              }
+      node.members.forEach((member) => {
+        if (ts.isPropertyDeclaration(member)) {
+          const inputDecorator = member.modifiers?.find(
+            (modifier) => modifier.getText() === '@Input'
+          );
+          if (inputDecorator) {
+            if (!component.inputs) {
+              component.inputs = [];
+            }
+            component.inputs.push({
+              name: member.name.getText(),
+              type: member.type?.getText(),
             });
           }
         }
       });
+    }
 
-      node.members.forEach((member) => {
-        if (ts.isPropertyDeclaration(member)) {
-          member.decorators?.forEach((decorator) => {
-            if (ts.isCallExpression(decorator.expression)) {
-              const callExpression = decorator.expression;
-              if (callExpression.expression.getText() === 'Input') {
-                if (!component.inputs) {
-                  component.inputs = [];
+    if (ts.isDecorator(node) && ts.isCallExpression(node.expression)) {
+      const callExpression = node.expression;
+      if (callExpression.expression.getText() === 'Component') {
+        callExpression.arguments.forEach((arg) => {
+          if (ts.isObjectLiteralExpression(arg)) {
+            arg.properties.forEach((prop) => {
+              if (ts.isPropertyAssignment(prop)) {
+                const initializer = prop.initializer;
+                if (ts.isStringLiteral(initializer)) {
+                  component[prop.name.getText()] = initializer.text;
                 }
-                component.inputs.push({
-                  name: member.name.getText(),
-                  type: member.type?.getText(),
-                });
               }
-            }
-          });
-        }
-      });
+            });
+          }
+        });
+      }
     }
   });
 
