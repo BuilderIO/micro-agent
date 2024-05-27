@@ -120,5 +120,19 @@ export function parse(componentString: string) {
     }
   });
 
+  // Resolve typedefs used as input types
+  const typeAliasMap: Record<string, string> = {};
+  ts.forEachChild(sourceFile, (node) => {
+    if (ts.isTypeAliasDeclaration(node) && node.type) {
+      typeAliasMap[node.name.text] = node.type.getText();
+    }
+  });
+
+  component.inputs.forEach((input: any) => {
+    if (typeAliasMap[input.type]) {
+      input.type = typeAliasMap[input.type];
+    }
+  });
+
   return component;
 }
