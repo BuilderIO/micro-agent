@@ -6,7 +6,7 @@ export default command(
   {
     name: 'update',
     help: {
-      description: 'Update AI Shell to the latest version',
+      description: 'Update Micro Agent to the latest version',
     },
   },
   async () => {
