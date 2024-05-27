@@ -48,13 +48,14 @@ cli(
       if (promptText.trim() === 'update') {
         update.callback?.(argv);
       } else {
-        // TODO: throw errors if flags not provided or move
-        // them to parameters https://github.com/privatenumber/cleye?tab=readme-ov-file#about
+        const filePath = argv._.filePath;
         await runAll({
-          outputFile: argv._.filePath,
-          promptFile: argv.flags.prompt!,
-          testCommand: argv.flags.test!,
-          testFile: argv.flags.testFile!,
+          outputFile: filePath,
+          promptFile:
+            argv.flags.prompt || filePath.replace(/\.ts$/, '.prompt.md'),
+          testCommand: argv.flags.test || 'npm test',
+          testFile:
+            argv.flags.testFile || filePath.replace(/\.ts$/, '.test.ts'),
           lastRunError: '',
           maxRuns: argv.flags.maxRuns,
           threadId: argv.flags.thread || '',

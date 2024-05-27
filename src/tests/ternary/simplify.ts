@@ -1,3 +1,4 @@
+```typescript
 import * as ts from 'typescript';
 
 function simplify(inputCode: string): string {
@@ -13,55 +14,68 @@ function simplify(inputCode: string): string {
 
     function traverse(node: ts.Node) {
       if (ts.isConditionalExpression(node)) {
-        const whenTrue = node.whenTrue.getText().trim();
         const condition = node.condition.getText().trim();
+        const whenTrue = node.whenTrue.getText().trim();
         conditions.push({ condition, whenTrue });
-        traverse(node.whenTrue);
         traverse(node.whenFalse);
+      } else {
+        ts.forEachChild(node, traverse);
       }
-      ts.forEachChild(node, traverse);
     }
 
     traverse(node);
     return conditions;
   }
 
-  function analyzeConditions(conditions: ConditionEvaluation[]): string | null {
-    const valueToConditions: Record<string, Set<string>> = {};
-    const resultToConditions: Record<string, Set<string>> = {};
-    const allConditions = new Set<string>();
+  function simplifyConditions(conditions: ConditionEvaluation[]): string | null {
+    const conditionMap: Record<string, Set<string>> = {};
+    const resultMap: Record<string, string[]> = {};
+    const finalResultSet = new Set<string>();
 
     conditions.forEach(({ condition, whenTrue }) => {
-      if (!valueToConditions[whenTrue]) {
-        valueToConditions[whenTrue] = new Set();
+      const conditionParts = condition.split(' && ');
+
+      if (!resultMap[whenTrue]) {
+        resultMap[whenTrue] = [];
       }
-      if (!resultToConditions[condition]) {
-        resultToConditions[condition] = new Set();
-      }
-      valueToConditions[whenTrue].add(condition);
-      resultToConditions[condition].add(whenTrue);
-      allConditions.add(condition);
+      resultMap[whenTrue].push(condition);
+      	finalResultSet.add(whenTrue);
+
+      conditionParts.forEach(part => {
+        const [key, val] = part.split(' === ').map(s => s.trim().replace(/['"]/g, ''));
+        if (!conditionMap[key]) {
+          conditionMap[key] = new Set();
+        }
+        conditionMap[key].add(val);
+      });
     });
 
-    if (Object.key(valueToConditions).length === 1) {
-      return Array.from(valueToConditions.keys())[0];
+    if (finalResultSet.size === 1) {
+      return Array.from(finalResultSet)[0];
     }
 
-    for (const cond in resultToConditions) {
-      if (resultToConditions[cond].size === 1) {
-        const value = Array.from(resultToConditions[cond])[0];
-        const conditionParts = cond.split(' && ').filter((part) => !allConditions.has(part));
-        if (conditionParts.length) {
-          return `${conditionParts.join(' && ')} ? ${value} : ${Array.from(resultToConditions.keys()).find((v) => v !== value)}`;
-        }
+    let primaryKey = '';
+    for (const key in conditionMap) {
+      if (conditionMap[key].size > 1) {
+        primaryKey = key;
+        break;
       }
     }
 
-    return null;
+    if (!primaryKey) {
+      return null;
+    }
+
+    const primaryResult = Array.from(finalResultSet).find(res => res !== resultMap[primaryKey][0]);
+    const primaryConditions = Array.from(conditionMap[primaryKey])
+      .map(val => `${primaryKey} === '${val}'`)
+      .join(' || ');
+
+    return `${primaryConditions} ? ${resultMap[primaryKey][0]} : ${primaryResult}`;
   }
 
   const ternaryConditions = collectTernaryConditions(sourceFile);
-  const conditionAnalysis = analyzeConditions(ternaryConditions);
+  const conditionAnalysis = simplifyConditions(ternaryConditions);
 
   if (conditionAnalysis) {
     return conditionAnalysis;
@@ -71,3 +85,4 @@ function simplify(inputCode: string): string {
 }
 
 export { simplify };
+```
