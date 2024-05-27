@@ -6,7 +6,7 @@
 </h2>
 
 <h4 align="center">
-   An AI agent that writes code for you.
+   An AI agent that writes and fixes code for you until your tests pass.
 </h4>
 
 <p align="center">
