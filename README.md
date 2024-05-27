@@ -2,7 +2,7 @@
 
 An AI CLI that writes code for you.
 
-Point Micro Agent at a file (either that exists or is empty) and a prompt, and it will write code for you. It will then run a test command to ensure the code works as expected. If the test fails, it will continue to iterate on the code until the test passes.
+Point Micro Agent at a file (either that exists or is empty) and a test, and it will write code for you until your tests pass.
 
 ## Installation
 
@@ -16,14 +16,15 @@ npm install -g @builder.io/micro-agent
 micro-agent run ./file-to-edit.ts -t "npm test"
 ```
 
-This will run the Micro Agent on the file `./file-to-edit.ts` running `npm test` to see if the code is correct.
+This will run the Micro Agent on the file `./file-to-edit.ts` running `npm test` and will write code until the tests pass.s
 
 The above assumes the following file structure:
 
 ```bash
-file-to-edit.ts
-file-to-edit.test.ts # test file. if you need a different path, use the -t argument
-file-to-edit.prompt.md # optional prompt file
+./
+├──file-to-edit.ts
+├──file-to-edit.test.ts # test file. if you need a different path, use the -t argument
+└──file-to-edit.prompt.md # optional prompt file. if you need a different path, use the -p argument
 ```
 
 By default, Micro Agent assumes you have a test file with the same name as the editing file but with `.test.ts` appended, such as `./file-to-edit.test.ts` for the above examples.
