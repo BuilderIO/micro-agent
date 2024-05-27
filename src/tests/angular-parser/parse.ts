@@ -6,7 +6,7 @@ function isDecoratorWithExpression(node: ts.Node, expressionText: string): node 
 }
 
 function getTypeText(type: ts.TypeNode): string {
-  return type.getText();
+  return type ? type.getText() : 'any';
 }
 
 function extractSelectorFromComponentDecorator(node: ts.Decorator): string | undefined {
@@ -18,7 +18,7 @@ function extractSelectorFromComponentDecorator(node: ts.Decorator): string | und
     if (callExpression.arguments.length && ts.isObjectLiteralExpression(callExpression.arguments[0])) {
       const properties = callExpression.arguments[0].properties;
 
-      properties.forEach(prop => {
+      properties.forEach((prop) => {
         if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name) && prop.name.text === 'selector') {
           if (ts.isStringLiteral(prop.initializer)) {
             selector = prop.initializer.text;
@@ -33,20 +33,15 @@ function extractSelectorFromComponentDecorator(node: ts.Decorator): string | und
 
 function extractEnumOptions(componentString: string): Record<string, string[]> {
   const enumOptions: Record<string, string[]> = {};
-  const sourceFile = ts.createSourceFile(
-    'temp.ts',
-    componentString,
-    ts.ScriptTarget.Latest,
-    true
-  );
+  const sourceFile = ts.createSourceFile('temp.ts', componentString, ts.ScriptTarget.Latest, true);
 
   ts.forEachChild(sourceFile, (node) => {
     if (
       ts.isTypeAliasDeclaration(node) &&
       ts.isUnionTypeNode(node.type) &&
-      node.type.types.every(t => ts.isLiteralTypeNode(t) && ts.isStringLiteral((t as ts.LiteralTypeNode).literal))
+      node.type.types.every((t) => ts.isLiteralTypeNode(t) && ts.isStringLiteral((t as ts.LiteralTypeNode).literal))
     ) {
-      enumOptions[node.name.text] = node.type.types.map(t => (t as ts.LiteralTypeNode).literal.text);
+      enumOptions[node.name.text] = node.type.types.map((t) => (t as ts.LiteralTypeNode).literal.text);
     }
   });
 
@@ -56,30 +51,23 @@ function extractEnumOptions(componentString: string): Record<string, string[]> {
 export function parse(componentString: string) {
   const enumOptions = extractEnumOptions(componentString);
 
-  const sourceFile = ts.createSourceFile(
-    'temp.ts',
-    componentString,
-    ts.ScriptTarget.Latest,
-    true
-  );
+  const sourceFile = ts.createSourceFile('temp.ts', componentString, ts.ScriptTarget.Latest, true);
 
   let component: any = {};
 
   ts.forEachChild(sourceFile, (node) => {
     if (ts.isClassDeclaration(node)) {
       component.name = node.name?.getText();
-
+      
       node.members.forEach((member) => {
         if (ts.isPropertyDeclaration(member)) {
-          const inputDecorator = member.decorators?.find((decorator) =>
-            isDecoratorWithExpression(decorator, 'Input')
-          );
-
+          const inputDecorator = member.decorators?.find((decorator) => isDecoratorWithExpression(decorator, 'Input'));
+          
           if (inputDecorator) {
             if (!component.inputs) {
               component.inputs = [];
             }
-            const inputType = getTypeText(member.type!);
+            let inputType = getTypeText(member.type!);
             const input: any = {
               name: member.name.getText(),
               type: inputType,
@@ -94,7 +82,7 @@ export function parse(componentString: string) {
       });
 
       if (node.decorators) {
-        node.decorators.forEach(decorator => {
+        node.decorators.forEach((decorator) => {
           const selector = extractSelectorFromComponentDecorator(decorator);
           if (selector) {
             component.selector = selector;

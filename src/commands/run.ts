@@ -38,6 +38,7 @@ export default command(
         testCommand: argv.flags.test!,
         testFile: argv.flags.testFile!,
         lastRunError: '',
+        threadId: '',
       });
     } catch (error: any) {
       console.error(`\n${red('✖')} ${error.message || error}`);
