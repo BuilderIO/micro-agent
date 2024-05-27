@@ -36,3 +36,5 @@ should return this
   ],
 }
 ```
+
+Do not hard code anything for this one test, it should take any Angular component and output its inputs and types as shown above.
