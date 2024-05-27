@@ -1,4 +1,4 @@
-import { intro, note, outro, spinner, log } from '@clack/prompts';
+import { intro, note, outro, log } from '@clack/prompts';
 import { generate } from './generate';
 import { test } from './test';
 import { writeFile } from 'fs/promises';
@@ -16,18 +16,17 @@ type Options = {
 };
 
 export async function runOne(options: Options) {
-  const generatingSpinner = spinner();
-  generatingSpinner.start('Generating code...');
+  log.step('Generating code...');
 
   // TODO: parse any imports in the prompt file and include them in the prompt as context
   const result = await generate(options);
 
   await writeFile(options.outputFile, result);
-  generatingSpinner.stop('Updated code');
+  log.step('Updated code');
 
   log.step('Running tests...');
   const testResult = await test(options.testCommand);
-  console.log('◇');
+
   return {
     code: result,
     testResult,
@@ -97,7 +96,6 @@ export async function runAll(options: RunOptions) {
   log.step('Running tests...');
   const testResult = await test(options.testCommand);
 
-  console.log('◇');
   if (testResult.type === 'success') {
     outro(green('All tests passed!'));
     return;

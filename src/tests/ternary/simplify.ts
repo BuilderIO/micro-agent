@@ -1,12 +1,11 @@
 import * as ts from 'typescript';
 
-export function simplify(inputCode: string): string {
+function simplify(inputCode: string): string {
   const sourceFile = ts.createSourceFile('temp.ts', inputCode, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
 
   interface ConditionEvaluation {
-    condition: ts.Expression;
-    whenTrue: ts.Expression;
-    whenFalse: ts.Expression;
+    condition: string;
+    whenTrue: string;
   }
 
   function collectTernaryConditions(node: ts.Node): ConditionEvaluation[] {
@@ -14,13 +13,11 @@ export function simplify(inputCode: string): string {
 
     function traverse(node: ts.Node) {
       if (ts.isConditionalExpression(node)) {
-        const whenTrue = node.whenTrue;
-        const whenFalse = node.whenFalse;
-        const condition = node.condition;
-
-        conditions.push({ condition, whenTrue, whenFalse });
-        traverse(whenTrue);
-        traverse(whenFalse);
+        const whenTrue = node.whenTrue.getText().trim();
+        const condition = node.condition.getText().trim();
+        conditions.push({ condition, whenTrue });
+        traverse(node.whenTrue);
+        traverse(node.whenFalse);
       }
       ts.forEachChild(node, traverse);
     }
@@ -29,63 +26,48 @@ export function simplify(inputCode: string): string {
     return conditions;
   }
 
-  function parseCondition(condition: ts.Expression): Record<string, Set<string>> {
-    const result: Record<string, Set<string>> = {};
+  function analyzeConditions(conditions: ConditionEvaluation[]): string | null {
+    const valueToConditions: Record<string, Set<string>> = {};
+    const resultToConditions: Record<string, Set<string>> = {};
+    const allConditions = new Set<string>();
 
-    function addCondition(expression: ts.Expression) {
-      if (ts.isBinaryExpression(expression)) {
-        const key = expression.left.getText();
-        const value = expression.right.getText().replace(/['"]/g, '');
-        if (!result[key]) {
-          result[key] = new Set();
-        }
-        result[key].add(value);
+    conditions.forEach(({ condition, whenTrue }) => {
+      if (!valueToConditions[whenTrue]) {
+        valueToConditions[whenTrue] = new Set();
       }
-    }
-
-    function traverse(expression: ts.Expression) {
-      if (ts.isBinaryExpression(expression) && expression.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken) {
-        traverse(expression.left);
-        traverse(expression.right);
-      } else {
-        addCondition(expression);
+      if (!resultToConditions[condition]) {
+        resultToConditions[condition] = new Set();
       }
-    }
-
-    traverse(condition);
-    return result;
-  }
-
-  function simplifyConditions(conditions: ConditionEvaluation[]): string {
-    const trueValues = new Set<string>();
-    const falseValues = new Set<string>();
-    const conditionMap = new Map<string, string>();
-
-    conditions.forEach(({ condition, whenTrue, whenFalse }) => {
-      const parsedCondition = parseCondition(condition);
-      const key = Object.keys(parsedCondition)[0];
-      conditionMap.set(key, key);
-
-      const trueText = whenTrue.getText();
-      trueValues.add(trueText);
-
-      const falseText = whenFalse?.getText();
-      falseValues.add(falseText);
+      valueToConditions[whenTrue].add(condition);
+      resultToConditions[condition].add(whenTrue);
+      allConditions.add(condition);
     });
 
-    if (trueValues.size === 1 && falseValues.size === 1) {
-      const [key] = conditionMap.keys();
-      const trueValue = Array.from(trueValues)[0];
-      const falseValue = Array.from(falseValues)[0];
-
-      return `${key} === 'With Icon' ? ${trueValue} : ${falseValue}`;
+    if (Object.key(valueToConditions).length === 1) {
+      return Array.from(valueToConditions.keys())[0];
     }
 
-    return inputCode;
+    for (const cond in resultToConditions) {
+      if (resultToConditions[cond].size === 1) {
+        const value = Array.from(resultToConditions[cond])[0];
+        const conditionParts = cond.split(' && ').filter((part) => !allConditions.has(part));
+        if (conditionParts.length) {
+          return `${conditionParts.join(' && ')} ? ${value} : ${Array.from(resultToConditions.keys()).find((v) => v !== value)}`;
+        }
+      }
+    }
+
+    return null;
   }
 
   const ternaryConditions = collectTernaryConditions(sourceFile);
-  const simplifiedCode = simplifyConditions(ternaryConditions);
+  const conditionAnalysis = analyzeConditions(ternaryConditions);
 
-  return simplifiedCode;
+  if (conditionAnalysis) {
+    return conditionAnalysis;
+  }
+
+  return inputCode;
 }
+
+export { simplify };

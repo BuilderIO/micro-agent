@@ -29,8 +29,8 @@ export const isFail = (result: unknown): result is Fail => {
   return (result as any)?.type === 'fail';
 };
 
-function formatMessage(message: string): string {
-  return message.replaceAll('\n', '\n' + gray('│   '));
+export function formatMessage(message: string): string {
+  return gray(message.replaceAll('\n', '\n' + '│   '));
 }
 
 export async function test(testScript: string): Promise<Result> {
@@ -46,12 +46,14 @@ export async function test(testScript: string): Promise<Result> {
     });
 
     const final = await result;
+    process.stdout.write('\n');
 
     if (final.stderr) {
       return fail(final.stderr);
     }
     return success();
   } catch (error: any) {
+    process.stdout.write('\n');
     if (error instanceof ExecaError) {
       return fail(error.stderr || error.message);
     }

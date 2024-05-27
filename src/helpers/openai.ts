@@ -7,6 +7,7 @@ import { RunCreateParams } from 'openai/resources/beta/threads/runs/runs';
 import { RunOptions } from './run';
 import { log } from '@clack/prompts';
 import { green } from 'kolorist';
+import { formatMessage } from './test';
 
 const defaultModel = 'gpt-4o';
 export const USE_ASSISTANT = true;
@@ -62,9 +63,11 @@ export const getCompletion = async function (options: {
     if (!threadId) {
       const thread = await openai.beta.threads.create();
       threadId = thread.id;
-      log.info(`\nCreated thread: ${green(threadId)}\n`);
+      log.info(`Created thread: ${green(threadId)}`);
     }
     options.options.threadId = threadId;
+
+    process.stdout.write(formatMessage('\n'));
 
     let result = '';
     return new Promise<string>((resolve) => {
@@ -76,8 +79,17 @@ export const getCompletion = async function (options: {
             (message) => message.role !== 'system'
           ) as RunCreateParams.AdditionalMessage[],
         })
-        .on('textDelta', (textDelta) => (result += textDelta.value))
-        .on('textDone', () => resolve(result));
+        .on('textDelta', (textDelta) => {
+          const str = textDelta.value || '';
+          if (str) {
+            result += textDelta.value;
+            process.stderr.write(formatMessage(str));
+          }
+        })
+        .on('textDone', () => {
+          process.stdout.write('\n');
+          resolve(result);
+        });
     });
   } else {
     const completion = await openai.chat.completions.create({
