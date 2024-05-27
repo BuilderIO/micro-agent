@@ -19,6 +19,8 @@
 
 Point Micro Agent at a file (either that exists or is empty) and a test, and it will write code for you until your tests pass.
 
+> Why write code when you could instead just write a test and have AI write the code for you?
+
 ## Getting started
 
 ### Installation
