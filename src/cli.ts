@@ -34,6 +34,10 @@ cli(
         description: 'The maximum number of runs to attempt',
         alias: 'm',
       },
+      thread: {
+        type: String,
+        description: 'Thread ID to resume',
+      },
     },
     commands: [config, run, update],
   },
@@ -53,6 +57,7 @@ cli(
           testFile: argv.flags.testFile!,
           lastRunError: '',
           maxRuns: argv.flags.maxRuns,
+          threadId: argv.flags.thread || '',
         });
       }
     } catch (error: any) {

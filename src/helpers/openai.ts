@@ -4,6 +4,7 @@ import { KnownError } from './error';
 import { commandName } from './constants';
 import { systemPrompt } from './generate';
 import { RunCreateParams } from 'openai/resources/beta/threads/runs/runs';
+import { RunOptions } from './run';
 
 const defaultModel = 'gpt-4o';
 export const USE_ASSISTANT = true;
@@ -28,6 +29,7 @@ export const getOpenAi = async function () {
 export const getCompletion = async function (options: {
   messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[];
   threadId?: string;
+  options: RunOptions;
 }) {
   const { MODEL: model } = await getConfig();
   const openai = await getOpenAi();
@@ -63,6 +65,7 @@ export const getCompletion = async function (options: {
       });
       threadId = thread.id;
     }
+    options.options.threadId = threadId;
     await openai.beta.threads.runs.create(threadId, {
       assistant_id: assistantId,
       additional_messages: options.messages.filter(
