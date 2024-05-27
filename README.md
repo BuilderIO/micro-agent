@@ -1,5 +1,7 @@
 # Micro Agent
 
+![Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4e8b02abb3e044118f070d9a7253003e)
+
 An AI CLI that writes code for you.
 
 Point Micro Agent at a file (either that exists or is empty) and a test, and it will write code for you until your tests pass.
