@@ -37,7 +37,7 @@ Note that these ternaries always use enum values that are exhaustive. For instan
 Another examples is this
 
 ```ts
-foo === 'Default' && status === 'Default'
+foo === 'Yo' && status === 'Default'
   ? 'start'
   : foo === 'Some Value' && status === 'Default'
   ? 'stretch'
@@ -49,11 +49,11 @@ foo === 'Default' && status === 'Default'
   ? 'stretch'
   : foo === 'Some Value' && status === 'Caution'
   ? 'stretch'
-  : foo === 'Default' && status === 'Neutral'
+  : foo === 'Yo' && status === 'Neutral'
   ? 'start'
-  : foo === 'Default' && status === 'Active'
+  : foo === 'Yo' && status === 'Active'
   ? 'start'
-  : foo === 'Default' && status === 'Alert'
+  : foo === 'Yo' && status === 'Alert'
   ? 'start'
   : 'start'
 ```
