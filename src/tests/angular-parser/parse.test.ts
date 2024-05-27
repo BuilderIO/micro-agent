@@ -32,3 +32,27 @@ test('parse Angular component', () => {
   const result = parse(componentString);
   expect(result).toEqual(expected);
 });
+
+test('parse another Angular component', () => {
+  const componentString = `
+    import { Component, Input } from '@angular/core';
+
+    type Foo = number;
+
+    @Component({
+      selector: 'my-component',
+    })
+    export class MyComponent {
+      @Input() num: Foo;
+    }
+  `;
+
+  const expected = {
+    name: 'MyComponent',
+    selector: 'my-component',
+    inputs: [{ name: 'num', type: 'number' }],
+  };
+
+  const result = parse(componentString);
+  expect(result).toEqual(expected);
+});

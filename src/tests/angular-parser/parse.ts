@@ -1,126 +1,124 @@
 import * as ts from 'typescript';
 
 function isInputDecorator(decorator: ts.Decorator): boolean {
- if (ts.isCallExpression(decorator.expression)) {
-   const callExpression = decorator.expression;
-   if (ts.isIdentifier(callExpression.expression)) {
-     return callExpression.expression.getText() === 'Input';
-   }
- }
- return false;
+  if (ts.isCallExpression(decorator.expression)) {
+    const callExpression = decorator.expression;
+    if (ts.isIdentifier(callExpression.expression)) {
+      return callExpression.expression.getText() === 'Input';
+    }
+  }
+  return false;
 }
 
 function getTypeText(type: ts.TypeNode | undefined): string {
- if (!type) {
-   return 'any';
- }
- const text = type.getText().trim();
- return text.includes('|') ? 'string' : text;
+  if (!type) {
+    return 'any';
+  }
+  const text = type.getText().trim();
+  return text.includes('|') ? 'string' : text;
 }
 
-function extractSelectorFromComponentDecorator(node: ts.Decorator): string | undefined {
- let selector: string | undefined;
-
- if (ts.isCallExpression(node.expression)) {
-   const callExpression = node.expression;
-
-   if (
-     callExpression.arguments.length &&
-     ts.isObjectLiteralExpression(callExpression.arguments[0])
-   ) {
-     const properties = callExpression.arguments[0].properties;
-     properties.forEach((prop) => {
-       if (
-         ts.isPropertyAssignment(prop) &&
-         ts.isIdentifier(prop.name) &&
-         prop.name.text === 'selector'
-       ) {
-         if (ts.isStringLiteral(prop.initializer)) {
-           selector = prop.initializer.text;
-         }
-       }
-     });
-   }
- }
-
- return selector;
+function extractSelectorFromComponentDecorator(componentNode: ts.ClassDeclaration): string | undefined {
+  for (const decorator of ts.getDecorators(componentNode) ?? []) {
+    if (ts.isCallExpression(decorator.expression)) {
+      const callExpression = decorator.expression;
+      if (
+        callExpression.arguments.length &&
+        ts.isObjectLiteralExpression(callExpression.arguments[0])
+      ) {
+        const properties = callExpression.arguments[0].properties;
+        for (const prop of properties) {
+          if (
+            ts.isPropertyAssignment(prop) &&
+            ts.isIdentifier(prop.name) &&
+            prop.name.text === 'selector'
+          ) {
+            if (ts.isStringLiteral(prop.initializer)) {
+              return prop.initializer.text;
+            }
+          }
+        }
+      }
+    }
+  }
+  return undefined;
 }
 
 function extractEnumOptions(componentString: string): Record<string, string[]> {
- const enumOptions: Record<string, string[]> = {};
- const sourceFile = ts.createSourceFile(
-   'temp.ts',
-   componentString,
-   ts.ScriptTarget.Latest,
-   true
- );
+  const enumOptions: Record<string, string[]> = {};
+  const sourceFile = ts.createSourceFile(
+    'temp.ts',
+    componentString,
+    ts.ScriptTarget.Latest,
+    true
+  );
 
- ts.forEachChild(sourceFile, (node) => {
-   if (
-     ts.isTypeAliasDeclaration(node) &&
-     ts.isUnionTypeNode(node.type) &&
-     node.type.types.every(
-       (t) =>
-         ts.isLiteralTypeNode(t) &&
-         ts.isStringLiteral((t as ts.LiteralTypeNode).literal)
-     )
-   ) {
-     enumOptions[node.name.text] = node.type.types.map(
-       (t) => (t as ts.LiteralTypeNode).literal.text
-     );
-   }
- });
+  ts.forEachChild(sourceFile, (node) => {
+    if (
+      ts.isTypeAliasDeclaration(node) &&
+      ts.isUnionTypeNode(node.type) &&
+      node.type.types.every(
+        (t) =>
+          ts.isLiteralTypeNode(t) && ts.isStringLiteral((t as ts.LiteralTypeNode).literal)
+      )
+    ) {
+      enumOptions[node.name.text] = node.type.types.map(
+        (t) => ((t as ts.LiteralTypeNode).literal as ts.StringLiteral).text
+      );
+    }
+  });
 
- return enumOptions;
+  return enumOptions;
 }
 
 export function parse(componentString: string) {
- const enumOptions = extractEnumOptions(componentString);
+  const enumOptions = extractEnumOptions(componentString);
 
- const sourceFile = ts.createSourceFile(
-   'temp.ts',
-   componentString,
-   ts.ScriptTarget.Latest,
-   true
- );
+  const sourceFile = ts.createSourceFile(
+    'temp.ts',
+    componentString,
+    ts.ScriptTarget.Latest,
+    true
+  );
 
- const component: any = {};
+  const component: any = {};
 
- ts.forEachChild(sourceFile, (node) => {
-   if (ts.isClassDeclaration(node)) {
-     const className = node.name?.getText();
-     if (className) {
-       component.name = className;
-     }
-     component.inputs = [];
+  ts.forEachChild(sourceFile, (node) => {
+    if (ts.isClassDeclaration(node)) {
+      const className = node.name?.getText();
+      if (className) {
+        component.name = className;
+      }
 
-     node.members.forEach((member) => {
-       if (ts.isPropertyDeclaration(member)) {
-         const decorators = ts.getDecorators(member);
-         if (decorators) {
-           decorators.forEach((decorator) => {
-             if (isInputDecorator(decorator)) {
-               const inputType = getTypeText(member.type);
-               const input: any = {
-                 name: member.name.getText(),
-                 type: enumOptions[inputType] ? 'string' : inputType,
-               };
-               if (enumOptions[inputType]) {
-                 input.enum = enumOptions[inputType];
-               }
-               component.inputs.push(input);
-             }
-           });
-         }
-       }
-     });
-   } else if (ts.isDecorator(node)) {
-     const selector = extractSelectorFromComponentDecorator(node);
-     if (selector && component.name && node.parent?.kind === ts.SyntaxKind.ClassDeclaration) {
-       component.selector = selector;
-     }
-   }
- });
+      const selector = extractSelectorFromComponentDecorator(node);
+      if (selector) {
+        component.selector = selector;
+      }
 
- return component;
+      component.inputs = [];
+
+      node.members.forEach((member) => {
+        if (ts.isPropertyDeclaration(member)) {
+          const decorators = ts.getDecorators(member);
+          if (decorators) {
+            decorators.forEach((decorator) => {
+              if (isInputDecorator(decorator)) {
+                const inputType = getTypeText(member.type);
+                const input: any = {
+                  name: member.name.getText(),
+                  type: enumOptions[inputType] ? 'string' : inputType,
+                };
+                if (enumOptions[inputType]) {
+                  input.enum = enumOptions[inputType];
+                }
+                component.inputs.push(input);
+              }
+            });
+          }
+        }
+      });
+    }
+  });
+
+  return component;
 }
