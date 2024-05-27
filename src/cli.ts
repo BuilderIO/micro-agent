@@ -49,13 +49,37 @@ cli(
         update.callback?.(argv);
       } else {
         const filePath = argv._.filePath;
+        const fileExtension = filePath.split('.').pop()!;
+        const testFileExtension = ['jsx', 'tsx'].includes(fileExtension as any)
+          ? fileExtension.replace('x', '')
+          : fileExtension;
+
+        const testFilePath =
+          argv.flags.testFile ||
+          filePath.replace(
+            new RegExp('\\.' + fileExtension + '$'),
+            `.test.${testFileExtension}`
+          );
+        const promptFilePath =
+          argv.flags.prompt ||
+          filePath.replace(
+            new RegExp('\\.' + fileExtension + '$'),
+            '.prompt.md'
+          );
+
+        console.log({
+          filePath,
+          fileExtension,
+          testFileExtension,
+          testFilePath,
+          promptFilePath,
+        });
+
         await runAll({
           outputFile: filePath,
-          promptFile:
-            argv.flags.prompt || filePath.replace(/\.ts$/, '.prompt.md'),
+          promptFile: promptFilePath,
           testCommand: argv.flags.test || 'npm test',
-          testFile:
-            argv.flags.testFile || filePath.replace(/\.ts$/, '.test.ts'),
+          testFile: testFilePath,
           lastRunError: '',
           maxRuns: argv.flags.maxRuns,
           threadId: argv.flags.thread || '',
