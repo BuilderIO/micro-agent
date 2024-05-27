@@ -1,4 +1,4 @@
-import { execaCommand } from 'execa';
+import { ExecaError, execaCommand } from 'execa';
 
 type Fail = {
   type: 'fail';
@@ -32,7 +32,8 @@ export async function test(testScript: string): Promise<Result> {
   try {
     const result = await execaCommand(testScript, {
       shell: process.env.SHELL || true,
-      stdio: 'inherit',
+      stdout: ['inherit', 'pipe'],
+      stderr: ['inherit', 'pipe'],
     });
 
     if (result.stderr) {
@@ -40,6 +41,9 @@ export async function test(testScript: string): Promise<Result> {
     }
     return success();
   } catch (error: any) {
+    if (error instanceof ExecaError) {
+      return fail(error.stderr || error.message);
+    }
     return fail(error.message);
   }
 }

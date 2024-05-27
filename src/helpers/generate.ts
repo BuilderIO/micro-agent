@@ -37,7 +37,7 @@ export async function generate(options: RunOptions) {
     Please give me the code that satisfies the prompt and test.
   `;
 
-  if (process.env.DEBUG) {
+  if (process.env.MA_DEBUG) {
     console.log(`\n\n${blue('Prompt:')}`, userPrompt, '\n\n');
   }
 

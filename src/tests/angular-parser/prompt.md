@@ -38,3 +38,5 @@ should return this
 ```
 
 Do not hard code anything for this one test, it should take any Angular component and output its inputs and types as shown above.
+
+Note: do not use `node.decorators` in typecript, it is deprecated. Decorators has been removed from Node and merged with modifiers on the Node subtypes that support them. Use ts.canHaveDecorators() to test whether a Node can have decorators. Use ts.getDecorators() to get the decorators of a Node.

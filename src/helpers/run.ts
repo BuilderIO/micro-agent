@@ -2,7 +2,7 @@ import { intro, note, outro, spinner, log } from '@clack/prompts';
 import { generate } from './generate';
 import { test } from './test';
 import { writeFile } from 'fs/promises';
-import { blue, green, yellow } from 'kolorist';
+import { green, yellow } from 'kolorist';
 import { commandName } from './constants';
 
 type Options = {
@@ -21,10 +21,6 @@ export async function runOne(options: Options) {
 
   // TODO: parse any imports in the prompt file and include them in the prompt as context
   const result = await generate(options);
-
-  if (process.env.DEBUG) {
-    console.log(`\n\n${blue('Output:')}`, result, '\n\n');
-  }
 
   await writeFile(options.outputFile, result);
   generatingSpinner.stop('Updated code');
