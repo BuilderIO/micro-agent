@@ -26,7 +26,6 @@ export async function runOne(options: Options) {
       await writeFile(options.outputFile, result.code);
       return result;
     } else {
-      console.log('passed test', result.code);
       return result;
     }
   }

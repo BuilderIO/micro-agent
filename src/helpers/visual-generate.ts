@@ -22,7 +22,7 @@ const bufferToBase64Url = (buffer: Buffer) => {
 };
 
 export const systemPrompt =
-  'You take a prompt and generate code accordingly. You only output typescript code and nothing else. Output just a typescript string, like "const hello = \'world\'", not markdown (aka do NOT put three backticks around the code). Be sure your code exports function that can be called by an external test file. Make sure your code is reusable and not overly hardcoded to match the promt. Use two spaces for indents.';
+  "You take a prompt and generate code accordingly. You only output typescript code and nothing else. Output just a typescript string, like \"const hello = 'world'\", not markdown (aka do NOT put three backticks around the code). Be sure your code exports function that can be called by an external test file. Make sure your code is reusable and not overly hardcoded to match the promt. Use two spaces for indents. Use placeholders for any new images that weren't in the code previously";
 
 export async function visualGenerate(options: RunOptions) {
   const filename = await findVisualFile(options);
@@ -40,8 +40,10 @@ export async function visualGenerate(options: RunOptions) {
   const priorCode = await readFile(options.outputFile, 'utf-8').catch(() => '');
 
   const userPrompt = dedent`
-    I need you to make my code (screenshot uploaded as file 2) look like my design (screenshot as file 1).
-    Make my code look as close as possible.
+    Here is a screenshot of my design. Please update my code to identically match the screenshot from the design.
+
+    I uploaded a second file that is a screenshot of what my code looks like when rendered. Please use this to help you update the code to 
+    accurately match the design - by looking at what hte code rendered, and fixing it to match the design.
 
     Heres some additional instructions:
     <prompt>
@@ -76,12 +78,14 @@ export async function visualGenerate(options: RunOptions) {
         role: 'user',
         content: [
           { type: 'text', text: userPrompt },
+
           {
             type: 'image_url',
             image_url: {
               url: designUrl,
             },
           },
+
           {
             type: 'image_url',
             image_url: {
