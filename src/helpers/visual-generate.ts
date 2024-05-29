@@ -6,6 +6,7 @@ import { readFile, writeFile } from 'fs/promises';
 import { success, fail } from './test';
 import { getScreenshot } from './get-screenshot';
 import { KnownError } from './error';
+import sharp from 'sharp';
 
 const imageFilePathToBase64Url = async (imageFilePath: string) => {
   const image = await readFile(imageFilePath);
@@ -19,6 +20,46 @@ const imageFilePathToBase64Url = async (imageFilePath: string) => {
 const bufferToBase64Url = (buffer: Buffer) => {
   const imageBase64 = buffer.toString('base64');
   return `data:image/png;base64,${imageBase64}`;
+};
+
+// use sharp to combine two images, putting them side by side
+const combineTwoImages = async (image1: string, image2: string) => {
+  const image1Buffer = Buffer.from(image1.split(',')[1], 'base64');
+  const image2Buffer = Buffer.from(image2.split(',')[1], 'base64');
+
+  const image1Sharp = sharp(image1Buffer);
+  const image2Sharp = sharp(image2Buffer);
+
+  const image1Metadata = await image1Sharp.metadata();
+  const image2Metadata = await image2Sharp.metadata();
+
+  const width = image1Metadata.width! + image2Metadata.width!;
+  const height = Math.max(image1Metadata.height!, image2Metadata.height!);
+
+  const combinedImage = sharp({
+    create: {
+      width,
+      height,
+      channels: 4,
+      background: { r: 255, g: 255, b: 255, alpha: 1 },
+    },
+  });
+
+  return combinedImage
+    .composite([
+      {
+        input: image1Buffer,
+        top: 0,
+        left: 0,
+      },
+      {
+        input: image2Buffer,
+        top: 0,
+        left: image1Metadata.width,
+      },
+    ])
+    .png()
+    .toBuffer();
 };
 
 export const systemPrompt =
@@ -40,15 +81,16 @@ export async function visualGenerate(options: RunOptions) {
   const priorCode = await readFile(options.outputFile, 'utf-8').catch(() => '');
 
   const userPrompt = dedent`
-    Here is a screenshot of my design. Please update my code to identically match the screenshot from the design.
+    Here is an image split in half - the left half is my original design, and the right half is what my code currently renders.
+    
+    Please update my code to identically match the original design (left side of the image I uploaded).
 
     Ignore placeholder images, those are intentional when present.
 
-    I uploaded a second file that is a screenshot of what my code looks like when rendered. Please use this to help you update the code to 
-    accurately match the design - by looking at what hte code rendered, and fixing it to match the design.
-
     Write out your thoughts on where the current code (via the screenshot of it) is not matching the design, and then generate new
     code matching the design and addressing those issues.
+
+    Don't summarize your changes at the end, just write out what needs changing, then give me the code, and nothing else.
 
     Heres some additional instructions:
     <prompt>
@@ -72,6 +114,11 @@ export async function visualGenerate(options: RunOptions) {
   const screenshotUrl = bufferToBase64Url(await getScreenshot(options));
   await writeFile('screenshot-image-url.txt', screenshotUrl, 'utf-8');
 
+  const combinedImage = bufferToBase64Url(
+    await combineTwoImages(designUrl, screenshotUrl)
+  );
+  await writeFile('combined-image-url.txt', combinedImage, 'utf-8');
+
   const output = await getCompletion({
     useAssistant: false,
     messages: [
@@ -85,16 +132,10 @@ export async function visualGenerate(options: RunOptions) {
           {
             type: 'image_url',
             image_url: {
-              url: designUrl,
+              url: combinedImage,
             },
           },
 
-          {
-            type: 'image_url',
-            image_url: {
-              url: screenshotUrl,
-            },
-          },
           { type: 'text', text: userPrompt },
         ],
       },

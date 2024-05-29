@@ -16,7 +16,8 @@
     "kolorist": "^1.7.0",
     "openai": "^4.47.1",
     "playwright": "^1.44.1",
-    "probe-image-size": "^7.2.3"
+    "probe-image-size": "^7.2.3",
+    "sharp": "^0.33.4"
   },
   "repository": {
     "type": "git",
