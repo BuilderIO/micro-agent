@@ -97,7 +97,18 @@ export const getCompletion = async function (options: {
     const completion = await openai.chat.completions.create({
       model: model || defaultModel,
       messages: options.messages,
+      stream: true,
     });
-    return completion.choices[0].message.content;
+    let output = '';
+    process.stdout.write(formatMessage('\n'));
+    for await (const chunk of completion) {
+      const str = chunk.choices[0]?.delta.content;
+      if (str) {
+        output += str;
+        process.stderr.write(formatMessage(str));
+      }
+    }
+    process.stdout.write(formatMessage('\n'));
+    return output;
   }
 };

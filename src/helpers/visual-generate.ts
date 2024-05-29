@@ -23,7 +23,7 @@ const bufferToBase64Url = (buffer: Buffer) => {
 };
 
 export const systemPrompt =
-  'You take a prompt and test and generate code accordingly. You only output typescript code and nothing else. Output just a typescript string, like "const hello = \'world\'", not markdown (aka do NOT put three backticks around the code). Be sure your code exports function that can be called by an external test file. Make sure your code is reusable and not overly hardcoded to match the promt. Use two spaces for indents.';
+  'You take a prompt and generate code accordingly. You only output typescript code and nothing else. Output just a typescript string, like "const hello = \'world\'", not markdown (aka do NOT put three backticks around the code). Be sure your code exports function that can be called by an external test file. Make sure your code is reusable and not overly hardcoded to match the promt. Use two spaces for indents.';
 
 export async function visualGenerate(options: RunOptions) {
   const filename = await findVisualFile(options);
@@ -56,7 +56,7 @@ export async function visualGenerate(options: RunOptions) {
 
     The file path for the above is ${options.outputFile}.
 
-    Please EITHER give me new code that better matches the design, or if the code is 99% accurate to the design (or hasn't gotten much closer in the last couple runs),
+    Please EITHER give me new code that better matches the design, or if the code is 99% accurate to the design,
     just output "looks good" and nothing else.
   `;
 
@@ -64,11 +64,15 @@ export async function visualGenerate(options: RunOptions) {
   await writeFile('design-image-url.txt', designUrl, 'utf-8');
 
   const screenshotUrl = bufferToBase64Url(await getScreenshot(options));
-  await writeFile('screenshot-image-url.txt', designUrl, 'utf-8');
+  await writeFile('screenshot-image-url.txt', screenshotUrl, 'utf-8');
 
   const output = await getCompletion({
     useAssistant: false,
     messages: [
+      {
+        role: 'system',
+        content: systemPrompt,
+      },
       {
         role: 'user',
         content: [
@@ -91,7 +95,7 @@ export async function visualGenerate(options: RunOptions) {
     options,
   });
 
-  if (output === 'looks good' || !output) {
+  if (output?.toLowerCase().trim().startsWith('looks good') || !output) {
     return { code: priorCode, testResult: success() };
   } else {
     return { code: output, testResult: fail('Code does not yet match design') };

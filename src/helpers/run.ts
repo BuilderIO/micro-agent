@@ -22,9 +22,11 @@ export async function runOne(options: Options) {
     log.step('Running...');
     const result = await visualGenerate(options);
     if (isFail(result.testResult)) {
+      console.log('failed test', result.code);
       await writeFile(options.outputFile, result.code);
       return result;
     } else {
+      console.log('passed test', result.code);
       return result;
     }
   }
