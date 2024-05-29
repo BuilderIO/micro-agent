@@ -3,8 +3,7 @@ import { findVisualFile } from './find-visual-file';
 import { getCompletion } from './openai';
 import { RunOptions } from './run';
 import { readFile, writeFile } from 'fs/promises';
-import { success } from './test';
-import { fail } from 'assert';
+import { success, fail } from './test';
 import { getScreenshot } from './get-screenshot';
 import { KnownError } from './error';
 
@@ -41,7 +40,7 @@ export async function visualGenerate(options: RunOptions) {
   const priorCode = await readFile(options.outputFile, 'utf-8').catch(() => '');
 
   const userPrompt = dedent`
-    I need you to make my code (screenshot uploaded as file 1) look like my design (screenshot as file 2).
+    I need you to make my code (screenshot uploaded as file 2) look like my design (screenshot as file 1).
     Make my code look as close as possible.
 
     Heres some additional instructions:
