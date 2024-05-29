@@ -22,7 +22,7 @@ const bufferToBase64Url = (buffer: Buffer) => {
 };
 
 export const systemPrompt =
-  "You take a prompt and generate code accordingly. You only output typescript code and nothing else. Output just a typescript string, like \"const hello = 'world'\", not markdown (aka do NOT put three backticks around the code). Be sure your code exports function that can be called by an external test file. Make sure your code is reusable and not overly hardcoded to match the promt. Use two spaces for indents. Use placeholders for any new images that weren't in the code previously";
+  "You take a prompt and generate code accordingly. Use placeholders (e.g. https://placehold.co/600x400) for any new images that weren't in the code previously. Don't make up image paths, always use placeholers from placehold.co";
 
 export async function visualGenerate(options: RunOptions) {
   const filename = await findVisualFile(options);
@@ -42,8 +42,13 @@ export async function visualGenerate(options: RunOptions) {
   const userPrompt = dedent`
     Here is a screenshot of my design. Please update my code to identically match the screenshot from the design.
 
+    Ignore placeholder images, those are intentional when present.
+
     I uploaded a second file that is a screenshot of what my code looks like when rendered. Please use this to help you update the code to 
     accurately match the design - by looking at what hte code rendered, and fixing it to match the design.
+
+    Write out your thoughts on where the current code (via the screenshot of it) is not matching the design, and then generate new
+    code matching the design and addressing those issues.
 
     Heres some additional instructions:
     <prompt>
@@ -77,8 +82,6 @@ export async function visualGenerate(options: RunOptions) {
       {
         role: 'user',
         content: [
-          { type: 'text', text: userPrompt },
-
           {
             type: 'image_url',
             image_url: {
@@ -92,6 +95,7 @@ export async function visualGenerate(options: RunOptions) {
               url: screenshotUrl,
             },
           },
+          { type: 'text', text: userPrompt },
         ],
       },
     ],

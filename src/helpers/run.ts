@@ -5,6 +5,7 @@ import { writeFile } from 'fs/promises';
 import { green, yellow } from 'kolorist';
 import { commandName } from './constants';
 import { visualGenerate } from './visual-generate';
+import { removeBackticks } from './remove-backticks';
 
 type Options = {
   outputFile: string;
@@ -22,9 +23,12 @@ export async function runOne(options: Options) {
     log.step('Running...');
     const result = await visualGenerate(options);
     if (isFail(result.testResult)) {
-      console.log('failed test', result.code);
-      await writeFile(options.outputFile, result.code);
-      return result;
+      const code = removeBackticks(result.code);
+      await writeFile(options.outputFile, code);
+      return {
+        code,
+        testResult: result.testResult,
+      };
     } else {
       return result;
     }
