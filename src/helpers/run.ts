@@ -1,9 +1,10 @@
 import { intro, note, outro, log } from '@clack/prompts';
 import { generate } from './generate';
-import { test } from './test';
+import { isFail, test } from './test';
 import { writeFile } from 'fs/promises';
 import { green, yellow } from 'kolorist';
 import { commandName } from './constants';
+import { visualGenerate } from './visual-generate';
 
 type Options = {
   outputFile: string;
@@ -13,9 +14,21 @@ type Options = {
   lastRunError: string;
   priorCode?: string;
   threadId: string;
+  visual: string;
 };
 
 export async function runOne(options: Options) {
+  if (options.visual) {
+    log.step('Running...');
+    const result = await visualGenerate(options);
+    if (isFail(result.testResult)) {
+      await writeFile(options.outputFile, result.code);
+      return result;
+    } else {
+      return result;
+    }
+  }
+
   log.step('Generating code...');
 
   // TODO: parse any imports in the prompt file and include them in the prompt as context
@@ -25,7 +38,7 @@ export async function runOne(options: Options) {
   log.step('Updated code');
 
   log.step('Running tests...');
-  const testResult = await test(options.testCommand);
+  const testResult = await test(options);
 
   return {
     code: result,
@@ -93,16 +106,19 @@ export async function* run(options: RunOptions) {
 export async function runAll(options: RunOptions) {
   intro('Running Micro Agent 🤖');
   const results = [];
-  log.step('Running tests...');
-  const testResult = await test(options.testCommand);
+  let testResult;
+  if (!options.visual) {
+    log.step('Running tests...');
+    testResult = await test(options);
 
-  if (testResult.type === 'success') {
-    outro(green('All tests passed!'));
-    return;
+    if (testResult.type === 'success') {
+      outro(green('All tests passed!'));
+      return;
+    }
   }
   for await (const result of run({
     ...options,
-    lastRunError: options.lastRunError || testResult.message,
+    lastRunError: options.lastRunError || testResult?.message || '',
   })) {
     results.push(result);
   }

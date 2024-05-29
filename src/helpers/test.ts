@@ -1,5 +1,6 @@
 import { ExecaError, execaCommand } from 'execa';
 import { gray } from 'kolorist';
+import { RunOptions } from './run';
 
 type Fail = {
   type: 'fail';
@@ -12,14 +13,14 @@ type Success = {
 
 type Result = Fail | Success;
 
-const fail = (message: string) => {
+export const fail = (message: string) => {
   return {
     type: 'fail',
     message,
   } as const;
 };
 
-const success = () => {
+export const success = () => {
   return {
     type: 'success',
   } as const;
@@ -33,7 +34,8 @@ export function formatMessage(message: string): string {
   return gray(message.replaceAll('\n', '\n' + '│   '));
 }
 
-export async function test(testScript: string): Promise<Result> {
+export async function test(options: RunOptions): Promise<Result> {
+  const testScript = options.testCommand;
   try {
     const result = execaCommand(testScript, {
       shell: process.env.SHELL || true,

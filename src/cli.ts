@@ -3,7 +3,6 @@ import { red } from 'kolorist';
 import { version } from '../package.json';
 import config from './commands/config';
 import update from './commands/update';
-import run from './commands/run';
 import { commandName } from './helpers/constants';
 import { handleCliError } from './helpers/error';
 import { runAll } from './helpers/run';
@@ -38,53 +37,44 @@ cli(
         type: String,
         description: 'Thread ID to resume',
       },
+      visual: {
+        type: String,
+        description:
+          'Visually diff a local screenshot with the result of this URL',
+        alias: 'v',
+      },
     },
-    commands: [config, run, update],
+    commands: [config, update],
   },
   async (argv) => {
     try {
-      const promptText = argv._.join(' ');
+      const filePath = argv._.filePath;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const fileExtension = filePath.split('.').pop()!;
+      const testFileExtension = ['jsx', 'tsx'].includes(fileExtension as any)
+        ? fileExtension.replace('x', '')
+        : fileExtension;
 
-      if (promptText.trim() === 'update') {
-        update.callback?.(argv);
-      } else {
-        const filePath = argv._.filePath;
-        const fileExtension = filePath.split('.').pop()!;
-        const testFileExtension = ['jsx', 'tsx'].includes(fileExtension as any)
-          ? fileExtension.replace('x', '')
-          : fileExtension;
+      const testFilePath =
+        argv.flags.testFile ||
+        filePath.replace(
+          new RegExp('\\.' + fileExtension + '$'),
+          `.test.${testFileExtension}`
+        );
+      const promptFilePath =
+        argv.flags.prompt ||
+        filePath.replace(new RegExp('\\.' + fileExtension + '$'), '.prompt.md');
 
-        const testFilePath =
-          argv.flags.testFile ||
-          filePath.replace(
-            new RegExp('\\.' + fileExtension + '$'),
-            `.test.${testFileExtension}`
-          );
-        const promptFilePath =
-          argv.flags.prompt ||
-          filePath.replace(
-            new RegExp('\\.' + fileExtension + '$'),
-            '.prompt.md'
-          );
-
-        console.log({
-          filePath,
-          fileExtension,
-          testFileExtension,
-          testFilePath,
-          promptFilePath,
-        });
-
-        await runAll({
-          outputFile: filePath,
-          promptFile: promptFilePath,
-          testCommand: argv.flags.test || 'npm test',
-          testFile: testFilePath,
-          lastRunError: '',
-          maxRuns: argv.flags.maxRuns,
-          threadId: argv.flags.thread || '',
-        });
-      }
+      await runAll({
+        outputFile: filePath,
+        promptFile: promptFilePath,
+        testCommand: argv.flags.test || 'npm test',
+        testFile: testFilePath,
+        lastRunError: '',
+        maxRuns: argv.flags.maxRuns,
+        threadId: argv.flags.thread || '',
+        visual: argv.flags.visual || '',
+      });
     } catch (error: any) {
       console.error(`\n${red('✖')} ${error.message || error}`);
       handleCliError(error);

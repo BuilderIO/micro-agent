@@ -33,12 +33,13 @@ export const getOpenAi = async function () {
 export const getCompletion = async function (options: {
   messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[];
   options: RunOptions;
+  useAssistant?: boolean;
 }) {
   const { MODEL: model } = await getConfig();
   const openai = await getOpenAi();
   const useModel = model || defaultModel;
 
-  if (USE_ASSISTANT) {
+  if (options.useAssistant ?? USE_ASSISTANT) {
     let assistantId: string;
     const assistants = await openai.beta.assistants.list({
       limit: 100,
