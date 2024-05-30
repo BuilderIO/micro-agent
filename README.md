@@ -80,6 +80,19 @@ app/about
 └──page.png # The screenshot to match
 ```
 
+### Adding an Anthropic API key
+
+> [!NOTE]
+> Using the visual matching feature requires an Anthropic API key.
+
+OpenAI is simply just not good at visual matching. We recommend using [Anthropic](https://anthropic.com/) for visual matching. To use Anthropic, you need to add your API key to the CLI:
+
+```bash
+micro-agent config set ANTHROPIC_KEY <your token>
+```
+
+Anthropic Claude Opus will do the visual matching and feedback, and then OpenAI will generate the code to match the design and address the feedback.
+
 ### Integration with Figma
 
 Micro Agent can also integrate with [Visual Copilot](https://www.builder.io/c/docs/visual-copilot) to connect directly with Figma to ensure the highest fidelity possible deisgn to code.
