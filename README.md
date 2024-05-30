@@ -62,6 +62,27 @@ If this is not the case, you can specify the test file with the `-f` flag, like 
 
 You can also add a prompt to help guide the code generation, either at a file located at `<filename>.prompt.md` like `./file-to-edit.prompt.md` or by specifying the prompt file with the `-p` flag, like `micro-agent run ./file-to-edit.ts -p ./path-to-prompt.prompt.md`.
 
+
+## Visual matching
+
+Micro Agent can also help you match a design. To do this, you need to provide a design and a local URL to your rendered code. For instance:
+
+```bash
+micro-agent run ./app/about/page.tsx --visual localhost:3000/about
+```
+
+Micro agent will then generate code until the rendered output of your code matches more closely matches a screenshot file that you place next to the code you are editing (in this case, it would be `./app/about/page.png`).
+
+The above assumes the following file structure:
+
+```bash
+app/about
+├──page.tsx # The code to edit
+└──page.png # The screenshot to match
+```
+
+## Configuration
+
 ### Max runs
 
 By default, Micro Agent will do 10 runs. If tests don't pass in 10 runs, it will stop. You can change this with the `-m` flag, like `micro-agent run ./file-to-edit.ts -m 20`.
@@ -125,6 +146,7 @@ Flags:
   -p, --prompt <string>           Prompt to run
   -t, --test <string>             The test script to run
   -f, --test-file <string>        The test file to run
+  -v, --visual <string>           Visual matching URL
       --thread <string>           Thread ID to resume
       --version                   Show version
 ```
