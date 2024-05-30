@@ -13,10 +13,6 @@
    <a href="https://www.npmjs.com/package/@builder.io/micro-agent"><img src="https://img.shields.io/npm/v/@builder.io/micro-agent" alt="Current version"></a>
 </p>
 
-| Iterate until tests pass                                                                                     | Iterate until matches design                                                                                        |
-| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| ![Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4e8b02abb3e044118f070d9a7253003e) | ![Visual Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fe90f6d4158b44a8fb9adeee3be3dbe82) |
-
 # Micro Agent
 
 Point Micro Agent at a file and a test (or screenshot), and it will write code for you until your tests pass or it more closely matches your design screenshot.
@@ -41,6 +37,8 @@ micro-agent config set OPENAI_KEY=<your token>
 
 ## Running
 
+![Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4e8b02abb3e044118f070d9a7253003e)
+
 ```bash
 micro-agent run ./file-to-edit.ts -t "npm test"
 ```
@@ -63,6 +61,8 @@ If this is not the case, you can specify the test file with the `-f` flag, like 
 You can also add a prompt to help guide the code generation, either at a file located at `<filename>.prompt.md` like `./file-to-edit.prompt.md` or by specifying the prompt file with the `-p` flag, like `micro-agent run ./file-to-edit.ts -p ./path-to-prompt.prompt.md`.
 
 ## Visual matching
+
+![Visual Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fe90f6d4158b44a8fb9adeee3be3dbe82)
 
 Micro Agent can also help you match a design. To do this, you need to provide a design and a local URL to your rendered code. For instance:
 
