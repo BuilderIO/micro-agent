@@ -1,0 +1,75 @@
+diff --git a/test/nextjs-app/app/page.tsx b/test/nextjs-app/app/page.tsx
+index 123abcde..456fghij 100644
+--- a/test/nextjs-app/app/page.tsx
++++ b/test/nextjs-app/app/page.tsx
+@@ -5,7 +5,7 @@ export default function Home() {
+ <main className="bg-white min-h-screen py-12 px-8">
+   <div className="max-w-screen-xl w-full mx-auto">
+     <header className="flex justify-between items-center mb-16">
+-      <div className="flex items-start">
++      <div className="flex items-center">
+         <img
+           src="https://placehold.co/60x60"
+           alt="builder.io logo"
+@@ -14,7 +14,7 @@ export default function Home() {
+         <div>
+           <h1 className="text-3xl font-bold text-gray-900">builder.io</h1>
+           <p className="text-base text-gray-700 mt-1 max-w-md">
+-            Visually build and optimize digital experiences on any tech stack. No coding required, and developer approved.
++            Visually build and optimize digital experiences on any tech stack. No coding required, and developer approved.
+           </p>
+         </div>
+       </div>
+@@ -22,13 +22,14 @@ export default function Home() {
+         <button className="bg-orange-500 text-white px-8 py-2.5 rounded-full shadow-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-600">
+           Get Started
+         </button>
+-        <a href="#" className="text-orange-500 font-semibold hover:underline flex items-center">
+-          Log in <span className="ml-1">→</span>
++        <a href="#" className="text-orange-500 font-semibold hover:underline">
++          Log in <span className="ml-1 align-middle">→</span>
+         </a>
+       </div>
+     </header>
+
+-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-8 text-sm mb-16">
++    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 text-sm mb-16">
+       <div>
+         <h2 className="font-bold text-gray-800 mb-4">DEVELOPERS</h2>
+         <ul className="list-none p-0">
+@@ -66,7 +67,7 @@ export default function Home() {
+         </ul>
+       </div>
+       <div>
+-        <h2 className="font-bold text-gray-800 mb-4">COMPANY</h2>
++        <h2 className="font-bold text-gray-800 mb-4">COMPANY</h2> 
+         <ul className="list-none p-0">
+           <li><a href="#" className="text-gray-700 block mb-2 hover:underline">About</a></li>
+           <li><a href="#" className="text-gray-700 block mb-2 hover:underline">Careers <span className="ml-2">✍️</span></a></li>
+@@ -75,16 +76,16 @@ export default function Home() {
+     </div>
+
+     <footer className="flex flex-col md:flex-row justify-between items-center pt-10 border-t border-gray-300 text-xs">
+-      <div className="text-gray-600 text-center md:text-left mb-4 md:mb-0">
+-        <small>© 2022 Builder.io, Inc.</small> |
+-        <a href="#" className="text-gray-600 hover:underline mx-2">Security</a> |
+-        <a href="#" className="text-gray-600 hover:underline mx-2">Privacy Policy</a> |
+-        <a href="#" className="text-gray-600 hover:underline mx-2">Terms of Service</a>
++      <div className="text-gray-600 text-center md:text-left mb-4 md:mb-0 space-x-2 md:space-x-1">
++        <small>© 2022 Builder.io, Inc.</small> 
++        <span className="hidden md:inline">|</span>
++        <a href="#" className="text-gray-600 hover:underline">Security</a>
++        <span className="hidden md:inline">|</span>
++        <a href="#" className="text-gray-600 hover:underline">Privacy Policy</a>
++        <span className="hidden md:inline">|</span>
++        <a href="#" className="text-gray-600 hover:underline">Terms of Service</a>
+       </div>
+       <div className="flex space-x-4">
+-        <a href="#" className="text-gray-600 hover:text-gray-800">
++        <a href="#" className="text-gray-600 hover:text-gray-800"> 
+           <i className="fab fa-github text-xl"></i>
+-        </a>
++        </a> 
+         <a href="#" className="text-gray-600 hover:text-gray-800">
+           <i className="fab fa-twitter text-xl"></i>
+         </a>

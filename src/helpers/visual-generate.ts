@@ -119,7 +119,7 @@ export async function visualGenerate(options: RunOptions) {
       !asDiff
         ? ''
         : dedent`
-        Give me the code as a diff from the current code, not the entire file.
+        Give me the code as a unified diff from the current code, not the entire file.
       `
     }
   `;
