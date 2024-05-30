@@ -80,6 +80,8 @@ export async function visualGenerate(options: RunOptions) {
   const prompt = await readFile(options.promptFile, 'utf-8').catch(() => '');
   const priorCode = await readFile(options.outputFile, 'utf-8').catch(() => '');
 
+  const asDiff = true;
+
   const userPrompt = dedent`
     Here is an image split in half - the left half is my original design, and the right half is what my code currently renders.
     
@@ -87,8 +89,14 @@ export async function visualGenerate(options: RunOptions) {
 
     Ignore placeholder images, those are intentional when present.
 
-    Write out your thoughts on where the current code (via the screenshot of it) is not matching the design, and then generate new
-    code matching the design and addressing those issues.
+    Write out your thoughts on where the current code (via the screenshot of it) is not matching the design (be specific), and how exactly the code needs
+    to be updated to be fixed and then generate new code matching the design and addressing those issues.
+
+    For instance, if the header is left aligned but should be centet aligned, you would write:
+    "The header is left aligned, but should be center aligned." (don't write that exactly, its just an example. also leave out the quotes)
+
+    Especially focus on major layout issues. If something should be 3 columns but is 2, or if something is supposed to be left aligned vs centered, 
+    write it out and fix it. Every small detail matters, be extremely precise and detailed.
 
     Don't summarize your changes at the end, just write out what needs changing, then give me the code, and nothing else.
 
@@ -106,6 +114,14 @@ export async function visualGenerate(options: RunOptions) {
 
     Please EITHER give me new code that better matches the design, or if the code is 99% accurate to the design,
     just output "looks good" and nothing else.
+
+    ${
+      !asDiff
+        ? ''
+        : dedent`
+        Give me the code as a diff from the current code, not the entire file.
+      `
+    }
   `;
 
   const designUrl = await imageFilePathToBase64Url(filename);
