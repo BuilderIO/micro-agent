@@ -23,7 +23,7 @@ export async function runOne(options: Options) {
     log.step('Running...');
     const result = await visualGenerate(options);
     if (isFail(result.testResult)) {
-      const code = removeBackticks(result.code);
+      const code = result.code;
       await writeFile(options.outputFile, code);
       return {
         code,

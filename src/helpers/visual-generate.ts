@@ -7,6 +7,8 @@ import { success, fail } from './test';
 import { getScreenshot } from './get-screenshot';
 import { KnownError } from './error';
 import sharp from 'sharp';
+import { applyUnifiedDiff } from './apply-unified-diff';
+import { removeBackticks } from './remove-backticks';
 
 const imageFilePathToBase64Url = async (imageFilePath: string) => {
   const image = await readFile(imageFilePath);
@@ -162,6 +164,19 @@ export async function visualGenerate(options: RunOptions) {
   if (output?.toLowerCase().trim().startsWith('looks good') || !output) {
     return { code: priorCode, testResult: success() };
   } else {
-    return { code: output, testResult: fail('Code does not yet match design') };
+    const stripped = removeBackticks(output);
+    console.log('stripped', stripped);
+    if (asDiff) {
+      const newCode = applyUnifiedDiff(stripped, priorCode);
+      return {
+        code: newCode,
+        testResult: fail('Code does not yet match design'),
+      };
+    } else {
+      return {
+        code: stripped,
+        testResult: fail('Code does not yet match design'),
+      };
+    }
   }
 }
