@@ -6,7 +6,7 @@
 </h3>
 
 <h4 align="center">
-   An AI agent that writes and fixes code for you until your tests pass.
+   An AI agent that writes and fixes code for you.
 </h4>
 
 <p align="center">
@@ -19,7 +19,7 @@
 
 # Micro Agent
 
-Point Micro Agent at a file (either that exists or is empty) and a test, and it will write code for you until your tests pass.
+Point Micro Agent at a file and a test (or screenshot), and it will write code for you until your tests pass or it more closely matches your design screenshot.
 
 > Why write code when you could instead just write a test and have AI write the code for you?
 
@@ -62,7 +62,6 @@ If this is not the case, you can specify the test file with the `-f` flag, like 
 
 You can also add a prompt to help guide the code generation, either at a file located at `<filename>.prompt.md` like `./file-to-edit.prompt.md` or by specifying the prompt file with the `-p` flag, like `micro-agent run ./file-to-edit.ts -p ./path-to-prompt.prompt.md`.
 
-
 ## Visual matching
 
 Micro Agent can also help you match a design. To do this, you need to provide a design and a local URL to your rendered code. For instance:
@@ -80,6 +79,16 @@ app/about
 ├──page.tsx # The code to edit
 └──page.png # The screenshot to match
 ```
+
+### Integration with Visual Copilot
+
+Micro Agent can also integrate with [Visual Copilot](https://www.builder.io/c/docs/visual-copilot) to ensure the highest fidelity possible deisgn to code.
+
+Visual Copilot connects directly to Figma to assist with pixel perfect conversion, exact design component mapping, and precise reusage of your components in the generated output.
+
+Then, Micro Agent can take the output of Visual Copilot and make final adjustments to the code to ensure it passes TSC, lint, tests, and fully matches your design including final tweaks.
+
+![Visual Copilot demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2F2c6cee7ed86346dc9c2b9cc77deed78f)
 
 ## Configuration
 
