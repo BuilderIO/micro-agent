@@ -13,11 +13,7 @@
    <a href="https://www.npmjs.com/package/@builder.io/micro-agent"><img src="https://img.shields.io/npm/v/@builder.io/micro-agent" alt="Current version"></a>
 </p>
 
-# Micro Agent
-
 Point Micro Agent at a file and a test (or screenshot), and it will write code for you until your tests pass or it more closely matches your design screenshot.
-
-> Why write code when you could instead just write a test and have AI write the code for you?
 
 ## Getting started
 
@@ -27,6 +23,8 @@ Point Micro Agent at a file and a test (or screenshot), and it will write code f
 npm install -g @builder.io/micro-agent
 ```
 
+## Running
+
 ### Add an OpenAI API key
 
 Micro Agent uses the OpenAI API to generate code. You need to add your API key to the CLI:
@@ -34,8 +32,6 @@ Micro Agent uses the OpenAI API to generate code. You need to add your API key t
 ```bash
 micro-agent config set OPENAI_KEY=<your token>
 ```
-
-## Running
 
 ### Unit test matching
 
