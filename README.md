@@ -80,15 +80,15 @@ app/about
 └──page.png # The screenshot to match
 ```
 
-### Integration with Visual Copilot
+### Integration with Figma
 
-Micro Agent can also integrate with [Visual Copilot](https://www.builder.io/c/docs/visual-copilot) to ensure the highest fidelity possible deisgn to code.
+Micro Agent can also integrate with [Visual Copilot](https://www.builder.io/c/docs/visual-copilot) to connect directly with Figma to ensure the highest fidelity possible deisgn to code.
 
 Visual Copilot connects directly to Figma to assist with pixel perfect conversion, exact design component mapping, and precise reusage of your components in the generated output.
 
 Then, Micro Agent can take the output of Visual Copilot and make final adjustments to the code to ensure it passes TSC, lint, tests, and fully matches your design including final tweaks.
 
-![Visual Copilot demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2F2c6cee7ed86346dc9c2b9cc77deed78f)
+![Visual Copilot demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2F965d6a606cc54bc1bf7f1fd7a424a3eb)
 
 ## Configuration
 
