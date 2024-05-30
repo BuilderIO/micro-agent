@@ -11,8 +11,10 @@ import { removeBackticks } from './remove-backticks';
 import { bufferToBase64Url, imageFilePathToBase64Url } from './base64';
 import Anthropic from '@anthropic-ai/sdk';
 import { getConfig } from './config';
+import { visualTest } from './visual-test';
 
-const USE_ANTHROPIC = true;
+const USE_ANTHROPIC = false;
+const USE_VISUAL_TEST = true;
 
 export const systemPrompt =
   "You take a prompt and generate code accordingly. Use placeholders (e.g. https://placehold.co/600x400) for any new images that weren't in the code previously. Don't make up image paths, always use placeholers from placehold.co";
@@ -32,6 +34,11 @@ export async function visualGenerate(options: RunOptions) {
   const prompt = await readFile(options.promptFile, 'utf-8').catch(() => '');
   const priorCode = await readFile(options.outputFile, 'utf-8').catch(() => '');
 
+  const visualTestResult = USE_VISUAL_TEST && (await visualTest(options));
+  if (visualTestResult?.toLowerCase().trim().startsWith('looks good')) {
+    return { code: priorCode, testResult: success() };
+  }
+
   const asDiff = false;
   const asJsonDiff = false;
 
@@ -45,9 +52,12 @@ export async function visualGenerate(options: RunOptions) {
 
     Ignore placeholder images (gray boxes), those are intentional when present and will be fixed later.
 
-    Heres some additional instructions:
+    Heres some important instructions to follow of what specifically needs fixing:
     <prompt>
-    ${prompt || 'Make the code match the original design as close as possible.'}
+    ${
+      visualTestResult ||
+      'Make the code match the original design as close as possible.'
+    }
     </prompt>
 
     The current code is:
