@@ -37,7 +37,11 @@ micro-agent config set OPENAI_KEY=<your token>
 
 ## Running
 
+### Unit test matching
+
 ![Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4e8b02abb3e044118f070d9a7253003e)
+
+To run the Micro Agent on a file in unit test matching mode, you need to provide a test script that will run after each code generation attempt. For instance:
 
 ```bash
 micro-agent run ./file-to-edit.ts -t "npm test"
@@ -60,7 +64,7 @@ If this is not the case, you can specify the test file with the `-f` flag, like 
 
 You can also add a prompt to help guide the code generation, either at a file located at `<filename>.prompt.md` like `./file-to-edit.prompt.md` or by specifying the prompt file with the `-p` flag, like `micro-agent run ./file-to-edit.ts -p ./path-to-prompt.prompt.md`.
 
-## Visual matching
+### Visual matching
 
 ![Visual Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fe90f6d4158b44a8fb9adeee3be3dbe82)
 
