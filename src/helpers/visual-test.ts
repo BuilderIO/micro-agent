@@ -5,6 +5,7 @@ import { bufferToBase64Url, imageFilePathToBase64Url } from './base64';
 import { findVisualFile } from './find-visual-file';
 import { getScreenshot } from './get-screenshot';
 import { formatMessage } from './test';
+import dedent from 'dedent';
 
 export async function visualTest(options: RunOptions) {
   const { ANTHROPIC_KEY } = await getConfig();
@@ -18,6 +19,7 @@ export async function visualTest(options: RunOptions) {
 
   const output = await new Promise<string>((resolve, reject) => {
     let responseText = '';
+    process.stdout.write(formatMessage('\n'));
     anthropic.messages
       .stream({
         model: 'claude-3-opus-20240229',
@@ -44,7 +46,11 @@ export async function visualTest(options: RunOptions) {
               },
               {
                 type: 'text',
-                text: 'here are two designs. the first is mine, which is trying to replicate the second, the original design (made by my teammate). what is wrong in mine that i need to fix? please describe in detail anything wrong with the design and layout please isgnore that i am using placeholder images (gray boxes). those will be fixed later',
+                text: dedent`
+                  here are two designs. the first is mine, which is trying to replicate the second, the original design (made by my teammate). what is wrong in mine that i need to fix? please describe in detail anything wrong with the design and layout please isgnore that i am using placeholder images (gray boxes). those will be fixed later
+                
+                  by detailed. point out anything that is wrongly missing or added, elements in the wrong locations, or anything that is not aligned properly. please be as detailed as possible. thank you!
+                `,
               },
             ],
           },

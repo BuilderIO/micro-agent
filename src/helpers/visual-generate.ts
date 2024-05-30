@@ -65,6 +65,11 @@ export async function visualGenerate(options: RunOptions) {
     ${priorCode || 'None'}
     </code>
 
+    Here are additional instructions from the user:
+    <prompt>
+    ${prompt || 'None provided'}
+    </prmopt>
+
     The file path for the above is ${options.outputFile}.
 
     Please EITHER give me new code that better matches the design, or if the code is 99% accurate to the design,

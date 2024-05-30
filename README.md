@@ -79,7 +79,8 @@ The above assumes the following file structure:
 ```bash
 app/about
 ├──page.tsx # The code to edit
-└──page.png # The screenshot to match
+├──page.png # The screenshot to match
+└──page.prompt.md # Optional, additional instructions for the AI
 ```
 
 ### Adding an Anthropic API key
