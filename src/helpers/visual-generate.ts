@@ -6,7 +6,6 @@ import { readFile, writeFile } from 'fs/promises';
 import { success, fail, formatMessage } from './test';
 import { getScreenshot } from './get-screenshot';
 import { KnownError } from './error';
-import sharp from 'sharp';
 import { applyUnifiedDiff } from './apply-unified-diff';
 import { removeBackticks } from './remove-backticks';
 import { bufferToBase64Url, imageFilePathToBase64Url } from './base64';
@@ -14,46 +13,6 @@ import Anthropic from '@anthropic-ai/sdk';
 import { getConfig } from './config';
 
 const USE_ANTHROPIC = true;
-
-// use sharp to combine two images, putting them side by side
-const combineTwoImages = async (image1: string, image2: string) => {
-  const image1Buffer = Buffer.from(image1.split(',')[1], 'base64');
-  const image2Buffer = Buffer.from(image2.split(',')[1], 'base64');
-
-  const image1Sharp = sharp(image1Buffer);
-  const image2Sharp = sharp(image2Buffer);
-
-  const image1Metadata = await image1Sharp.metadata();
-  const image2Metadata = await image2Sharp.metadata();
-
-  const width = image1Metadata.width! + image2Metadata.width!;
-  const height = Math.max(image1Metadata.height!, image2Metadata.height!);
-
-  const combinedImage = sharp({
-    create: {
-      width,
-      height,
-      channels: 4,
-      background: { r: 255, g: 255, b: 255, alpha: 1 },
-    },
-  });
-
-  return combinedImage
-    .composite([
-      {
-        input: image1Buffer,
-        top: 0,
-        left: 0,
-      },
-      {
-        input: image2Buffer,
-        top: 0,
-        left: image1Metadata.width,
-      },
-    ])
-    .png()
-    .toBuffer();
-};
 
 export const systemPrompt =
   "You take a prompt and generate code accordingly. Use placeholders (e.g. https://placehold.co/600x400) for any new images that weren't in the code previously. Don't make up image paths, always use placeholers from placehold.co";
@@ -140,7 +99,7 @@ export async function visualGenerate(options: RunOptions) {
       anthropic.messages
         .stream({
           model: ANTHROPIC_MODEL || 'claude-3-opus-20240229',
-          max_tokens: 1024,
+          max_tokens: 4096,
           system: systemPrompt,
           messages: [
             {

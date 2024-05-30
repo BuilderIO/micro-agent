@@ -15,7 +15,7 @@ export async function visualTest(options: RunOptions) {
 
   await anthropic.messages.create({
     model: 'claude-3-opus-20240229',
-    max_tokens: 1024,
+    max_tokens: 4096,
     messages: [
       {
         role: 'user',
