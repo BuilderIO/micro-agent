@@ -7,6 +7,7 @@ import {
   showConfigUI,
 } from '../helpers/config.js';
 import { KnownError, handleCliError } from '../helpers/error.js';
+import { outro } from '@clack/prompts';
 
 export default command(
   {
@@ -47,6 +48,8 @@ export default command(
         await setConfigs(
           keyValues.map((keyValue) => keyValue.split('=') as [string, string])
         );
+
+        outro('Config updated ✅');
         return;
       }
 

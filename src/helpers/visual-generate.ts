@@ -3,26 +3,17 @@ import { findVisualFile } from './find-visual-file';
 import { getCompletion } from './openai';
 import { RunOptions } from './run';
 import { readFile, writeFile } from 'fs/promises';
-import { success, fail } from './test';
+import { success, fail, formatMessage } from './test';
 import { getScreenshot } from './get-screenshot';
 import { KnownError } from './error';
 import sharp from 'sharp';
 import { applyUnifiedDiff } from './apply-unified-diff';
 import { removeBackticks } from './remove-backticks';
+import { bufferToBase64Url, imageFilePathToBase64Url } from './base64';
+import Anthropic from '@anthropic-ai/sdk';
+import { getConfig } from './config';
 
-const imageFilePathToBase64Url = async (imageFilePath: string) => {
-  const image = await readFile(imageFilePath);
-  const extension = imageFilePath.split('.').pop();
-  const imageBase64 = Buffer.from(image).toString('base64');
-  return `data:image/${
-    extension === 'jpg' ? 'jpeg' : extension
-  };base64,${imageBase64}`;
-};
-
-const bufferToBase64Url = (buffer: Buffer) => {
-  const imageBase64 = buffer.toString('base64');
-  return `data:image/png;base64,${imageBase64}`;
-};
+const USE_ANTHROPIC = true;
 
 // use sharp to combine two images, putting them side by side
 const combineTwoImages = async (image1: string, image2: string) => {
@@ -82,29 +73,22 @@ export async function visualGenerate(options: RunOptions) {
   const prompt = await readFile(options.promptFile, 'utf-8').catch(() => '');
   const priorCode = await readFile(options.outputFile, 'utf-8').catch(() => '');
 
-  const asDiff = true;
+  const asDiff = false;
+  const asJsonDiff = false;
 
   const userPrompt = dedent`
-    Here is an image split in half - the left half is my original design, and the right half is what my code currently renders.
-    
+    The first image is a design i'm trying to 100% match. the second image the render of my current code. 
+  
     Please update my code to identically match the original design (left side of the image I uploaded).
 
-    Ignore placeholder images, those are intentional when present.
+    Think out loud - list exactly what is different between the original and mine that needs to be fixed before
+    you start coding, such as layout and styling issues or missing elements. 
 
-    Write out your thoughts on where the current code (via the screenshot of it) is not matching the design (be specific), and how exactly the code needs
-    to be updated to be fixed and then generate new code matching the design and addressing those issues.
-
-    For instance, if the header is left aligned but should be centet aligned, you would write:
-    "The header is left aligned, but should be center aligned." (don't write that exactly, its just an example. also leave out the quotes)
-
-    Especially focus on major layout issues. If something should be 3 columns but is 2, or if something is supposed to be left aligned vs centered, 
-    write it out and fix it. Every small detail matters, be extremely precise and detailed.
-
-    Don't summarize your changes at the end, just write out what needs changing, then give me the code, and nothing else.
+    Ignore placeholder images (gray boxes), those are intentional when present and will be fixed later.
 
     Heres some additional instructions:
     <prompt>
-    ${prompt || 'Make them look as close as possible'}
+    ${prompt || 'Make the code match the original design as close as possible.'}
     </prompt>
 
     The current code is:
@@ -124,6 +108,17 @@ export async function visualGenerate(options: RunOptions) {
         Give me the code as a unified diff from the current code, not the entire file.
       `
     }
+
+    ${
+      !asJsonDiff
+        ? ''
+        : dedent`
+        Give me the code as a JSON diff from the current code, not the entire file. I will split split the current file
+        into lines (an array of strings where each sttring is one line) and you will need to provide the json patches to make
+        the current code match the design. Then I will apply the patches you give me to the array and then combine
+        the array of strings back into a single string to get the new code.
+      `
+    }
   `;
 
   const designUrl = await imageFilePathToBase64Url(filename);
@@ -132,41 +127,114 @@ export async function visualGenerate(options: RunOptions) {
   const screenshotUrl = bufferToBase64Url(await getScreenshot(options));
   await writeFile('screenshot-image-url.txt', screenshotUrl, 'utf-8');
 
-  const combinedImage = bufferToBase64Url(
-    await combineTwoImages(designUrl, screenshotUrl)
-  );
-  await writeFile('combined-image-url.txt', combinedImage, 'utf-8');
+  let output: string;
+  if (USE_ANTHROPIC) {
+    const { ANTHROPIC_KEY, ANTHROPIC_MODEL } = await getConfig();
+    const anthropic = new Anthropic({
+      apiKey: ANTHROPIC_KEY,
+    });
+    output = await new Promise<string>((resolve, reject) => {
+      let responseText = '';
 
-  const output = await getCompletion({
-    useAssistant: false,
-    messages: [
-      {
-        role: 'system',
-        content: systemPrompt,
-      },
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'image_url',
-            image_url: {
-              url: combinedImage,
+      process.stdout.write(formatMessage('\n'));
+      anthropic.messages
+        .stream({
+          model: ANTHROPIC_MODEL || 'claude-3-opus-20240229',
+          max_tokens: 1024,
+          system: systemPrompt,
+          messages: [
+            {
+              role: 'user',
+              content: [
+                {
+                  type: 'image',
+                  source: {
+                    type: 'base64',
+                    media_type: 'image/png',
+                    data: designUrl.split(',')[1],
+                  },
+                },
+                {
+                  type: 'image',
+                  source: {
+                    type: 'base64',
+                    media_type: 'image/png',
+                    data: screenshotUrl.split(',')[1],
+                  },
+                },
+                { type: 'text', text: userPrompt },
+              ],
             },
-          },
-
-          { type: 'text', text: userPrompt },
-        ],
-      },
-    ],
-    options,
-  });
+          ],
+        })
+        .on('text', (text) => {
+          responseText += text;
+          process.stderr.write(formatMessage(text));
+        })
+        .on('end', () => {
+          process.stdout.write('\n');
+          resolve(responseText);
+        })
+        .on('error', (error) => {
+          reject(error);
+        });
+    });
+  } else {
+    output = await getCompletion({
+      useAssistant: false,
+      messages: [
+        {
+          role: 'system',
+          content: systemPrompt,
+        },
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'image_url',
+              image_url: {
+                url: designUrl,
+              },
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: screenshotUrl,
+              },
+            },
+            { type: 'text', text: userPrompt },
+          ],
+        },
+      ],
+      options,
+    });
+  }
 
   if (output?.toLowerCase().trim().startsWith('looks good') || !output) {
     return { code: priorCode, testResult: success() };
   } else {
     const stripped = removeBackticks(output);
-    console.log('stripped', stripped);
-    if (asDiff) {
+
+    if (asJsonDiff) {
+      const parsed = JSON.parse(stripped);
+      const priorLines = priorCode.split('\n');
+      const newLines = parsed.reduce((acc: string[], patch: any) => {
+        if (patch.op === 'add') {
+          acc.push(patch.value);
+        } else if (patch.op === 'remove') {
+          acc.pop();
+        } else if (patch.op === 'replace') {
+          acc.pop();
+          acc.push(patch.value);
+        }
+        return acc;
+      }, priorLines);
+      const newCode = newLines.join('\n');
+      return {
+        code: newCode,
+        testResult: fail('Code does not yet match design'),
+      };
+    } else if (asDiff) {
       const newCode = applyUnifiedDiff(stripped, priorCode);
       return {
         code: newCode,

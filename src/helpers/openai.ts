@@ -108,7 +108,7 @@ export const getCompletion = async function (options: {
         process.stderr.write(formatMessage(str));
       }
     }
-    process.stdout.write(formatMessage('\n'));
+    process.stdout.write('\n');
     return output;
   }
 };

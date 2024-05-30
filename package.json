@@ -4,6 +4,7 @@
   "version": "0.0.3",
   "type": "module",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.21.1",
     "@clack/core": "latest",
     "@clack/prompts": "latest",
     "@dqbd/tiktoken": "^1.0.15",

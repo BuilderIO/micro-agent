@@ -22,12 +22,28 @@ const configParsers = {
 
     return key;
   },
+  ANTHROPIC_KEY(key?: string) {
+    if (!key) {
+      throw new KnownError(
+        `Please set your Anthropic API key via \`${commandName} config set ANTHROPIC_KEY=<your token>\``
+      );
+    }
+
+    return key;
+  },
   MODEL(model?: string) {
     if (!model || model.length === 0) {
       return 'gpt-4o';
     }
 
     return model as TiktokenModel;
+  },
+  ANTHROPIC_MODEL(model?: string) {
+    if (!model || model.length === 0) {
+      return 'claude-3-opus-20240229';
+    }
+
+    return model;
   },
   SILENT_MODE(mode?: string) {
     return String(mode).toLowerCase() === 'true';
