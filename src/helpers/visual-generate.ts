@@ -2,7 +2,7 @@ import dedent from 'dedent';
 import { findVisualFile } from './find-visual-file';
 import { getCompletion } from './openai';
 import { RunOptions } from './run';
-import { readFile, writeFile } from 'fs/promises';
+import { readFile, writeFile, mkdir, stat } from 'fs/promises';
 import { success, fail, formatMessage } from './test';
 import { getScreenshot } from './get-screenshot';
 import { KnownError } from './error';
@@ -96,10 +96,24 @@ export async function visualGenerate(options: RunOptions) {
   `;
 
   const designUrl = await imageFilePathToBase64Url(filename);
-  await writeFile('design-image-url.txt', designUrl, 'utf-8');
+  const debugImageOutputFolder = 'debug/images';
+  try {
+    await stat(debugImageOutputFolder);
+  } catch (error) {
+    await mkdir(debugImageOutputFolder, { recursive: true });
+  }
+  await writeFile(
+    `${debugImageOutputFolder}/design-image-url.txt`,
+    designUrl,
+    'utf-8'
+  );
 
   const screenshotUrl = bufferToBase64Url(await getScreenshot(options));
-  await writeFile('screenshot-image-url.txt', screenshotUrl, 'utf-8');
+  await writeFile(
+    `${debugImageOutputFolder}/screenshot-image-url.txt`,
+    screenshotUrl,
+    'utf-8'
+  );
 
   let output: string;
   if (USE_ANTHROPIC) {
