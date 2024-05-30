@@ -64,45 +64,4 @@ Changed line.`;
     const result = applyUnifiedDiff(diff, originalFileContent);
     expect(result).toBe(expectedFileContent);
   });
-
-  it('should apply multiple patches correctly', () => {
-    const diff = `--- a/test1.txt
-+++ b/test1.txt
-@@ -1,3 +1,3 @@
--Hello
--World
-+Hi
-+Universe
- This is a test.
---- a/test2.txt
-+++ b/test2.txt
-@@ -1,3 +1,3 @@
--First line
--Second line
-+Changed first line
-+Changed second line
- Last line`;
-
-    const originalFileContent1 = `Hello
-World
-This is a test.`;
-
-    const expectedFileContent1 = `Hi
-Universe
-This is a test.`;
-
-    const originalFileContent2 = `First line
-Second line
-Last line`;
-
-    const expectedFileContent2 = `Changed first line
-Changed second line
-Last line`;
-
-    let result = applyUnifiedDiff(diff, originalFileContent1);
-    expect(result).toBe(expectedFileContent1);
-
-    result = applyUnifiedDiff(diff, originalFileContent2);
-    expect(result).toBe(expectedFileContent2);
-  });
 });

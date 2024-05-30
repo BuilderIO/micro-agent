@@ -1,27 +1,14 @@
-import { parsePatch, applyPatch, ParsedDiff } from 'diff';
-
-function isValidDiff(patches: ParsedDiff[]): boolean {
-  return patches.every(patch => patch.hunks.length > 0);
-}
+import { parsePatch, applyPatch } from 'diff';
 
 export function applyUnifiedDiff(diff: string, fileContent: string): string {
-  if (!diff.trim()) return fileContent;
-
-  const patches = parsePatch(diff);
-
-  if (patches.length === 0 || !isValidDiff(patches)) {
-    throw new Error('Failed to apply patch');
-  }
-
-  let updatedContent = fileContent;
-
-  patches.forEach((patch) => {
-    const result = applyPatch(updatedContent, patch);
+  const parsedDiff = parsePatch(diff);
+  let str = fileContent;
+  for (const patch of parsedDiff) {
+    const result = applyPatch(fileContent, patch);
     if (result === false) {
       throw new Error('Failed to apply patch');
     }
-    updatedContent = result;
-  });
-
-  return updatedContent;
+    str = result;
+  }
+  return str;
 }
