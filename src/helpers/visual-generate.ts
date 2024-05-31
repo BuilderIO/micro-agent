@@ -14,7 +14,7 @@ import { getConfig } from './config';
 import { visualTest } from './visual-test';
 
 const USE_ANTHROPIC = false;
-const USE_VISUAL_TEST = true as boolean;
+const USE_VISUAL_TEST = false as boolean;
 
 export const systemPrompt =
   "You take a prompt and generate code accordingly. Use placeholders (e.g. https://placehold.co/600x400) for any new images that weren't in the code previously. Don't make up image paths, always use placeholers from placehold.co";
@@ -46,16 +46,11 @@ export async function visualGenerate(options: RunOptions) {
   const asJsonDiff = false;
 
   const userPrompt = dedent`
-    The first image is a design i'm trying to 100% match. the second image the render of my current code. 
-  
-    Please update my code to identically match the original design (left side of the image I uploaded).
-
-    Think out loud - list exactly what is different between the original and mine that needs to be fixed before
-    you start coding, such as layout and styling issues or missing elements. 
+    Here is a design I am trying to make my code match. Currently, its not quite right.
 
     Ignore placeholder images (gray boxes), those are intentional when present and will be fixed later.
 
-    Heres some important instructions to follow of what specifically needs fixing:
+    Heres some important instructions to follow of some of the specific areas that are wrong and need fixing:
     <prompt>
     ${
       visualTestResult ||
@@ -145,14 +140,6 @@ export async function visualGenerate(options: RunOptions) {
                     data: designUrl.split(',')[1],
                   },
                 },
-                {
-                  type: 'image',
-                  source: {
-                    type: 'base64',
-                    media_type: 'image/png',
-                    data: screenshotUrl.split(',')[1],
-                  },
-                },
                 { type: 'text', text: userPrompt },
               ],
             },
@@ -185,12 +172,14 @@ export async function visualGenerate(options: RunOptions) {
               type: 'image_url',
               image_url: {
                 url: designUrl,
+                detail: 'high',
               },
             },
             {
               type: 'image_url',
               image_url: {
                 url: screenshotUrl,
+                detail: 'high',
               },
             },
             { type: 'text', text: userPrompt },

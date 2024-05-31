@@ -6,6 +6,47 @@ import { findVisualFile } from './find-visual-file';
 import { getScreenshot } from './get-screenshot';
 import { formatMessage } from './test';
 import dedent from 'dedent';
+import sharp from 'sharp';
+
+// use sharp to combine two images, putting them side by side
+const combineTwoImages = async (image1: string, image2: string) => {
+  const image1Buffer = Buffer.from(image1.split(',')[1], 'base64');
+  const image2Buffer = Buffer.from(image2.split(',')[1], 'base64');
+
+  const image1Sharp = sharp(image1Buffer);
+  const image2Sharp = sharp(image2Buffer);
+
+  const image1Metadata = await image1Sharp.metadata();
+  const image2Metadata = await image2Sharp.metadata();
+
+  const width = image1Metadata.width! + image2Metadata.width!;
+  const height = Math.max(image1Metadata.height!, image2Metadata.height!);
+
+  const combinedImage = sharp({
+    create: {
+      width,
+      height,
+      channels: 4,
+      background: { r: 255, g: 255, b: 255, alpha: 1 },
+    },
+  });
+
+  return combinedImage
+    .composite([
+      {
+        input: image1Buffer,
+        top: 0,
+        left: 0,
+      },
+      {
+        input: image2Buffer,
+        top: 0,
+        left: image1Metadata.width,
+      },
+    ])
+    .png()
+    .toBuffer();
+};
 
 export async function visualTest(options: RunOptions) {
   const { ANTHROPIC_KEY } = await getConfig();
@@ -16,6 +57,10 @@ export async function visualTest(options: RunOptions) {
   const filename = await findVisualFile(options);
   const designUrl = await imageFilePathToBase64Url(filename!);
   const screenshotUrl = bufferToBase64Url(await getScreenshot(options));
+
+  const composite = bufferToBase64Url(
+    await combineTwoImages(screenshotUrl, designUrl)
+  );
 
   const output = await new Promise<string>((resolve, reject) => {
     let responseText = '';
@@ -33,21 +78,14 @@ export async function visualTest(options: RunOptions) {
                 source: {
                   type: 'base64',
                   media_type: 'image/png',
-                  data: screenshotUrl.split(',')[1],
+                  data: composite.split(',')[1],
                 },
               },
-              {
-                type: 'image',
-                source: {
-                  type: 'base64',
-                  media_type: 'image/png',
-                  data: designUrl.split(',')[1],
-                },
-              },
+
               {
                 type: 'text',
                 text: dedent`
-                  here are two designs. the first is mine, which is trying to replicate the second, the original design (made by my teammate). what is wrong in mine that i need to fix? please describe in detail anything wrong with the design and layout please isgnore that i am using placeholder images (gray boxes). those will be fixed later
+                  here are two designs in one image. the left side is mine, which is trying to replicate the original design (right side). what is wrong in mine that i need to fix? please describe in detail anything wrong with the design and layout please isgnore that i am using placeholder images (gray boxes). those will be fixed later
                 
                   by detailed. point out anything that is wrongly missing or added, elements in the wrong locations, or anything that is not aligned properly. please be as detailed as possible. 
 

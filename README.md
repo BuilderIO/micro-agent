@@ -94,7 +94,9 @@ OpenAI is simply just not good at visual matching. We recommend using [Anthropic
 micro-agent config set ANTHROPIC_KEY <your token>
 ```
 
-Anthropic Claude Opus will do the visual matching and feedback, and then OpenAI will generate the code to match the design and address the feedback.
+Visual matcing uses a multi-agent approach where Anthropic Claude Opus will do the visual matching and feedback, and then OpenAI will generate the code to match the design and address the feedback.
+
+![Visual of the multi agent approach](https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Ff5bbcf73d9bf4a78a6b866a3dc67c737)
 
 ### Integration with Figma
 

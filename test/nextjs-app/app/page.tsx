@@ -1,55 +1,110 @@
 import React from 'react';
 
+const navItems = [
+  {
+    title: "DEVELOPERS",
+    links: [
+      { name: "Builder for Developers", href: "#" },
+      { name: "Developer Docs", href: "#" },
+      { name: "Open Source Projects", href: "#" },
+      { name: "Performance Insights", href: "#" },
+    ],
+  },
+  {
+    title: "INTEGRATIONS",
+    links: [
+      { name: "All Integrations", href: "#" },
+      { name: "Shopify", href: "#" },
+      { name: "React", href: "#" },
+      { name: "Angular", href: "#" },
+      { name: "Next.js", href: "#" },
+      { name: "Gatsby", href: "#" },
+    ],
+  },
+  {
+    title: "RESOURCES",
+    links: [
+      { name: "User Guides", href: "#" },
+      { name: "Blog", href: "#" },
+      { name: "Community Forum", href: "#" },
+      { name: "Templates", href: "#" },
+      { name: "Partners", href: "#" },
+      { name: "Submit an Idea", href: "#" },
+    ],
+  },
+  {
+    title: "USE CASES",
+    links: [
+      { name: "Landing Pages", href: "#" },
+      { name: "Shopify Storefront", href: "#" },
+      { name: "Headless CMS", href: "#" },
+      { name: "Headless Storefront", href: "#" },
+      { name: "Customer Showcase", href: "#" },
+      { name: "Customer Success Stories", href: "#" },
+    ],
+  },
+  {
+    title: "COMPANY",
+    links: [
+      { name: "About", href: "#" },
+      { name: "Careers", href: "#" },
+    ],
+  },
+  {
+    title: "PRODUCT",
+    links: [
+      { name: "Features", href: "#" },
+      { name: "Pricing", href: "#" },
+    ],
+  },
+];
+
 const Home: React.FC = () => {
-return (
-  <main className="bg-white flex flex-col items-start min-h-screen p-12">
-    <div className="flex md:items-start md:justify-between md:space-x-6">
-      <div className="flex flex-col items-start">
-        <h1 className="text-5xl font-extrabold mb-4">Optimize</h1>
-        <h2 className="text-2xl font-medium mb-2">Design responsively</h2>
-        <p className="text-gray-800 text-lg mb-4 max-w-md">
-          Easily preview and adjust your content and layouts across desktop, tablet, and mobile 
-          devices until it is <span className="font-bold">just right</span>, and even 
-          <span className="font-bold">customize your breakpoints</span>.{' '}
-          <a href="#" className="text-blue-500 hover:text-blue-700">Learn more.</a>
+  return (
+    <main className="bg-white flex flex-col items-center min-h-screen py-12 font-sans">
+      <div className="text-left flex flex-col items-center mb-8">
+        <img src="https://placehold.co/150x50" alt="logo" className="mb-4" />
+        <p className="text-black mb-6 max-w-lg text-center">
+          Visually build and optimize digital experiences on any tech stack. No coding required, and developer approved.
         </p>
-        
-        <h2 className="text-2xl font-medium mb-2">Asset management</h2>
-        <p className="text-gray-800 text-lg mb-4 max-w-md">
-          You can now organize and manage all of your digital assets – all image and video formats – 
-          to make you and your team more productive.{' '}
-          <a href="#" className="text-blue-500 hover:text-blue-700">Learn more.</a>
-        </p>
-
-        <hr className="my-6 w-full border-gray-300" />
-        
-        <h2 className="text-2xl font-medium mb-2">Animations</h2>
-        <p className="text-gray-800 text-lg mb-6 max-w-md">
-          Control exactly what your team can drag and drop. Turn on components-only mode, enable 
-          full bespoke creation, or anything in between.
-        </p>
+        <div className="flex space-x-4">
+          <button className="bg-orange-500 text-white px-6 py-2 rounded-md">Get Started</button>
+          <button className="text-orange-600 flex items-center">Log in <span className="ml-1">→</span></button>
+        </div>
       </div>
-      
-      <div className="flex items-center justify-center pt-16 md:pt-0">
-        <img src="https://placehold.co/600x400" alt="Design preview" className="w-80 h-64 rounded-lg shadow-lg border border-gray-200" />
-      </div>
-    </div>
 
-    <div className="absolute top-0 right-0 h-full p-4 bg-gray-100 shadow-lg border border-gray-300 rounded-md flex flex-col items-center">
-        <div className="bg-purple-500 p-3 mb-4 rounded-full">
-          <svg className="w-6 h-6 text-white" fill="currentColor"></svg>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 w-full max-w-screen-xl text-left mb-8">
+        {navItems.map((section) => (
+          <div key={section.title}>
+            <h2 className="text-sm font-semibold text-black">{section.title}</h2>
+            <ul className="space-y-2">
+              {section.links.map((link) => (
+                <li key={link.name}>
+                  <a href={link.href} className="text-gray-700 hover:text-orange-600 text-sm">{link.name}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      <footer className="w-full max-w-screen-xl border-t pt-8">
+        <div className="text-center pb-4">
+          <div className="flex justify-center space-x-6 mt-4">
+            <a href="#" className="text-gray-700 hover:text-gray-900">Security</a>
+            <a href="#" className="text-gray-700 hover:text-gray-900">Privacy Policy</a>
+            <a href="#" className="text-gray-700 hover:text-gray-900">Terms of Service</a>
+          </div>
+          <p className="text-xs text-gray-500 mt-4">&copy; 2022 Builder.io, Inc.</p>
+          <div className="flex justify-center space-x-4 mt-4">
+            <a href="#" className="text-gray-700 hover:text-gray-900"><i className="fab fa-github"></i></a>
+            <a href="#" className="text-gray-700 hover:text-gray-900"><i className="fab fa-twitter"></i></a>
+            <a href="#" className="text-gray-700 hover:text-gray-900"><i className="fab fa-linkedin"></i></a>
+          </div>
         </div>
-        <div className="space-y-3">
-          <div className="bg-gray-200 p-2 rounded"></div>
-          <div className="bg-gray-200 p-2 rounded"></div>
-          <div className="bg-gray-200 p-2 rounded"></div>
-        </div>
-        <div className="mt-4 cursor-pointer">
-          <svg className="w-6 h-6" fill="currentColor"></svg>
-        </div>
-    </div>
-  </main>
-);
+      </footer>
+    </main>
+  );
 };
 
 export default Home;
