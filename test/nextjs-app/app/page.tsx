@@ -8,14 +8,16 @@ const navItems = [
       { name: "Developer Docs", href: "#" },
       { name: "Open Source Projects", href: "#" },
       { name: "Performance Insights", href: "#" },
+      { name: "Shopify Storefront", href: "#" },
+      { name: "Headless CMS", href: "#" },
     ],
   },
   {
     title: "INTEGRATIONS",
     links: [
       { name: "All Integrations", href: "#" },
-      { name: "Shopify", href: "#" },
       { name: "React", href: "#" },
+      { name: "Shopify", href: "#" },
       { name: "Angular", href: "#" },
       { name: "Next.js", href: "#" },
       { name: "Gatsby", href: "#" },
@@ -26,20 +28,19 @@ const navItems = [
     links: [
       { name: "User Guides", href: "#" },
       { name: "Blog", href: "#" },
-      { name: "Community Forum", href: "#" },
       { name: "Templates", href: "#" },
       { name: "Partners", href: "#" },
+      { name: "Community Forum", href: "#" },
       { name: "Submit an Idea", href: "#" },
     ],
   },
   {
-    title: "USE CASES",
+    title: "PRODUCT",
     links: [
-      { name: "Landing Pages", href: "#" },
-      { name: "Shopify Storefront", href: "#" },
-      { name: "Headless CMS", href: "#" },
+      { name: "Features", href: "#" },
+      { name: "Pricing", href: "#" },
       { name: "Headless Storefront", href: "#" },
-      { name: "Customer Showcase", href: "#" },
+      { name: "Customer Storefront", href: "#" },
       { name: "Customer Success Stories", href: "#" },
     ],
   },
@@ -49,14 +50,7 @@ const navItems = [
       { name: "About", href: "#" },
       { name: "Careers", href: "#" },
     ],
-  },
-  {
-    title: "PRODUCT",
-    links: [
-      { name: "Features", href: "#" },
-      { name: "Pricing", href: "#" },
-    ],
-  },
+  }
 ];
 
 const Home: React.FC = () => {
@@ -64,7 +58,7 @@ const Home: React.FC = () => {
     <main className="bg-white flex flex-col items-center min-h-screen py-12 font-sans">
       <div className="text-left flex flex-col items-center mb-8">
         <img src="https://placehold.co/150x50" alt="logo" className="mb-4" />
-        <p className="text-black mb-6 max-w-lg text-center">
+        <p className="text-black mb-6 max-w-md text-center">
           Visually build and optimize digital experiences on any tech stack. No coding required, and developer approved.
         </p>
         <div className="flex space-x-4">
@@ -89,18 +83,24 @@ const Home: React.FC = () => {
       </div>
 
       <footer className="w-full max-w-screen-xl border-t pt-8">
-        <div className="text-center pb-4">
-          <div className="flex justify-center space-x-6 mt-4">
+        <div className="flex justify-between text-xs text-gray-500">
+          <p>&copy; 2022 Builder.io, Inc.</p>
+          <div className="flex space-x-4">
             <a href="#" className="text-gray-700 hover:text-gray-900">Security</a>
             <a href="#" className="text-gray-700 hover:text-gray-900">Privacy Policy</a>
             <a href="#" className="text-gray-700 hover:text-gray-900">Terms of Service</a>
           </div>
-          <p className="text-xs text-gray-500 mt-4">&copy; 2022 Builder.io, Inc.</p>
-          <div className="flex justify-center space-x-4 mt-4">
-            <a href="#" className="text-gray-700 hover:text-gray-900"><i className="fab fa-github"></i></a>
-            <a href="#" className="text-gray-700 hover:text-gray-900"><i className="fab fa-twitter"></i></a>
-            <a href="#" className="text-gray-700 hover:text-gray-900"><i className="fab fa-linkedin"></i></a>
-          </div>
+        </div>
+        <div className="flex space-x-4 mt-4">
+          <a href="#" className="text-gray-700 hover:text-gray-900">
+            <img src="https://placehold.co/16x16" alt="LinkedIn" />
+          </a>
+          <a href="#" className="text-gray-700 hover:text-gray-900">
+            <img src="https://placehold.co/16x16" alt="Twitter" />
+          </a>
+          <a href="#" className="text-gray-700 hover:text-gray-900">
+            <img src="https://placehold.co/16x16" alt="Facebook" />
+          </a>
         </div>
       </footer>
     </main>

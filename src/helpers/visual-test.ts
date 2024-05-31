@@ -85,11 +85,9 @@ export async function visualTest(options: RunOptions) {
               {
                 type: 'text',
                 text: dedent`
-                  here are two designs in one image. the left side is mine, which is trying to replicate the original design (right side). what is wrong in mine that i need to fix? please describe in detail anything wrong with the design and layout please isgnore that i am using placeholder images (gray boxes). those will be fixed later
-                
-                  by detailed. point out anything that is wrongly missing or added, elements in the wrong locations, or anything that is not aligned properly. please be as detailed as possible. 
-
-                  be very specific. never say "update the button to better match the design". say exactly what must change, like "move the button 20px to the right" or "change the button color to #FF0000" or "change the heading font to Helvetica" or "the main button should be below the heading, not to the left of it", etc. don't use those exactly, they are just examples.
+                  here is a screenshot of some original code (left side of image) and my code trying to replicate it (right side of image)
+                  what did I get wrong? be incredibly specific, like which objects are missing or placed in the wrong places and where exactly they should be placed instead
+                  make it so that i could simply read what you say and update the code without any other visual and get it right. don't give me code, just words
                 `,
               },
             ],

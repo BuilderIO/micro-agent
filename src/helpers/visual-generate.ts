@@ -14,7 +14,7 @@ import { getConfig } from './config';
 import { visualTest } from './visual-test';
 
 const USE_ANTHROPIC = false;
-const USE_VISUAL_TEST = false as boolean;
+const USE_VISUAL_TEST = true as boolean;
 
 export const systemPrompt =
   "You take a prompt and generate code accordingly. Use placeholders (e.g. https://placehold.co/600x400) for any new images that weren't in the code previously. Don't make up image paths, always use placeholers from placehold.co";
