@@ -34,10 +34,14 @@ export async function visualGenerate(options: RunOptions) {
   const prompt = await readFile(options.promptFile, 'utf-8').catch(() => '');
   const priorCode = await readFile(options.outputFile, 'utf-8').catch(() => '');
 
-  const visualTestResult = USE_VISUAL_TEST && (await visualTest(options));
+  let visualTestResult = USE_VISUAL_TEST && (await visualTest(options));
   if (
     visualTestResult &&
-    visualTestResult.toLowerCase().trim().startsWith('looks good')
+    visualTestResult
+      .toLowerCase()
+      .trim()
+      .replace(/"/g, '')
+      .startsWith('looks good')
   ) {
     return { code: priorCode, testResult: success() };
   }
@@ -45,12 +49,16 @@ export async function visualGenerate(options: RunOptions) {
   const asDiff = false;
   const asJsonDiff = false;
 
+  visualTestResult =
+    'The "get started" and "login" buttons should be to the left of the columns with links, not above them';
+
   const userPrompt = dedent`
-    Here is a design I am trying to make my code match. Currently, its not quite right.
+    Here is a design I am trying to make my code match (attached image). Currently, its not quite right.
 
     Ignore placeholder images (gray boxes), those are intentional when present and will be fixed later.
 
-    Heres some important instructions to follow of some of the specific areas that are wrong and need fixing:
+    Heres some exampels of things that are wrong between the code and image that need fixing.
+    Fix any other discrepancies you see too. I want the code to match the design as closely as possible.
     <prompt>
     ${
       visualTestResult ||
@@ -63,15 +71,14 @@ export async function visualGenerate(options: RunOptions) {
     ${priorCode || 'None'}
     </code>
 
+    If the updates to the code are substrantial, its ok to completely rewrite the code from scratch.
+
     Here are additional instructions from the user:
     <prompt>
     ${prompt || 'None provided'}
     </prmopt>
 
     The file path for the above is ${options.outputFile}.
-
-    Please EITHER give me new code that better matches the design, or if the code is 99% accurate to the design,
-    just output "looks good" and nothing else.
 
     ${
       !asDiff

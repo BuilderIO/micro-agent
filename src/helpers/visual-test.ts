@@ -7,6 +7,7 @@ import { getScreenshot } from './get-screenshot';
 import { formatMessage } from './test';
 import dedent from 'dedent';
 import sharp from 'sharp';
+import { mkdir, stat, writeFile } from 'fs/promises';
 
 // use sharp to combine two images, putting them side by side
 const combineTwoImages = async (image1: string, image2: string) => {
@@ -31,21 +32,33 @@ const combineTwoImages = async (image1: string, image2: string) => {
     },
   });
 
-  return combinedImage
-    .composite([
-      {
-        input: image1Buffer,
-        top: 0,
-        left: 0,
-      },
-      {
-        input: image2Buffer,
-        top: 0,
-        left: image1Metadata.width,
-      },
-    ])
-    .png()
-    .toBuffer();
+  return (
+    combinedImage
+      .composite([
+        {
+          input: image1Buffer,
+          top: 0,
+          left: 0,
+        },
+        {
+          input: image2Buffer,
+          top: 0,
+          left: image1Metadata.width,
+        },
+      ])
+      // .composite([
+      //   {
+      //     input: await readFile('src/images/original-label.png'),
+      //     gravity: 'northwest',
+      //   },
+      //   {
+      //     input: await readFile('src/images/my-version-label.png'),
+      //     gravity: 'northeast',
+      //   },
+      // ])
+      .png()
+      .toBuffer()
+  );
 };
 
 export async function visualTest(options: RunOptions) {
@@ -59,7 +72,18 @@ export async function visualTest(options: RunOptions) {
   const screenshotUrl = bufferToBase64Url(await getScreenshot(options));
 
   const composite = bufferToBase64Url(
-    await combineTwoImages(screenshotUrl, designUrl)
+    await combineTwoImages(designUrl, screenshotUrl)
+  );
+
+  const debugImageOutputFolder = 'debug/images';
+  try {
+    await stat(debugImageOutputFolder);
+  } catch (error) {
+    await mkdir(debugImageOutputFolder, { recursive: true });
+  }
+  await writeFile(
+    `${debugImageOutputFolder}/composite-image-url.txt`,
+    composite
   );
 
   const output = await new Promise<string>((resolve, reject) => {
@@ -88,6 +112,9 @@ export async function visualTest(options: RunOptions) {
                   here is a screenshot of some original code (left side of image) and my code trying to replicate it (right side of image)
                   what did I get wrong? be incredibly specific, like which objects are missing or placed in the wrong places and where exactly they should be placed instead
                   make it so that i could simply read what you say and update the code without any other visual and get it right. don't give me code, just words
+
+                  focus primarily on major layout differences. for instance, are all buttons, columns, etc in the right place? if not, be very precise about what should move exactly
+                  where. then, if the layout is perfect, focus on styling
                 `,
               },
             ],

@@ -40,7 +40,7 @@ micro-agent config set OPENAI_KEY=<your token>
 To run the Micro Agent on a file in unit test matching mode, you need to provide a test script that will run after each code generation attempt. For instance:
 
 ```bash
-micro-agent run ./file-to-edit.ts -t "npm test"
+micro-agent ./file-to-edit.ts -t "npm test"
 ```
 
 This will run the Micro Agent on the file `./file-to-edit.ts` running `npm test` and will write code until the tests pass.s
@@ -59,7 +59,7 @@ By default, Micro Agent assumes you have a test file with the same name as the e
 If this is not the case, you can specify the test file with the `-f` flag. You can also add a prompt to help guide the code generation, either at a file located at `<filename>.prompt.md` like `./file-to-edit.prompt.md` or by specifying the prompt file with the `-p`. For instance:
 
 ```bash
-micro-agent run ./file-to-edit.ts -t "npm test" -f ./file-to-edit.spec.ts -p ./path-to-prompt.prompt.md
+micro-agent ./file-to-edit.ts -t "npm test" -f ./file-to-edit.spec.ts -p ./path-to-prompt.prompt.md
 ```
 
 ### Visual matching
@@ -69,7 +69,7 @@ micro-agent run ./file-to-edit.ts -t "npm test" -f ./file-to-edit.spec.ts -p ./p
 Micro Agent can also help you match a design. To do this, you need to provide a design and a local URL to your rendered code. For instance:
 
 ```bash
-micro-agent run ./app/about/page.tsx --visual localhost:3000/about
+micro-agent ./app/about/page.tsx --visual localhost:3000/about
 ```
 
 Micro agent will then generate code until the rendered output of your code matches more closely matches a screenshot file that you place next to the code you are editing (in this case, it would be `./app/about/page.png`).
@@ -112,7 +112,7 @@ Then, Micro Agent can take the output of Visual Copilot and make final adjustmen
 
 ### Max runs
 
-By default, Micro Agent will do 10 runs. If tests don't pass in 10 runs, it will stop. You can change this with the `-m` flag, like `micro-agent run ./file-to-edit.ts -m 20`.
+By default, Micro Agent will do 10 runs. If tests don't pass in 10 runs, it will stop. You can change this with the `-m` flag, like `micro-agent ./file-to-edit.ts -m 20`.
 
 ### Config
 
@@ -152,7 +152,7 @@ To get an interactive UI like below:
 All config options can be overriden as environment variables, for instance:
 
 ```bash
-MODEL=gpt-3.5-turbo micro-agent run ./file-to-edit.ts -t "npm test"
+MODEL=gpt-3.5-turbo micro-agent ./file-to-edit.ts -t "npm test"
 ```
 
 ## Usage
