@@ -96,7 +96,7 @@ micro-agent config set ANTHROPIC_KEY <your token>
 
 Visual matcing uses a multi-agent approach where Anthropic Claude Opus will do the visual matching and feedback, and then OpenAI will generate the code to match the design and address the feedback.
 
-![Visual of the multi agent approach](https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fb4e50607dcf8438b8f02cfda3fbb09ec)
+![Visual of the multi agent approach](https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F427929ba84b34ac6a0f1fda104e60ecd)
 
 ### Integration with Figma
 

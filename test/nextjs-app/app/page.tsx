@@ -8,16 +8,14 @@ const navItems = [
       { name: "Developer Docs", href: "#" },
       { name: "Open Source Projects", href: "#" },
       { name: "Performance Insights", href: "#" },
-      { name: "Shopify Storefront", href: "#" },
-      { name: "Headless CMS", href: "#" },
     ],
   },
   {
     title: "INTEGRATIONS",
     links: [
       { name: "All Integrations", href: "#" },
-      { name: "React", href: "#" },
       { name: "Shopify", href: "#" },
+      { name: "React", href: "#" },
       { name: "Angular", href: "#" },
       { name: "Next.js", href: "#" },
       { name: "Gatsby", href: "#" },
@@ -28,9 +26,9 @@ const navItems = [
     links: [
       { name: "User Guides", href: "#" },
       { name: "Blog", href: "#" },
+      { name: "Community Forum", href: "#" },
       { name: "Templates", href: "#" },
       { name: "Partners", href: "#" },
-      { name: "Community Forum", href: "#" },
       { name: "Submit an Idea", href: "#" },
     ],
   },
@@ -39,8 +37,16 @@ const navItems = [
     links: [
       { name: "Features", href: "#" },
       { name: "Pricing", href: "#" },
+    ],
+  },
+  {
+    title: "USE CASES",
+    links: [
+      { name: "Landing Pages", href: "#" },
+      { name: "Shopify Storefront", href: "#" },
+      { name: "Headless CMS", href: "#" },
       { name: "Headless Storefront", href: "#" },
-      { name: "Customer Storefront", href: "#" },
+      { name: "Customer Showcase", href: "#" },
       { name: "Customer Success Stories", href: "#" },
     ],
   },
@@ -50,7 +56,7 @@ const navItems = [
       { name: "About", href: "#" },
       { name: "Careers", href: "#" },
     ],
-  }
+  },
 ];
 
 const Home: React.FC = () => {
@@ -84,22 +90,23 @@ const Home: React.FC = () => {
 
       <footer className="w-full max-w-screen-xl border-t pt-8">
         <div className="flex justify-between text-xs text-gray-500">
-          <p>&copy; 2022 Builder.io, Inc.</p>
           <div className="flex space-x-4">
             <a href="#" className="text-gray-700 hover:text-gray-900">Security</a>
             <a href="#" className="text-gray-700 hover:text-gray-900">Privacy Policy</a>
             <a href="#" className="text-gray-700 hover:text-gray-900">Terms of Service</a>
           </div>
+          <p>&copy; 2022 Builder.io, Inc.</p>
         </div>
         <div className="flex space-x-4 mt-4">
           <a href="#" className="text-gray-700 hover:text-gray-900">
-            <img src="https://placehold.co/16x16" alt="LinkedIn" />
+            <img src="https://placehold.co/16x16" alt="GitHub" />
           </a>
           <a href="#" className="text-gray-700 hover:text-gray-900">
             <img src="https://placehold.co/16x16" alt="Twitter" />
           </a>
-          <a href="#" className="text-gray-700 hover:text-gray-900">
-            <img src="https://placehold.co/16x16" alt="Facebook" />
+          <a href="#"
+            className="text-gray-700 hover:text-gray-900">
+            <img src="https://placehold.co/16x16" alt="LinkedIn" />
           </a>
         </div>
       </footer>
