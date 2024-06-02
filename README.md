@@ -62,9 +62,12 @@ If this is not the case, you can specify the test file with the `-f` flag. You c
 micro-agent ./file-to-edit.ts -t "npm test" -f ./file-to-edit.spec.ts -p ./path-to-prompt.prompt.md
 ```
 
-### Visual matching
+### Visual matching (experimental)
 
 ![Visual Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fe90f6d4158b44a8fb9adeee3be3dbe82)
+
+> [!WARNING]
+> This feature is experimental and under active development. Use with caution.
 
 Micro Agent can also help you match a design. To do this, you need to provide a design and a local URL to your rendered code. For instance:
 
