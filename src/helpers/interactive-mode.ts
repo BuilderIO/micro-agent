@@ -10,6 +10,7 @@ import { removeBackticks } from './remove-backticks';
 import { formatMessage } from './test';
 
 export async function interactiveMode(options: Partial<RunOptions>) {
+  console.log('');
   intro('🦾 Micro Agent');
 
   const { OPENAI_KEY } = await getConfig();
