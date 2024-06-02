@@ -28,23 +28,23 @@ The idea of a micro agent is to
 1. Create a definitive test case that can give clear feedback if the solution works as intended or not, and
 2. Not try to boil the ocean. We are far away from general purpose coding agents. But agents that can iterate on code with clear feedback (e.g. via a unit test or a visual test) are actual quite powerful and useful, today.
 
-## Getting started
-
-## Interactive Mode
-
-Micro Agent can be run in interactive mode, where it will ask you questions about the code it generates and use your feedback to improve the code it generates.
-
-```bash
-micro-agent
-```
-
-### Installation
+## Installation
 
 ```bash
 npm install -g @builder.io/micro-agent
 ```
 
-## Running
+## Interactive Mode
+
+![Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fd961e5d1e0274e1b979d4f2b13d7fe5e)
+
+The best way to get started is to run Micro Agent in interactive mode, where it will ask you questions about the code it generates and use your feedback to improve the code it generates.
+
+```bash
+micro-agent
+```
+
+## Running Manually
 
 ### Add an OpenAI API key
 
