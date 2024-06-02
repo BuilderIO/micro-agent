@@ -1,3 +1,4 @@
+<br>
 <div align="center">
    <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4d36bc052c4340f997dd61eb19c1c64b">
@@ -12,6 +13,7 @@
 <p align="center">
    <a href="https://www.npmjs.com/package/@builder.io/micro-agent"><img src="https://img.shields.io/npm/v/@builder.io/micro-agent" alt="Current version"></a>
 </p>
+<br>
 
 ![Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fd961e5d1e0274e1b979d4f2b13d7fe5e)
 

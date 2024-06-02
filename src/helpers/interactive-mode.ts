@@ -8,7 +8,7 @@ import { readFile, writeFile } from 'fs/promises';
 import dedent from 'dedent';
 import { removeBackticks } from './remove-backticks';
 import { formatMessage } from './test';
-import { gray } from 'kolorist';
+import { gray, green } from 'kolorist';
 
 const exitOnCancel = (value: string | symbol) => {
   if (typeof value === 'symbol') {
@@ -174,6 +174,9 @@ export async function interactiveMode(options: Partial<RunOptions>) {
   if (result.toLowerCase().trim() === 'good') {
     // TODO: generate dir if one doesn't exist yet
     await writeFile(testFilePath, testContents);
+    log.success(
+      `${green('Test file generated!')} ${gray(`(${testFilePath})`)}`
+    );
     const testCommand = exitOnCancel(
       await text({
         message: 'What command should I run to test the code?',
