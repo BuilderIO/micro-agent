@@ -49,7 +49,8 @@ export async function interactiveMode(options: Partial<RunOptions>) {
           ${prompt}
           </prompt>
 
-          Here is a preview of the files in the current directory for reference:
+          Here is a preview of the files in the current directory for reference. Please
+          use these as a reference as to what a good file name and path would be:
           <files>
           ${fileString}
           </files>
