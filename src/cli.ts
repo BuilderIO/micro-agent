@@ -8,6 +8,7 @@ import { handleCliError } from './helpers/error';
 import { RunOptions, runAll } from './helpers/run';
 import { interactiveMode } from './helpers/interactive-mode';
 import { fileExists } from './helpers/file-exists';
+import { outro } from '@clack/prompts';
 
 cli(
   {
@@ -94,3 +95,8 @@ cli(
     }
   }
 );
+
+process.on('SIGINT', () => {
+  outro(red('Stopping.'));
+  process.exit();
+});
