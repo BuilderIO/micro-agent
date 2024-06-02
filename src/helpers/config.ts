@@ -3,7 +3,6 @@ import path from 'path';
 import os from 'os';
 import ini from 'ini';
 import type { TiktokenModel } from '@dqbd/tiktoken';
-import { commandName } from './constants';
 import { KnownError, handleCliError } from './error';
 import * as p from '@clack/prompts';
 import { red } from 'kolorist';
@@ -14,21 +13,9 @@ export const hasOwn = (object: unknown, key: PropertyKey) =>
 
 const configParsers = {
   OPENAI_KEY(key?: string) {
-    if (!key) {
-      throw new KnownError(
-        `Please set your OpenAI API key via \`${commandName} config set OPENAI_KEY=<your token>\``
-      );
-    }
-
     return key;
   },
   ANTHROPIC_KEY(key?: string) {
-    if (!key) {
-      throw new KnownError(
-        `Please set your Anthropic API key via \`${commandName} config set ANTHROPIC_KEY=<your token>\``
-      );
-    }
-
     return key;
   },
   MODEL(model?: string) {
@@ -44,9 +31,6 @@ const configParsers = {
     }
 
     return model;
-  },
-  SILENT_MODE(mode?: string) {
-    return String(mode).toLowerCase() === 'true';
   },
   OPENAI_API_ENDPOINT(apiEndpoint?: string) {
     return apiEndpoint || 'https://api.openai.com/v1';
@@ -96,7 +80,7 @@ export const getConfig = async (
     parsedConfig[key] = parser(value);
   }
 
-  return { ...process.env, ...(parsedConfig as ValidConfig) };
+  return { ...(parsedConfig as ValidConfig), ...process.env };
 };
 
 export const setConfigs = async (keyValues: [key: string, value: string][]) => {
@@ -125,7 +109,7 @@ export const showConfigUI = async () => {
           value: 'OPENAI_KEY',
           hint: hasOwn(config, 'OPENAI_KEY')
             ? // Obfuscate the key
-              'sk-...' + config.OPENAI_KEY.slice(-3)
+              'sk-...' + (config.OPENAI_KEY?.slice(-3) || '')
             : '(not set)',
         },
         {
@@ -167,12 +151,6 @@ export const showConfigUI = async () => {
       });
       if (p.isCancel(apiEndpoint)) return;
       await setConfigs([['OPENAI_API_ENDPOINT', apiEndpoint]]);
-    } else if (choice === 'SILENT_MODE') {
-      const silentMode = await p.confirm({
-        message: 'Enable silent mode?',
-      });
-      if (p.isCancel(silentMode)) return;
-      await setConfigs([['SILENT_MODE', silentMode ? 'true' : 'false']]);
     } else if (choice === 'MODEL') {
       const model = await p.text({
         message: 'Enter the model you want to use',

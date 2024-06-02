@@ -8,6 +8,7 @@ import { readFile, writeFile } from 'fs/promises';
 import dedent from 'dedent';
 import { removeBackticks } from './remove-backticks';
 import { formatMessage } from './test';
+import { gray } from 'kolorist';
 
 const exitOnCancel = (value: string | symbol) => {
   if (typeof value === 'symbol') {
@@ -17,18 +18,30 @@ const exitOnCancel = (value: string | symbol) => {
   return value;
 };
 
+const attempt = <T>(fn: () => T) => {
+  try {
+    return fn();
+  } catch (error) {
+    return error as Error;
+  }
+};
+
 export async function interactiveMode(options: Partial<RunOptions>) {
   console.log('');
   intro('🦾 Micro Agent');
 
-  const { OPENAI_KEY } = await getConfig();
+  const config = await getConfig();
 
-  if (!OPENAI_KEY) {
-    const openaiKey = await text({
-      message: 'Welcome newcomer! What is your OpenAI key? (this is private)',
-    });
+  if (!config.OPENAI_KEY) {
+    const openaiKey = exitOnCancel(
+      await text({
+        message: `Welcome newcomer! What is your OpenAI key? ${gray(
+          '(this is kept private)'
+        )}`,
+      })
+    );
 
-    await setConfigs([[OPENAI_KEY, openaiKey as string]]);
+    await setConfigs([['OPENAI_KEY', openaiKey as string]]);
   }
 
   const prompt = exitOnCancel(
