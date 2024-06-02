@@ -32,6 +32,10 @@ The idea of a micro agent is to
 1. Create a definitive test case that can give clear feedback if the solution works as intended or not, and
 2. Not try to boil the ocean. We are far away from general purpose coding agents. But agents that can iterate on code with clear feedback (e.g. via a unit test or a visual test) are actual quite powerful and useful, today.
 
+This is not something that is trying to be an end to end developer. It won't install modules, read and write multiple files, or do anything else that is highly likely to cause havoc when it inevitably fails.
+
+It's a micro agent. It's small, focused, and does one thing as well as possible: write a test, then produce code that passes that test.
+
 ## Installation
 
 ```bash
