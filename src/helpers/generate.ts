@@ -50,6 +50,9 @@ export async function generate(options: RunOptions) {
     }
 
     Please give me the code that satisfies the prompt and test.
+
+    Be sure to use good coding conventions. For instance, if you are generating a typescript
+    file, use types (e.g. for function parameters, etc).
   `;
 
   if (process.env.MA_DEBUG) {
