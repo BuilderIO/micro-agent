@@ -15,7 +15,7 @@
 </p>
 <br>
 
-![Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fd961e5d1e0274e1b979d4f2b13d7fe5e)
+![Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2F10462811d8944ec68e09d6bb58e8d302)
 
 Point Micro Agent at a file and a test (or screenshot), and it will write code for you until your tests pass or it more closely matches your design screenshot.
 
