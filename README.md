@@ -15,7 +15,28 @@
 
 Point Micro Agent at a file and a test (or screenshot), and it will write code for you until your tests pass or it more closely matches your design screenshot.
 
+## Why?
+
+LLMs can output code, but the code rarely works as expected on the first try. It can take repeat iteration to be sure what was generated is what was needed. So why do this manually when AI can handle not just the generation, but the iteration as well?
+
+### Why a "micro" agent?
+
+AI Agents are cool, but they rarely work as hoped or promised. They have the tendency to go haywire with compounding errors. Think of your roomba getting stuck under a table, x1000.
+
+The idea of a micro agent is to
+
+1. Create a definitive test case that can give clear feedback if the solution works as intended or not, and
+2. Not try to boil the ocean. We are far away from general purpose coding agents. But agents that can iterate on code with clear feedback (e.g. via a unit test or a visual test) are actual quite powerful and useful, today.
+
 ## Getting started
+
+## Interactive Mode
+
+Micro Agent can be run in interactive mode, where it will ask you questions about the code it generates and use your feedback to improve the code it generates.
+
+```bash
+micro-agent
+```
 
 ### Installation
 
