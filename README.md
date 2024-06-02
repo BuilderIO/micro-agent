@@ -13,6 +13,8 @@
    <a href="https://www.npmjs.com/package/@builder.io/micro-agent"><img src="https://img.shields.io/npm/v/@builder.io/micro-agent" alt="Current version"></a>
 </p>
 
+![Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fd961e5d1e0274e1b979d4f2b13d7fe5e)
+
 Point Micro Agent at a file and a test (or screenshot), and it will write code for you until your tests pass or it more closely matches your design screenshot.
 
 ## Why?
@@ -35,8 +37,6 @@ npm install -g @builder.io/micro-agent
 ```
 
 ## Interactive Mode
-
-![Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fd961e5d1e0274e1b979d4f2b13d7fe5e)
 
 The best way to get started is to run Micro Agent in interactive mode, where it will ask you questions about the code it generates and use your feedback to improve the code it generates.
 
