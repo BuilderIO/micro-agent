@@ -24,6 +24,7 @@ export async function interactiveMode(options: Partial<RunOptions>) {
 
   const prompt = (await text({
     message: 'What would you like to do?',
+    placeholder: 'A function that ...',
   })) as string;
 
   let filePath = options.outputFile;
@@ -66,8 +67,7 @@ export async function interactiveMode(options: Partial<RunOptions>) {
     })) as string;
   }
 
-  const testLoading = spinner();
-  testLoading.start('Generating test...');
+  log.info('Generating test...');
 
   process.stdout.write(formatMessage('\n'));
 
@@ -85,6 +85,8 @@ export async function interactiveMode(options: Partial<RunOptions>) {
   const packageJsonContents = await readFile('package.json', 'utf8').catch(
     () => ''
   );
+
+  const testFilePath = filePath.replace(/.(\w+)$/, '.test.$1');
 
   const testContents = removeBackticks(
     (await getSimpleCompletion({
@@ -104,6 +106,9 @@ export async function interactiveMode(options: Partial<RunOptions>) {
           <prompt>
           ${prompt}
           </prompt>
+
+          The test will be located at \`${testFilePath}\` and the code to test will be located at 
+          \`${filePath}\`.
 
           ${
             twoTests.length > 0
@@ -126,7 +131,6 @@ export async function interactiveMode(options: Partial<RunOptions>) {
     }))!
   );
 
-  testLoading.stop();
   const result = await text({
     message:
       'How does the generated test look? Reply "good", or provide feedback',
@@ -134,12 +138,15 @@ export async function interactiveMode(options: Partial<RunOptions>) {
     placeholder: 'good',
   });
 
-  const testFilePath = filePath.replace(/.(\w+)$/, '.test.$1');
+  const defaultTestCommand = `npm test -- ${
+    testFilePath.split('/').pop()!.split('.')[0]
+  }`;
+
   if (result === 'good') {
     const testCommand = await text({
       message: 'What command should I run to test the code?',
-      defaultValue: 'npm test',
-      placeholder: 'npm test',
+      defaultValue: defaultTestCommand,
+      placeholder: defaultTestCommand,
     });
     log.success(`${testFilePath} generated!`);
     await runAll({
