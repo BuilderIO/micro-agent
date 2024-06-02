@@ -156,7 +156,7 @@ export async function interactiveMode(options: Partial<RunOptions>) {
     await runAll({
       skipIntro: true,
       threadId: options.threadId || '',
-      maxRuns: options.maxRuns || 10,
+      maxRuns: options.maxRuns || 20,
       visual: options.visual || '',
       ...options,
       testCommand: testCommand as string,

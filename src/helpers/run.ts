@@ -5,6 +5,7 @@ import { writeFile } from 'fs/promises';
 import { green, yellow } from 'kolorist';
 import { commandName } from './constants';
 import { visualGenerate } from './visual-generate';
+import { fileExists } from './file-exists';
 
 type Options = {
   outputFile: string;
@@ -86,7 +87,7 @@ function createCommandString(options: RunOptions) {
 
 export async function* run(options: RunOptions) {
   let passed = false;
-  const maxRuns = options.maxRuns ?? 10;
+  const maxRuns = options.maxRuns ?? 20;
   for (let i = 0; i < maxRuns; i++) {
     const result = await runOne(options);
     yield result;
@@ -100,6 +101,9 @@ export async function* run(options: RunOptions) {
   }
   if (!passed) {
     log.message(yellow(`Max runs of ${maxRuns} reached.`));
+    if (options.prompt && !(await fileExists(options.promptFile))) {
+      await writeFile(options.promptFile, options.prompt);
+    }
     note(
       `${createCommandString(options)}`,
       'You can resume with this command with:'
