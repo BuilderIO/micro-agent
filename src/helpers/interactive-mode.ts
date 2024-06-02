@@ -174,9 +174,7 @@ export async function interactiveMode(options: Partial<RunOptions>) {
   if (result.toLowerCase().trim() === 'good') {
     // TODO: generate dir if one doesn't exist yet
     await writeFile(testFilePath, testContents);
-    log.success(
-      `${green('Test file generated!')} ${gray(`(${testFilePath})`)}`
-    );
+    log.success(`${green('Test file generated!')} ${gray(`${testFilePath}`)}`);
     const testCommand = exitOnCancel(
       await text({
         message: 'What command should I run to test the code?',

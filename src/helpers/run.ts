@@ -109,6 +109,7 @@ export async function* run(options: RunOptions) {
       'You can resume with this command with:'
     );
     outro(yellow('Stopping.'));
+    console.log('\n');
   }
 }
 

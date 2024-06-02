@@ -97,6 +97,8 @@ cli(
 );
 
 process.on('SIGINT', () => {
+  console.log('\n');
   outro(red('Stopping.'));
+  console.log('\n');
   process.exit();
 });

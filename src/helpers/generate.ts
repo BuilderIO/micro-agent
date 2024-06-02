@@ -12,6 +12,8 @@ export async function generate(options: RunOptions) {
   const priorCode = await readFile(options.outputFile, 'utf-8').catch(() => '');
   const testCode = await readFile(options.testFile, 'utf-8');
 
+  const packageJson = await readFile('package.json', 'utf-8').catch(() => '');
+
   const userPrompt = dedent`
     Here is what I need:
 
@@ -37,6 +39,15 @@ export async function generate(options: RunOptions) {
     <error>
     ${options.lastRunError || 'None'}
     </error>
+
+    ${
+      packageJson &&
+      dedent`
+    Don't use any node modules that aren't included here unless specifically told otherwise:
+    <package-json>
+    ${packageJson}
+    </package-json>`
+    }
 
     Please give me the code that satisfies the prompt and test.
   `;
