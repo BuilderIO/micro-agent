@@ -184,7 +184,9 @@ export async function interactiveMode(options: Partial<RunOptions>) {
         placeholder: defaultTestCommand,
       })
     );
-    log.success(`${testFilePath} generated!`);
+
+    log.info(`Agent running...`);
+
     await runAll({
       skipIntro: true,
       threadId: options.threadId || '',
