@@ -1,4 +1,4 @@
-import { intro, log, spinner, text } from '@clack/prompts';
+import { intro, log, outro, spinner, text } from '@clack/prompts';
 
 import { glob } from 'glob';
 import { RunOptions, runAll } from './run';
@@ -8,6 +8,14 @@ import { readFile, writeFile } from 'fs/promises';
 import dedent from 'dedent';
 import { removeBackticks } from './remove-backticks';
 import { formatMessage } from './test';
+
+const exitOnCancel = (value: string | symbol) => {
+  if (typeof value === 'symbol') {
+    outro('Goodbye!');
+    process.exit(0);
+  }
+  return value;
+};
 
 export async function interactiveMode(options: Partial<RunOptions>) {
   console.log('');
@@ -23,10 +31,12 @@ export async function interactiveMode(options: Partial<RunOptions>) {
     await setConfigs([[OPENAI_KEY, openaiKey as string]]);
   }
 
-  const prompt = (await text({
-    message: 'What would you like to do?',
-    placeholder: 'A function that ...',
-  })) as string;
+  const prompt = exitOnCancel(
+    await text({
+      message: 'What would you like to do?',
+      placeholder: 'A function that ...',
+    })
+  );
 
   let filePath = options.outputFile;
   if (!filePath) {
@@ -62,11 +72,13 @@ export async function interactiveMode(options: Partial<RunOptions>) {
     });
     loading.stop();
 
-    filePath = (await text({
-      message: 'What file would you like to create or edit?',
-      defaultValue: recommendedFilePath!,
-      placeholder: recommendedFilePath!,
-    })) as string;
+    filePath = exitOnCancel(
+      await text({
+        message: 'What file would you like to create or edit?',
+        defaultValue: recommendedFilePath!,
+        placeholder: recommendedFilePath!,
+      })
+    );
   }
 
   log.info('Generating test...');
@@ -133,12 +145,14 @@ export async function interactiveMode(options: Partial<RunOptions>) {
     }))!
   );
 
-  const result = (await text({
-    message:
-      'How does the generated test look? Reply "good", or provide feedback',
-    defaultValue: 'good',
-    placeholder: 'good',
-  })) as string;
+  const result = exitOnCancel(
+    await text({
+      message:
+        'How does the generated test look? Reply "good", or provide feedback',
+      defaultValue: 'good',
+      placeholder: 'good',
+    })
+  );
 
   const defaultTestCommand = `npm test -- ${
     testFilePath.split('/').pop()!.split('.')[0]
@@ -147,11 +161,13 @@ export async function interactiveMode(options: Partial<RunOptions>) {
   if (result.toLowerCase().trim() === 'good') {
     // TODO: generate dir if one doesn't exist yet
     await writeFile(testFilePath, testContents);
-    const testCommand = await text({
-      message: 'What command should I run to test the code?',
-      defaultValue: defaultTestCommand,
-      placeholder: defaultTestCommand,
-    });
+    const testCommand = exitOnCancel(
+      await text({
+        message: 'What command should I run to test the code?',
+        defaultValue: defaultTestCommand,
+        placeholder: defaultTestCommand,
+      })
+    );
     log.success(`${testFilePath} generated!`);
     await runAll({
       skipIntro: true,
@@ -159,7 +175,7 @@ export async function interactiveMode(options: Partial<RunOptions>) {
       maxRuns: options.maxRuns || 20,
       visual: options.visual || '',
       ...options,
-      testCommand: testCommand as string,
+      testCommand: testCommand,
       outputFile: filePath,
       testFile: testFilePath,
       promptFile: filePath.replace(/.(\w+)$/, '.prompt.md'),
