@@ -5,7 +5,6 @@ import { writeFile } from 'fs/promises';
 import { green, yellow } from 'kolorist';
 import { commandName } from './constants';
 import { visualGenerate } from './visual-generate';
-import { removeBackticks } from './remove-backticks';
 
 type Options = {
   outputFile: string;
@@ -16,6 +15,7 @@ type Options = {
   priorCode?: string;
   threadId: string;
   visual: string;
+  prompt?: string;
 };
 
 export async function runOne(options: Options) {
@@ -108,8 +108,14 @@ export async function* run(options: RunOptions) {
   }
 }
 
-export async function runAll(options: RunOptions) {
-  intro('Running Micro Agent 🤖');
+export async function runAll(
+  options: RunOptions & {
+    skipIntro?: boolean;
+  }
+) {
+  if (!options.skipIntro) {
+    intro('🦾 Micro Agent');
+  }
   const results = [];
   let testResult;
   if (!options.visual) {

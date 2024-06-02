@@ -30,6 +30,33 @@ export const getOpenAi = async function () {
   return openai;
 };
 
+export const getSimpleCompletion = async function (options: {
+  messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[];
+  onChunk?: (chunk: string) => void;
+}) {
+  const { MODEL: model } = await getConfig();
+  const openai = await getOpenAi();
+  const completion = await openai.chat.completions.create({
+    model: model || defaultModel,
+    messages: options.messages,
+    stream: true,
+  });
+
+  let output = '';
+
+  for await (const chunk of completion) {
+    const str = chunk.choices[0]?.delta.content;
+    if (str) {
+      output += str;
+      if (options.onChunk) {
+        options.onChunk(str);
+      }
+    }
+  }
+
+  return output;
+};
+
 export const getCompletion = async function (options: {
   messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[];
   options: RunOptions;

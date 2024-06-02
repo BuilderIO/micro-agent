@@ -31,7 +31,9 @@ export async function visualGenerate(options: RunOptions) {
     );
   }
 
-  const prompt = await readFile(options.promptFile, 'utf-8').catch(() => '');
+  const prompt =
+    options.prompt ||
+    (await readFile(options.promptFile, 'utf-8').catch(() => ''));
   const priorCode = await readFile(options.outputFile, 'utf-8').catch(() => '');
 
   let visualTestResult = USE_VISUAL_TEST && (await visualTest(options));

@@ -5,13 +5,15 @@ import config from './commands/config';
 import update from './commands/update';
 import { commandName } from './helpers/constants';
 import { handleCliError } from './helpers/error';
-import { runAll } from './helpers/run';
+import { RunOptions, runAll } from './helpers/run';
+import { interactiveMode } from './helpers/interactive-mode';
+import { fileExists } from './helpers/file-exists';
 
 cli(
   {
     name: commandName,
     version: version,
-    parameters: ['<file path>'],
+    parameters: ['[file path]'],
     flags: {
       prompt: {
         type: String,
@@ -47,34 +49,44 @@ cli(
     commands: [config, update],
   },
   async (argv) => {
+    const filePath = argv._.filePath;
+    const fileExtension = filePath?.split('.').pop();
+    const testFileExtension = ['jsx', 'tsx'].includes(fileExtension as any)
+      ? fileExtension?.replace('x', '')
+      : fileExtension;
+
+    let testFilePath =
+      argv.flags.testFile ||
+      filePath?.replace(
+        // TODO: check .spec.ts too
+        new RegExp('\\.' + fileExtension + '$'),
+        `.test.${testFileExtension}`
+      );
+    const promptFilePath =
+      argv.flags.prompt ||
+      filePath?.replace(new RegExp('\\.' + fileExtension + '$'), '.prompt.md');
+
+    if (!testFilePath || !(await fileExists(testFilePath))) {
+      testFilePath = '';
+    }
+
+    const runOptions: RunOptions = {
+      outputFile: filePath!,
+      promptFile: promptFilePath || '',
+      testCommand: argv.flags.test || '',
+      testFile: testFilePath,
+      lastRunError: '',
+      maxRuns: argv.flags.maxRuns,
+      threadId: argv.flags.thread || '',
+      visual: argv.flags.visual || '',
+    };
     try {
-      const filePath = argv._.filePath;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const fileExtension = filePath.split('.').pop()!;
-      const testFileExtension = ['jsx', 'tsx'].includes(fileExtension as any)
-        ? fileExtension.replace('x', '')
-        : fileExtension;
+      if (!argv._.filePath || !argv.flags.test) {
+        await interactiveMode(runOptions);
+        return;
+      }
 
-      const testFilePath =
-        argv.flags.testFile ||
-        filePath.replace(
-          new RegExp('\\.' + fileExtension + '$'),
-          `.test.${testFileExtension}`
-        );
-      const promptFilePath =
-        argv.flags.prompt ||
-        filePath.replace(new RegExp('\\.' + fileExtension + '$'), '.prompt.md');
-
-      await runAll({
-        outputFile: filePath,
-        promptFile: promptFilePath,
-        testCommand: argv.flags.test || 'npm test',
-        testFile: testFilePath,
-        lastRunError: '',
-        maxRuns: argv.flags.maxRuns,
-        threadId: argv.flags.thread || '',
-        visual: argv.flags.visual || '',
-      });
+      await runAll(runOptions);
     } catch (error: any) {
       console.error(`\n${red('✖')} ${error.message || error}`);
       handleCliError(error);
