@@ -66,7 +66,7 @@ type ValidConfig = {
   [Key in ConfigKeys]: ReturnType<(typeof configParsers)[Key]>;
 };
 
-const configPath = path.join(os.homedir(), '.ai-shell');
+const configPath = path.join(os.homedir(), '.micro-agent');
 
 const fileExists = (filePath: string) =>
   fs.lstat(filePath).then(
