@@ -4,7 +4,7 @@ import { glob } from 'glob';
 import { RunOptions, runAll } from './run';
 import { getSimpleCompletion } from './openai';
 import { getConfig, setConfigs } from './config';
-import { readFile } from 'fs/promises';
+import { readFile, writeFile } from 'fs/promises';
 import dedent from 'dedent';
 import { removeBackticks } from './remove-backticks';
 import { formatMessage } from './test';
@@ -131,18 +131,20 @@ export async function interactiveMode(options: Partial<RunOptions>) {
     }))!
   );
 
-  const result = await text({
+  const result = (await text({
     message:
       'How does the generated test look? Reply "good", or provide feedback',
     defaultValue: 'good',
     placeholder: 'good',
-  });
+  })) as string;
 
   const defaultTestCommand = `npm test -- ${
     testFilePath.split('/').pop()!.split('.')[0]
   }`;
 
-  if (result === 'good') {
+  if (result.toLowerCase().trim() === 'good') {
+    // TODO: generate dir if one doesn't exist yet
+    await writeFile(testFilePath, testContents);
     const testCommand = await text({
       message: 'What command should I run to test the code?',
       defaultValue: defaultTestCommand,
