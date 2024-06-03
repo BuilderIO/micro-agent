@@ -42,7 +42,6 @@ It's a micro agent. It's small, focused, and does one thing as well as possible:
 
 ## Installation
 
-> [!NOTE]
 > Micro Agent requires [Node.js](https://nodejs.org/) v14 or later.
 
 ```bash
