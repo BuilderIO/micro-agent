@@ -1,4 +1,4 @@
-import { intro, log, outro, spinner, text } from '@clack/prompts';
+import { intro, log, spinner, text } from '@clack/prompts';
 
 import { glob } from 'glob';
 import { RunOptions, runAll } from './run';
@@ -9,22 +9,8 @@ import dedent from 'dedent';
 import { removeBackticks } from './remove-backticks';
 import { formatMessage } from './test';
 import { gray, green } from 'kolorist';
-
-const exitOnCancel = (value: string | symbol) => {
-  if (typeof value === 'symbol') {
-    outro('Goodbye!');
-    process.exit(0);
-  }
-  return value;
-};
-
-const attempt = <T>(fn: () => T) => {
-  try {
-    return fn();
-  } catch (error) {
-    return error as Error;
-  }
-};
+import { exitOnCancel } from './exit-on-cancel';
+import { iterateOnTest } from './iterate-on-test';
 
 export async function interactiveMode(options: Partial<RunOptions>) {
   console.log('');
@@ -115,7 +101,7 @@ export async function interactiveMode(options: Partial<RunOptions>) {
 
   const testFilePath = filePath.replace(/.(\w+)$/, '.test.$1');
 
-  const testContents = removeBackticks(
+  let testContents = removeBackticks(
     (await getSimpleCompletion({
       onChunk: (chunk) => {
         process.stderr.write(formatMessage(chunk));
@@ -171,34 +157,36 @@ export async function interactiveMode(options: Partial<RunOptions>) {
     testFilePath.split('/').pop()!.split('.')[0]
   }`;
 
-  if (result.toLowerCase().trim() === 'good') {
-    // TODO: generate dir if one doesn't exist yet
-    await writeFile(testFilePath, testContents);
-    log.success(`${green('Test file generated!')} ${gray(`${testFilePath}`)}`);
-    const testCommand = exitOnCancel(
-      await text({
-        message: 'What command should I run to test the code?',
-        defaultValue: defaultTestCommand,
-        placeholder: defaultTestCommand,
-      })
-    );
-
-    log.info(`Agent running...`);
-
-    await runAll({
-      skipIntro: true,
-      threadId: options.threadId || '',
-      maxRuns: options.maxRuns || 20,
-      visual: options.visual || '',
-      ...options,
-      testCommand: testCommand,
-      outputFile: filePath,
-      testFile: testFilePath,
-      promptFile: filePath.replace(/.(\w+)$/, '.prompt.md'),
-      prompt,
-      lastRunError: '',
-    });
-  } else {
-    // TODO: recursive feedback loop
+  if (result.toLowerCase().trim() !== 'good') {
+    options.testFile = testFilePath;
+    options.outputFile = filePath;
+    testContents = await iterateOnTest(testContents, options);
   }
+
+  // TODO: generate dir if one doesn't exist yet
+  await writeFile(testFilePath, testContents);
+  log.success(`${green('Test file generated!')} ${gray(`${testFilePath}`)}`);
+  const testCommand = exitOnCancel(
+    await text({
+      message: 'What command should I run to test the code?',
+      defaultValue: defaultTestCommand,
+      placeholder: defaultTestCommand,
+    })
+  );
+
+  log.info(`Agent running...`);
+
+  await runAll({
+    skipIntro: true,
+    threadId: options.threadId || '',
+    maxRuns: options.maxRuns || 20,
+    visual: options.visual || '',
+    ...options,
+    testCommand: testCommand,
+    outputFile: filePath,
+    testFile: testFilePath,
+    promptFile: filePath.replace(/.(\w+)$/, '.prompt.md'),
+    prompt,
+    lastRunError: '',
+  });
 }

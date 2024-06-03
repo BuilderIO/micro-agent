@@ -23,7 +23,7 @@ Point Micro Agent at a file and a test (or screenshot), and it will write code f
 
 ## Why?
 
-LLMs can output code, but the code often does not work as expected on the first try. It can take repeat iteration to be sure what was generated is what was needed. 
+LLMs are great out giving you broken code, and it can take repeat iteration on that code to get it working as expected.
 
 So why do this manually when AI can handle not just the generation, but the iteration and fixing as well?
 
@@ -53,6 +53,8 @@ The best way to get started is to run Micro Agent in interactive mode, where it 
 ```bash
 micro-agent
 ```
+
+Look at that, you're now a test-driven developer. You're welcome.
 
 ## Running Manually
 
