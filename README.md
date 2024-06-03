@@ -23,20 +23,20 @@ Point Micro Agent at a file and a test (or screenshot), and it will write code f
 
 ## Why?
 
-LLMs are great out giving you broken code, and it can take repeat iteration on that code to get it working as expected.
+LLMs are great at giving you broken code, and it can take repeat iteration to get that code to work as expected.
 
-So why do this manually when AI can handle not just the generation, but the iteration and fixing as well?
+So why do this manually when AI can handle not just the generation but also the iteration and fixing?
 
 ### Why a "micro" agent?
 
-AI agents are cool, but general purpose coding agents rarely work as hoped or promised. They have the tendency to go haywire with compounding errors. Think of your roomba getting stuck under a table, x1000.
+AI agents are cool, but general-purpose coding agents rarely work as hoped or promised. They tend to go haywire with compounding errors. Think of your Roomba getting stuck under a table, x1000.
 
 The idea of a micro agent is to
 
 1. Create a definitive test case that can give clear feedback if the code works as intended or not, and
 2. Iterate on code until all test cases pass
 
-This is not something that is trying to be an end to end developer. It won't install modules, read and write multiple files, or do anything else that is highly likely to cause havoc when it inevitably fails.
+This project is not trying to be an end-to-end developer. AI agents are not capable enough to reliably try to be that yet (or probably very soon). This project won't install modules, read and write multiple files, or do anything else that is highly likely to cause havoc when it inevitably fails.
 
 It's a micro agent. It's small, focused, and does one thing as well as possible: write a test, then produce code that passes that test.
 
