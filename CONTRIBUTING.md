@@ -1,5 +1,11 @@
 # Contribution Guide
 
+## Guildelines
+
+We would love your contributions to make this project better, and gladly accept PRs.
+
+Note: please try to keep changes incremental. Big refactors cause heartburn, please try to make frequent, small PRs instead of large ones.
+
 ## Setting up the project
 
 Use [nvm](https://nvm.sh) to use the appropriate Node.js version from `.nvmrc`:
@@ -24,28 +30,12 @@ npm build
 
 The package is bundled using [pkgroll](https://github.com/privatenumber/pkgroll) (Rollup). It infers the entry-points from `package.json` so there are no build configurations.
 
-### Development (watch) mode
+### Development
 
-During development, you can use the watch flag (`--watch, -w`) to automatically rebuild the package on file changes:
-
-```sh
-npm build -w
-```
-
-## Running the package locally
-
-Since pkgroll knows the entry-point is a binary (being in `package.json#bin`), it automatically adds the Node.js hashbang to the top of the file, and chmods it so it's executable.
-
-You can run the distribution file in any directory:
+To run the CLI locally without installing it globally, you can use the `start` script:
 
 ```sh
-./dist/cli.mjs
-```
-
-Or in non-UNIX environments, you can use Node.js to run the file:
-
-```sh
-node ./dist/cli.mjs
+npm start
 ```
 
 ## Check the lint in order to pass
@@ -71,3 +61,7 @@ prettier --write "src/**/*.js"
 ```
 
 If you use Vscode, It is recommended to use [prettier-vscode](https://github.com/prettier/prettier-vscode)
+
+## Send a pull request
+
+Once you have made your changes, push them to your fork and send a pull request to the main repository. We will try to review your changes in a timely manner.

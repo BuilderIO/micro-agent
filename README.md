@@ -193,6 +193,14 @@ All config options can be overriden as environment variables, for instance:
 MODEL=gpt-3.5-turbo micro-agent ./file-to-edit.ts -t "npm test"
 ```
 
+## Contributing
+
+We would love your contributions to make this project better, and gladly accept PRs. Please see [./CONTRIBUTING.md](CONTRIBUTING.md) for how to contribute.
+
+## Feedback
+
+If you have any feedback, please open an issue or @ me at [@steve8708](https://twitter.com/steve8708) on Twitter.
+
 ## Usage
 
 ```bash
