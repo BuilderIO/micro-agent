@@ -136,9 +136,9 @@ Visual matcing uses a multi-agent approach where Anthropic Claude Opus will do t
 
 ### Integration with Figma
 
-Micro Agent can also integrate with [Visual Copilot](https://www.builder.io/c/docs/visual-copilot) to connect directly with Figma to ensure the highest fidelity possible deisgn to code, including fully reusing the exact components and design tokens from your codebase.
+Micro Agent can also integrate with [Visual Copilot](https://www.builder.io/c/docs/visual-copilot) to connect directly with Figma to ensure the highest fidelity possible design to code, including fully reusing the exact components and design tokens from your codebase.
 
-Visual Copilot connects directly to Figma to assist with pixel perfect conversion, exact design component mapping, and precise reusage of your components in the generated output.
+Visual Copilot connects directly to Figma to assist with pixel perfect conversion, exact design token mapping, and precise reusage of your components in the generated output.
 
 Then, Micro Agent can take the output of Visual Copilot and make final adjustments to the code to ensure it passes TSC, lint, tests, and fully matches your design including final tweaks.
 
