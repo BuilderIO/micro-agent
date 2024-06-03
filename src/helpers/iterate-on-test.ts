@@ -6,16 +6,16 @@ import { getSimpleCompletion } from './openai';
 import { formatMessage } from './test';
 import dedent from 'dedent';
 
-export async function iterateOnTest(
-  testCode: string,
-  options: Partial<RunOptions>
-) {
-  const prompt = exitOnCancel(
-    await text({
-      message: 'How should I modify this test code?',
-    })
-  );
-
+export async function iterateOnTest({
+  testCode,
+  feedback,
+  options,
+}: {
+  testCode: string;
+  feedback: string;
+  options: Partial<RunOptions>;
+}) {
+  process.stderr.write(formatMessage('\n'));
   let testContents = removeBackticks(
     (await getSimpleCompletion({
       onChunk: (chunk) => {
@@ -32,7 +32,7 @@ export async function iterateOnTest(
           content: dedent`
           Here is a unit test file generated from the following prompt
           <prompt>
-          ${prompt}
+          ${options.prompt}
           </prompt>
 
           The test will be located at \`${options.testFile}\` and the code to test will be located at 
@@ -47,7 +47,7 @@ export async function iterateOnTest(
           if neededed) the test based on the feedback.
 
           <feedback>
-          ${prompt}
+          ${feedback}
           </feedback>
 
           Please give me new code addressing the feedback.s
@@ -57,6 +57,7 @@ export async function iterateOnTest(
       ],
     }))!
   );
+  console.log(formatMessage('\n'));
 
   const result = exitOnCancel(
     await text({
@@ -68,7 +69,11 @@ export async function iterateOnTest(
   );
 
   if (result.toLowerCase().trim() !== 'good') {
-    testContents = await iterateOnTest(testContents, options);
+    testContents = await iterateOnTest({
+      testCode: testContents,
+      feedback: result,
+      options,
+    });
   }
 
   return testContents;

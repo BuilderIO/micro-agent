@@ -44,16 +44,17 @@ export async function interactiveMode(options: Partial<RunOptions>) {
     const loading = spinner();
     loading.start();
 
-    const recommendedFilePath = await getSimpleCompletion({
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You return a file path only. No other words, just one file path',
-        },
-        {
-          role: 'user',
-          content: dedent`
+    const recommendedFilePath = removeBackticks(
+      await getSimpleCompletion({
+        messages: [
+          {
+            role: 'system',
+            content:
+              'You return a file path only. No other words, just one file path',
+          },
+          {
+            role: 'user',
+            content: dedent`
           Please give me a recommended file path for the following prompt:
           <prompt>
           ${prompt}
@@ -66,9 +67,10 @@ export async function interactiveMode(options: Partial<RunOptions>) {
           </files>
           
           `,
-        },
-      ],
-    });
+          },
+        ],
+      })
+    );
     loading.stop();
 
     filePath = exitOnCancel(
@@ -160,7 +162,12 @@ export async function interactiveMode(options: Partial<RunOptions>) {
   if (result.toLowerCase().trim() !== 'good') {
     options.testFile = testFilePath;
     options.outputFile = filePath;
-    testContents = await iterateOnTest(testContents, options);
+    options.prompt = prompt;
+    testContents = await iterateOnTest({
+      testCode: testContents,
+      feedback: result,
+      options,
+    });
   }
 
   // TODO: generate dir if one doesn't exist yet
