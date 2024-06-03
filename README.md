@@ -50,7 +50,7 @@ It's a micro agent. It's small, focused, and does one thing as well as possible:
 npm install -g @builder.io/micro-agent
 ```
 
-## Interactive Mode
+## Getting Started
 
 The best way to get started is to run Micro Agent in interactive mode, where it will ask you questions about the code it generates and use your feedback to improve the code it generates.
 
