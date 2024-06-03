@@ -146,7 +146,7 @@ Visual Copilot connects directly to Figma to assist with pixel perfect conversio
 
 Then, Micro Agent can take the output of Visual Copilot and make final adjustments to the code to ensure it passes TSC, lint, tests, and fully matches your design including final tweaks.
 
-![Visual Copilot demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2F965d6a606cc54bc1bf7f1fd7a424a3eb)
+![Visual Copilot demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2Ffa11b740d64341da8a1c2ab1aa9978be)
 
 ## Configuration
 
