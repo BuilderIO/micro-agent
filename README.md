@@ -197,6 +197,8 @@ MODEL=gpt-3.5-turbo micro-agent ./file-to-edit.ts -t "npm test"
 
 We would love your contributions to make this project better, and gladly accept PRs. Please see [./CONTRIBUTING.md](CONTRIBUTING.md) for how to contribute.
 
+If you are looking for a good first issue, check out the [good first issue](https://github.com/BuilderIO/micro-agent/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) label.
+
 ## Feedback
 
 If you have any feedback, please open an issue or @ me at [@steve8708](https://twitter.com/steve8708) on Twitter.
