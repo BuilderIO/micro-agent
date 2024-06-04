@@ -1,6 +1,6 @@
 # Contribution Guide
 
-## Guildelines
+## Guidelines
 
 We would love your contributions to make this project better, and gladly accept PRs.
 
@@ -25,7 +25,7 @@ npm i
 Run the `build` script:
 
 ```sh
-npm build
+npm run build
 ```
 
 The package is bundled using [pkgroll](https://github.com/privatenumber/pkgroll) (Rollup). It infers the entry-points from `package.json` so there are no build configurations.

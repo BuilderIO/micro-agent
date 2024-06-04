@@ -80,14 +80,14 @@ To run the Micro Agent on a file in unit test matching mode, you need to provide
 micro-agent ./file-to-edit.ts -t "npm test"
 ```
 
-This will run the Micro Agent on the file `./file-to-edit.ts` running `npm test` and will write code until the tests pass.s
+This will run the Micro Agent on the file `./file-to-edit.ts` running `npm test` and will write code until the tests pass.
 
 The above assumes the following file structure:
 
 ```bash
 some-folder
 ├──file-to-edit.ts
-├──file-to-edit.test.ts # test file. if you need a different path, use the -t argument
+├──file-to-edit.test.ts # test file. if you need a different path, use the -f argument
 └──file-to-edit.prompt.md # optional prompt file. if you need a different path, use the -p argument
 ```
 
@@ -134,7 +134,7 @@ OpenAI is simply just not good at visual matching. We recommend using [Anthropic
 micro-agent config set ANTHROPIC_KEY <your token>
 ```
 
-Visual matcing uses a multi-agent approach where Anthropic Claude Opus will do the visual matching and feedback, and then OpenAI will generate the code to match the design and address the feedback.
+Visual matching uses a multi-agent approach where Anthropic Claude Opus will do the visual matching and feedback, and then OpenAI will generate the code to match the design and address the feedback.
 
 ![Visual of the multi agent approach](https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F427929ba84b34ac6a0f1fda104e60ecd)
 
@@ -189,7 +189,7 @@ To get an interactive UI like below:
 
 #### Environment variables
 
-All config options can be overriden as environment variables, for instance:
+All config options can be overridden as environment variables, for instance:
 
 ```bash
 MODEL=gpt-3.5-turbo micro-agent ./file-to-edit.ts -t "npm test"
