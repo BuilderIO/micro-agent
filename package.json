@@ -42,7 +42,10 @@
     "lint": "prettier --check . && eslint",
     "typecheck": "tsc",
     "build": "pkgroll",
-    "release:patch": "npm run build && npm version patch && npm run build && npm publish && git push --follow-tags",
+    "release:patch": "npm run build && npm version patch && npm run build && npm publish && git push --follow-tags && standard-version --release-as patch",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
     "postinstall": "npx playwright install",
     "prepare": "husky install"
   },
@@ -58,6 +61,7 @@
     "jiti": "^1.21.3",
     "pkgroll": "^1.9.0",
     "prettier": "^2.8.8",
+    "standard-version": "^9.5.0",
     "typescript": "^4.9.5",
     "vitest": "^1.6.0"
   }
