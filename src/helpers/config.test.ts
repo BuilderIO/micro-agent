@@ -1,13 +1,16 @@
 import os from 'os';
 import path from 'path';
 import { expect, describe, it, vi } from 'vitest';
-import { getConfig, setConfigs } from './config';
+import { getConfig, setConfigs, showConfigUI, hasOwn } from './config';
 
 const mocks = vi.hoisted(() => {
   return {
     lstat: vi.fn(),
     readFile: vi.fn(),
     writeFile: vi.fn(),
+    select: vi.fn(),
+    isCancel: vi.fn(),
+    exit: vi.fn(),
   };
 });
 
@@ -20,6 +23,18 @@ vi.mock('fs/promises', () => {
     },
   };
 });
+
+vi.mock('@clack/prompts', () => {
+  return {
+    select: mocks.select,
+    isCancel: mocks.isCancel,
+  };
+});
+
+const realProcess = process;
+global.process = { ...realProcess, exit: mocks.exit };
+
+
 
 const configFilePath = path.join(os.homedir(), '.micro-agent');
 
@@ -166,4 +181,40 @@ describe('setConfigs', () => {
     );
   });
 
+});
+
+describe('showConfigUI', () => {
+  it('should show the config UI', async () => {
+    mocks.lstat.mockResolvedValueOnce(true);
+    mocks.readFile.mockResolvedValueOnce('');
+    mocks.select.mockResolvedValueOnce('cancel');
+
+    await showConfigUI();
+
+    expect(mocks.select).toHaveBeenCalledWith({
+      message: 'Set config' + ':',
+      options: [
+        {
+          label: 'OpenAI Key',
+          value: 'OPENAI_KEY',
+          hint: 'sk-...',
+        },
+        {
+          label: 'OpenAI API Endpoint',
+          value: 'OPENAI_API_ENDPOINT',
+          hint: 'https://api.openai.com/v1',
+        },
+        {
+          label: 'Model',
+          value: 'MODEL',
+          hint: 'gpt-4o',
+        },
+        {
+          label: 'Done',
+          value: 'cancel',
+          hint: 'Exit',
+        },
+      ],
+    });
+  });
 });
