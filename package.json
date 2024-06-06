@@ -1,7 +1,7 @@
 {
   "name": "@builder.io/micro-agent",
   "description": "An AI CLI that writes code for you.",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "type": "module",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.21.1",
