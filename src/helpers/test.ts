@@ -50,7 +50,7 @@ export async function test(options: RunOptions): Promise<Result> {
     const final = await result;
     process.stdout.write('\n');
 
-    if (final.stderr) {
+    if (final.code !== 0) {
       return fail(final.stderr);
     }
     return success();
