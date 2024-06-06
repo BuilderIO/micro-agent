@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import { getConfig } from './config';
 import { KnownError } from './error';
 import { commandName } from './constants';
-import { systemPrompt } from './generate';
+import { systemPrompt } from './systemPrompt';
 import { RunCreateParams } from 'openai/resources/beta/threads/runs/runs';
 import { RunOptions } from './run';
 import { log } from '@clack/prompts';
