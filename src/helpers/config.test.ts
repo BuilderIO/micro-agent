@@ -1,12 +1,13 @@
 import os from 'os';
 import path from 'path';
 import { expect, describe, it, vi } from 'vitest';
-import { getConfig } from './config';
+import { getConfig, setConfigs } from './config';
 
 const mocks = vi.hoisted(() => {
   return {
     lstat: vi.fn(),
     readFile: vi.fn(),
+    writeFile: vi.fn(),
   };
 });
 
@@ -15,9 +16,12 @@ vi.mock('fs/promises', () => {
     default: {
       lstat: mocks.lstat,
       readFile: mocks.readFile,
+      writeFile: mocks.writeFile,
     },
   };
 });
+
+const configFilePath = path.join(os.homedir(), '.micro-agent');
 
 describe('getConfig', () => {
   const defaultConfig = {
@@ -80,7 +84,7 @@ describe('getConfig', () => {
     await getConfig();
 
     expect(mocks.lstat).toHaveBeenCalledWith(
-      path.join(os.homedir(), '.micro-agent')
+      configFilePath
     );
   });
 
@@ -91,7 +95,7 @@ describe('getConfig', () => {
     await getConfig();
 
     expect(mocks.readFile).toHaveBeenCalledWith(
-      path.join(os.homedir(), '.micro-agent'),
+      configFilePath,
       'utf8'
     );
   });
@@ -128,4 +132,38 @@ describe('getConfig', () => {
       ...process.env,
     });
   });
+});
+
+describe('setConfigs', () => {
+  it('should write the provided key-value pairs to the config file', async () => {
+    mocks.lstat.mockResolvedValueOnce(true);
+    mocks.readFile.mockResolvedValueOnce('');
+    const keyValues: [string, string][] = [
+      ['OPENAI_KEY', 'my-openai-key'],
+      ['MODEL', 'gpt-3.5-turbo'],
+      ['LANGUAGE', 'en'],
+    ];
+
+    await setConfigs(keyValues);
+
+    expect(mocks.writeFile).toHaveBeenCalledWith(
+      configFilePath,
+      'OPENAI_KEY=my-openai-key\nMODEL=gpt-3.5-turbo\nLANGUAGE=en\n',
+      'utf8'
+    );
+  });
+
+  it('should throw an error for invalid config keys', async () => {
+    mocks.lstat.mockResolvedValueOnce(true);
+    mocks.readFile.mockResolvedValueOnce('');
+    const keyValues: [string, string][] = [
+      ['OPENAI_KEY', 'my-openai-key'],
+      ['INVALID_KEY', 'invalid-value'],
+    ];
+
+    await expect(setConfigs(keyValues)).rejects.toThrow(
+      'Invalid config property: INVALID_KEY'
+    );
+  });
+
 });
