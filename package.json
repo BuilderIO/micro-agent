@@ -7,6 +7,8 @@
     "@anthropic-ai/sdk": "^0.21.1",
     "@clack/core": "latest",
     "@clack/prompts": "latest",
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
     "@dqbd/tiktoken": "^1.0.15",
     "@types/diff": "^5.2.1",
     "@types/probe-image-size": "^7.2.4",
@@ -40,8 +42,12 @@
     "lint": "prettier --check . && eslint",
     "typecheck": "tsc",
     "build": "pkgroll",
-    "release:patch": "npm run build && npm version patch && npm run build && npm publish && git push --follow-tags",
-    "postinstall": "npx playwright install"
+    "release:patch": "npm run build && npm version patch && npm run build && npm publish && git push --follow-tags && standard-version --release-as patch",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "postinstall": "npx playwright install",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@types/dedent": "^0.7.0",
@@ -51,9 +57,11 @@
     "@typescript-eslint/parser": "^5.57.1",
     "eslint": "^8.38.0",
     "eslint-plugin-unused-imports": "^2.0.0",
-    "jiti": "^1.17.0",
+    "husky": "^8.0.0",
+    "jiti": "^1.21.3",
     "pkgroll": "^1.9.0",
     "prettier": "^2.8.8",
+    "standard-version": "^9.5.0",
     "typescript": "^4.9.5",
     "vitest": "^1.6.0"
   }
