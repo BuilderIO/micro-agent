@@ -9,7 +9,7 @@ export function applyUnifiedDiff(diff: string, fileContent: string): string {
     if (result === false) {
       console.log('could NOT apply a patch', patch), patch.hunks;
       throw new Error('Failed to apply patch');
-    } 
+    }
     str = result;
   }
   return str;

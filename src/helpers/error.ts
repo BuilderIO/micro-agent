@@ -14,6 +14,8 @@ export const handleCliError = (error: any) => {
     console.error(
       `\n${indent}Please open a Bug report with the information above:`
     );
-    console.error(`${indent}https://github.com/BuilderIO/micro-agent/issues/new`);
+    console.error(
+      `${indent}https://github.com/BuilderIO/micro-agent/issues/new`
+    );
   }
 };

@@ -1,60 +1,60 @@
-import React from "react";
+import React from 'react';
 
 const navItems = [
   {
-    title: "PRODUCT",
+    title: 'PRODUCT',
     links: [
-      { name: "Features", href: "#" },
-      { name: "Pricing", href: "#" },
+      { name: 'Features', href: '#' },
+      { name: 'Pricing', href: '#' },
     ],
   },
   {
-    title: "DEVELOPERS",
+    title: 'DEVELOPERS',
     links: [
-      { name: "Builder for Developers", href: "#" },
-      { name: "Developer Docs", href: "#" },
-      { name: "Open Source Projects", href: "#" },
-      { name: "Performance Insights", href: "#" },
+      { name: 'Builder for Developers', href: '#' },
+      { name: 'Developer Docs', href: '#' },
+      { name: 'Open Source Projects', href: '#' },
+      { name: 'Performance Insights', href: '#' },
     ],
   },
   {
-    title: "INTEGRATIONS",
+    title: 'INTEGRATIONS',
     links: [
-      { name: "All Integrations", href: "#" },
-      { name: "Shopify", href: "#" },
-      { name: "React", href: "#" },
-      { name: "Angular", href: "#" },
-      { name: "Next.js", href: "#" },
-      { name: "Gatsby", href: "#" },
+      { name: 'All Integrations', href: '#' },
+      { name: 'Shopify', href: '#' },
+      { name: 'React', href: '#' },
+      { name: 'Angular', href: '#' },
+      { name: 'Next.js', href: '#' },
+      { name: 'Gatsby', href: '#' },
     ],
   },
   {
-    title: "USE CASES",
+    title: 'USE CASES',
     links: [
-      { name: "Landing Pages", href: "#" },
-      { name: "Shopify Storefront", href: "#" },
-      { name: "Headless CMS", href: "#" },
-      { name: "Headless Storefront", href: "#" },
-      { name: "Customer Showcases", href: "#" },
-      { name: "Customer Success Stories", href: "#" },
+      { name: 'Landing Pages', href: '#' },
+      { name: 'Shopify Storefront', href: '#' },
+      { name: 'Headless CMS', href: '#' },
+      { name: 'Headless Storefront', href: '#' },
+      { name: 'Customer Showcases', href: '#' },
+      { name: 'Customer Success Stories', href: '#' },
     ],
   },
   {
-    title: "RESOURCES",
+    title: 'RESOURCES',
     links: [
-      { name: "User Guides", href: "#" },
-      { name: "Blog", href: "#" },
-      { name: "Community Forum", href: "#" },
-      { name: "Templates", href: "#" },
-      { name: "Partners", href: "#" },
-      { name: "Submit an Idea", href: "#" },
+      { name: 'User Guides', href: '#' },
+      { name: 'Blog', href: '#' },
+      { name: 'Community Forum', href: '#' },
+      { name: 'Templates', href: '#' },
+      { name: 'Partners', href: '#' },
+      { name: 'Submit an Idea', href: '#' },
     ],
   },
   {
-    title: "COMPANY",
+    title: 'COMPANY',
     links: [
-      { name: "About", href: "#" },
-      { name: "Careers", href: "#" },
+      { name: 'About', href: '#' },
+      { name: 'Careers', href: '#' },
     ],
   },
 ];
