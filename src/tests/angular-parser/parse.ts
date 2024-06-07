@@ -18,7 +18,9 @@ function getTypeText(type: ts.TypeNode | undefined): string {
   return text.includes('|') ? 'string' : text;
 }
 
-function extractSelectorFromComponentDecorator(componentNode: ts.ClassDeclaration): string | undefined {
+function extractSelectorFromComponentDecorator(
+  componentNode: ts.ClassDeclaration
+): string | undefined {
   for (const decorator of ts.getDecorators(componentNode) ?? []) {
     if (ts.isCallExpression(decorator.expression)) {
       const callExpression = decorator.expression;
@@ -59,7 +61,8 @@ function extractEnumOptions(componentString: string): Record<string, string[]> {
       ts.isUnionTypeNode(node.type) &&
       node.type.types.every(
         (t) =>
-          ts.isLiteralTypeNode(t) && ts.isStringLiteral((t as ts.LiteralTypeNode).literal)
+          ts.isLiteralTypeNode(t) &&
+          ts.isStringLiteral((t as ts.LiteralTypeNode).literal)
       )
     ) {
       enumOptions[node.name.text] = node.type.types.map(
