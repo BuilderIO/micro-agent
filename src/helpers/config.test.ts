@@ -299,9 +299,7 @@ describe('showConfigUI', () => {
     mocks.lstat.mockRejectedValue(
       new Error('ENOENT: no such file or directory')
     );
-    mocks.select
-      .mockResolvedValueOnce('MODEL')
-      .mockResolvedValueOnce('cancel');
+    mocks.select.mockResolvedValueOnce('MODEL').mockResolvedValueOnce('cancel');
     mocks.text.mockResolvedValueOnce('gpt-4o');
 
     await showConfigUI();
@@ -316,9 +314,7 @@ describe('showConfigUI', () => {
     mocks.lstat.mockRejectedValue(
       new Error('ENOENT: no such file or directory')
     );
-    mocks.select
-      .mockResolvedValueOnce('MODEL')
-      .mockResolvedValueOnce('cancel');
+    mocks.select.mockResolvedValueOnce('MODEL').mockResolvedValueOnce('cancel');
     mocks.text.mockResolvedValueOnce('gpt-4o');
 
     await showConfigUI();
