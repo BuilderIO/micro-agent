@@ -159,7 +159,7 @@ export const showConfigUI = async () => {
       await setConfigs([['MODEL', model]]);
     }
     if (choice === 'cancel') return;
-    showConfigUI();
+    await showConfigUI();
   } catch (error: any) {
     console.error(`\n${red('✖')} ${error.message}`);
     handleCliError(error);
