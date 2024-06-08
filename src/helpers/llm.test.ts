@@ -4,6 +4,7 @@ import { expect, describe, it, vi } from 'vitest';
 import OpenAI from 'openai';
 import { ChatCompletionMessageParam } from 'openai/resources';
 import { RunOptions } from './run';
+import { gray } from 'kolorist';
 
 const mocks = vi.hoisted(() => {
   return {
@@ -168,9 +169,9 @@ describe('getCompletion', () => {
     };
     await getCompletion(options);
 
-    expect(stdOutWriteMock).toHaveBeenNthCalledWith(1, '\n│   ');
+    expect(stdOutWriteMock).toHaveBeenNthCalledWith(1, gray('\n│   '));
     expect(stdOutWriteMock).toHaveBeenNthCalledWith(2, '\n');
-    expect(stdErrWriteMock).toHaveBeenCalledWith('Hello');
-    expect(stdErrWriteMock).toHaveBeenCalledWith('World');
+    expect(stdErrWriteMock).toHaveBeenCalledWith(gray('Hello'));
+    expect(stdErrWriteMock).toHaveBeenCalledWith(gray('World'));
   });
 });
