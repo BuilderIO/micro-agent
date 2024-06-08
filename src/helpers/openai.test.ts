@@ -1,4 +1,4 @@
-import { getOpenAi, getSimpleCompletion } from './openai';
+import { getOpenAi, getSimpleCompletion } from './llm';
 import { KnownError } from './error';
 import { expect, describe, it, vi } from 'vitest';
 import OpenAI from 'openai';
