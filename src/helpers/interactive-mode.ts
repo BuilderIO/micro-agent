@@ -122,9 +122,10 @@ export async function interactiveMode(options: Partial<RunOptions>) {
           ${prompt}
           </prompt>
 
-          The test will be located at \`${testFilePath}\` and the code to test will be located at 
-          \`${filePath}\`.
+          The test will be located at \`${testFilePath}\` and the code to test will be located at
 
+          \`${filePath}\`.
+  
           ${
             twoTests.length > 0
               ? dedent`Here is a copy of a couple example tests in the repo:
@@ -196,4 +197,22 @@ export async function interactiveMode(options: Partial<RunOptions>) {
     prompt,
     lastRunError: '',
   });
+}
+
+export async function getDependenciesFileContent(language?: string): Promise<string> {
+  let fileName;
+  switch (language) {
+    case 'py':
+      fileName = 'requirements.txt';
+      break;
+    case 'rb':
+      fileName = 'Gemfile';
+      break;
+    default:
+      fileName = 'package.json';
+      break;
+  }
+
+  const fileContent = await readFile(fileName, 'utf8');
+  return fileContent;
 }
