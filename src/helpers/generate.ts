@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import { getCompletion } from './openai';
+import { getCompletion } from './llm';
 import { readFile } from 'fs/promises';
 import { blue } from 'kolorist';
 import { RunOptions } from './run';

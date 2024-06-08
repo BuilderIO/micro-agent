@@ -2,7 +2,7 @@ import { intro, log, spinner, text } from '@clack/prompts';
 
 import { glob } from 'glob';
 import { RunOptions, runAll } from './run';
-import { getSimpleCompletion } from './openai';
+import { getSimpleCompletion } from './llm';
 import { getConfig, setConfigs } from './config';
 import { readFile, writeFile } from 'fs/promises';
 import dedent from 'dedent';

@@ -2,7 +2,7 @@ import { text } from '@clack/prompts';
 import { exitOnCancel } from './exit-on-cancel';
 import { RunOptions } from './run';
 import { removeBackticks } from './remove-backticks';
-import { getSimpleCompletion } from './openai';
+import { getSimpleCompletion } from './llm';
 import { formatMessage } from './test';
 import dedent from 'dedent';
 

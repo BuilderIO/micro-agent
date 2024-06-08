@@ -1,6 +1,6 @@
 import dedent from 'dedent';
 import { findVisualFile } from './find-visual-file';
-import { getCompletion } from './openai';
+import { getCompletion } from './llm';
 import { RunOptions } from './run';
 import { readFile, writeFile, mkdir, stat } from 'fs/promises';
 import { success, fail, formatMessage } from './test';
