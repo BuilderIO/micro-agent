@@ -131,7 +131,7 @@ app/about
 OpenAI is simply just not good at visual matching. We recommend using [Anthropic](https://anthropic.com/) for visual matching. To use Anthropic, you need to add your API key to the CLI:
 
 ```bash
-micro-agent config set ANTHROPIC_KEY <your token>
+micro-agent config set ANTHROPIC_KEY=<your token>
 ```
 
 Visual matching uses a multi-agent approach where Anthropic Claude Opus will do the visual matching and feedback, and then OpenAI will generate the code to match the design and address the feedback.
