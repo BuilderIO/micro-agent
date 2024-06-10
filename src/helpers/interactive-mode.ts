@@ -114,6 +114,8 @@ export async function interactiveMode(options: Partial<RunOptions>) {
               `
               : ''
           }
+
+          Only output the test code. No other words, just the code.
           `,
         },
       ],
