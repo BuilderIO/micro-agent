@@ -2,15 +2,16 @@ import { intro, log, spinner, text } from '@clack/prompts';
 
 import { glob } from 'glob';
 import { RunOptions, runAll } from './run';
-import { getSimpleCompletion } from './llm';
+import { getFileSuggestion, getSimpleCompletion } from './llm';
 import { getConfig, setConfigs } from './config';
-import { readFile, writeFile } from 'fs/promises';
+import { readFile } from 'fs/promises';
 import dedent from 'dedent';
 import { removeBackticks } from './remove-backticks';
 import { formatMessage } from './test';
 import { gray, green } from 'kolorist';
 import { exitOnCancel } from './exit-on-cancel';
 import { iterateOnTest } from './iterate-on-test';
+import { outputFile } from './output-file';
 
 export async function interactiveMode(options: Partial<RunOptions>) {
   console.log('');
@@ -44,33 +45,7 @@ export async function interactiveMode(options: Partial<RunOptions>) {
     const loading = spinner();
     loading.start();
 
-    const recommendedFilePath = removeBackticks(
-      await getSimpleCompletion({
-        messages: [
-          {
-            role: 'system',
-            content:
-              'You return a file path only. No other words, just one file path',
-          },
-          {
-            role: 'user',
-            content: dedent`
-          Please give me a recommended file path for the following prompt:
-          <prompt>
-          ${prompt}
-          </prompt>
-
-          Here is a preview of the files in the current directory for reference. Please
-          use these as a reference as to what a good file name and path would be:
-          <files>
-          ${fileString}
-          </files>
-          
-          `,
-          },
-        ],
-      })
-    );
+    const recommendedFilePath = await getFileSuggestion(prompt, fileString);
     loading.stop();
 
     filePath = exitOnCancel(
@@ -122,7 +97,7 @@ export async function interactiveMode(options: Partial<RunOptions>) {
           ${prompt}
           </prompt>
 
-          The test will be located at \`${testFilePath}\` and the code to test will be located at 
+          The test will be located at \`${testFilePath}\` and the code to test will be located at
           \`${filePath}\`.
 
           ${
@@ -140,6 +115,8 @@ export async function interactiveMode(options: Partial<RunOptions>) {
               `
               : ''
           }
+
+          Only output the test code. No other words, just the code.
           `,
         },
       ],
@@ -171,7 +148,7 @@ export async function interactiveMode(options: Partial<RunOptions>) {
   }
 
   // TODO: generate dir if one doesn't exist yet
-  await writeFile(testFilePath, testContents);
+  await outputFile(testFilePath, testContents);
   log.success(`${green('Test file generated!')} ${gray(`${testFilePath}`)}`);
   const testCommand = exitOnCancel(
     await text({

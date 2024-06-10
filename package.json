@@ -1,7 +1,7 @@
 {
   "name": "@builder.io/micro-agent",
   "description": "An AI CLI that writes code for you.",
-  "version": "0.0.26",
+  "version": "0.0.30",
   "type": "module",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.21.1",
@@ -46,9 +46,10 @@
     "typecheck": "tsc",
     "build": "pkgroll",
     "release:patch": "npm run build && npm version patch && npm run build && npm publish && git push --follow-tags && standard-version --release-as patch",
-    "release": "standard-version",
-    "release:minor": "standard-version --release-as minor",
-    "release:major": "standard-version --release-as major",
+    "standard-version:release": "standard-version",
+    "standard-version:release:minor": "standard-version --release-as minor",
+    "standard-version:release:major": "standard-version --release-as major",
+    "standard-version:release:patch": "standard-version --release-as patch",
     "postinstall": "npx playwright install",
     "prepare": "husky install"
   },

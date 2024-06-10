@@ -7,7 +7,7 @@ import { getScreenshot } from './get-screenshot';
 import { formatMessage } from './test';
 import dedent from 'dedent';
 import sharp from 'sharp';
-import { mkdir, stat, writeFile } from 'fs/promises';
+import { outputFile } from './output-file';
 
 // use sharp to combine two images, putting them side by side
 const combineTwoImages = async (image1: string, image2: string) => {
@@ -76,12 +76,8 @@ export async function visualTest(options: RunOptions) {
   );
 
   const debugImageOutputFolder = 'debug/images';
-  try {
-    await stat(debugImageOutputFolder);
-  } catch (error) {
-    await mkdir(debugImageOutputFolder, { recursive: true });
-  }
-  await writeFile(
+
+  await outputFile(
     `${debugImageOutputFolder}/composite-image-url.txt`,
     composite
   );

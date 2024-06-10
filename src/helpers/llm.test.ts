@@ -1,8 +1,10 @@
-import { getOpenAi, getSimpleCompletion } from './llm';
+import { getCompletion, getOpenAi, getSimpleCompletion } from './llm';
 import { KnownError } from './error';
 import { expect, describe, it, vi } from 'vitest';
 import OpenAI from 'openai';
 import { ChatCompletionMessageParam } from 'openai/resources';
+import { RunOptions } from './run';
+import { gray } from 'kolorist';
 
 const mocks = vi.hoisted(() => {
   return {
@@ -117,5 +119,59 @@ describe('getSimpleCompletion', () => {
     expect(onChunk).toHaveBeenCalledTimes(2);
     expect(onChunk).toHaveBeenCalledWith('Hello');
     expect(onChunk).toHaveBeenCalledWith(' World');
+  });
+});
+
+describe('getCompletion', () => {
+  it('should call openai.chat.completions.create with the correct parameters', async () => {
+    mocks.getConfig
+      .mockResolvedValueOnce(defaultConfig)
+      .mockResolvedValueOnce(defaultConfig);
+    const openaiInstance = new OpenAI();
+    mocks.create.mockResolvedValueOnce([]);
+
+    const messages: ChatCompletionMessageParam[] = [
+      { role: 'system', content: 'Hello' },
+    ];
+    const options = {
+      messages,
+      options: {} as RunOptions,
+      useAssistant: false,
+    };
+    await getCompletion(options);
+
+    expect(openaiInstance.chat.completions.create).toHaveBeenCalledWith({
+      model: 'gpt-4o',
+      messages,
+      stream: true,
+    });
+  });
+
+  it('should write to stdout and stderr', async () => {
+    mocks.getConfig
+      .mockResolvedValueOnce(defaultConfig)
+      .mockResolvedValueOnce(defaultConfig);
+    const openaiInstance = new OpenAI();
+    mocks.create.mockResolvedValueOnce([
+      { choices: [{ delta: { content: 'Hello' } }] },
+      { choices: [{ delta: { content: 'World' } }] },
+    ]);
+    const stdOutWriteMock = vi.spyOn(process.stdout, 'write');
+    const stdErrWriteMock = vi.spyOn(process.stderr, 'write');
+
+    const messages: ChatCompletionMessageParam[] = [
+      { role: 'system', content: 'Hello' },
+    ];
+    const options = {
+      messages,
+      options: {} as RunOptions,
+      useAssistant: false,
+    };
+    await getCompletion(options);
+
+    expect(stdOutWriteMock).toHaveBeenNthCalledWith(1, gray('\n│   '));
+    expect(stdOutWriteMock).toHaveBeenNthCalledWith(2, '\n');
+    expect(stdErrWriteMock).toHaveBeenCalledWith(gray('Hello'));
+    expect(stdErrWriteMock).toHaveBeenCalledWith(gray('World'));
   });
 });

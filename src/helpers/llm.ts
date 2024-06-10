@@ -10,6 +10,8 @@ import { green } from 'kolorist';
 import { formatMessage } from './test';
 import { removeBackticks } from './remove-backticks';
 import ollama from 'ollama';
+import dedent from 'dedent';
+import { removeInitialSlash } from './remove-initial-slash';
 import { readFile, writeFile } from 'fs/promises';
 
 const defaultModel = 'gpt-4o';
@@ -34,6 +36,89 @@ export const getOpenAi = async function () {
     baseURL: endpoint,
   });
   return openai;
+};
+
+export const getFileSuggestion = async function (
+  prompt: string,
+  fileString: string
+) {
+  const message = {
+    role: 'user' as const,
+    content: dedent`
+    Please give me a recommended file path for the following prompt:
+    <prompt>
+    ${prompt}
+    </prompt>
+
+    Here is a preview of the files in the current directory for reference. Please
+    use these as a reference as to what a good file name and path would be:
+    <files>
+    ${fileString}
+    </files>
+
+    `,
+  };
+  const { MODEL: model } = await getConfig();
+  if (useOllama(model)) {
+    return removeInitialSlash(
+      removeBackticks(
+        await getSimpleCompletion({
+          messages: [
+            {
+              role: 'system' as const,
+              content:
+                'You are an assistant that given a snapshot of the current filesystem suggests a relative file path for the code algorithm mentioned in the prompt. No other words, just one file path',
+            },
+            message,
+          ],
+        })
+      )
+    );
+  }
+  const openai = await getOpenAi();
+  const completion = await openai.chat.completions.create({
+    model: model || defaultModel,
+    tool_choice: {
+      type: 'function',
+      function: { name: 'file_suggestion' },
+    },
+    tools: [
+      {
+        type: 'function',
+        function: {
+          name: 'file_suggestion',
+          description:
+            'Given a prompt and a list of files, suggest a file path',
+          parameters: {
+            type: 'object',
+            properties: {
+              filePath: {
+                type: 'string',
+                description:
+                  'Relative file path to the file that the code algorithm should be written in, in case of doubt the extension should be .js',
+              },
+            },
+            required: ['filePath'],
+          },
+        },
+      },
+    ],
+    messages: [
+      {
+        role: 'system' as const,
+        content:
+          'You are an assistant that given a snapshot of the current filesystem suggests a relative file path for the code algorithm mentioned in the prompt.',
+      },
+      message,
+    ],
+    response_format: { type: 'json_object' },
+  });
+  const jsonStr =
+    completion.choices[0]?.message.tool_calls?.[0]?.function.arguments;
+  if (!jsonStr) {
+    return 'src/algorithm.js';
+  }
+  return removeInitialSlash(JSON.parse(jsonStr).filePath);
 };
 
 export const getSimpleCompletion = async function (options: {
