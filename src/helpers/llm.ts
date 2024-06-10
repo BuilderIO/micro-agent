@@ -12,7 +12,7 @@ import { removeBackticks } from './remove-backticks';
 import ollama from 'ollama';
 import dedent from 'dedent';
 import { removeInitialSlash } from './remove-initial-slash';
-import { readFile, writeFile } from 'fs/promises';
+import { captureLlmRecord, mockedLlmCompletion } from './mock-llm';
 
 const defaultModel = 'gpt-4o';
 export const USE_ASSISTANT = true;
@@ -293,72 +293,4 @@ export const getCompletion = async function (options: {
 
     return output;
   }
-};
-
-const captureLlmRecord = async (
-  messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-  output: string,
-  mockLlmRecordFile?: string
-) => {
-  if (mockLlmRecordFile) {
-    const mockLlmRecordFileContents = await readFile(
-      mockLlmRecordFile,
-      'utf-8'
-    ).catch(() => '');
-    let jsonLlmRecording;
-    try {
-      jsonLlmRecording = JSON.parse(mockLlmRecordFileContents.toString());
-    } catch {
-      jsonLlmRecording = { completions: [] };
-    }
-    jsonLlmRecording.completions.push({
-      inputs: messages,
-      output: output,
-    });
-
-    await writeFile(
-      mockLlmRecordFile,
-      JSON.stringify(jsonLlmRecording, null, 2)
-    );
-  }
-};
-const mockedLlmCompletion = async (
-  mockLlmRecordFile: string | undefined,
-  messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]
-) => {
-  if (!mockLlmRecordFile) {
-    throw new KnownError(
-      'You need to set the MOCK_LLM_RECORD_FILE environment variable to use the mock LLM'
-    );
-  }
-  const mockLlmRecordFileContents = await readFile(
-    mockLlmRecordFile,
-    'utf-8'
-  ).catch(() => '');
-  let jsonLlmRecording;
-  try {
-    jsonLlmRecording = JSON.parse(mockLlmRecordFileContents.toString());
-  } catch {
-    throw new KnownError(
-      'The MOCK_LLM_RECORD_FILE file is not a valid JSON file'
-    );
-  }
-  const completion = jsonLlmRecording.completions.find(
-    (completion: { inputs: any }) => {
-      // Match on system input only
-      return (
-        JSON.stringify(completion.inputs[0]) === JSON.stringify(messages[0])
-      );
-    }
-  );
-  if (!completion) {
-    throw new KnownError(
-      `No completion found for the given system input in the MOCK_LLM_RECORD_FILE: ${JSON.stringify(
-        messages[0]
-      )}`
-    );
-  }
-  process.stdout.write(formatMessage('\n'));
-  process.stderr.write(formatMessage(completion.output));
-  return completion.output;
 };
