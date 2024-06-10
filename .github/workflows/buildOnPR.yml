@@ -22,5 +22,7 @@ jobs:
         run: npm run lint
       - name: Build
         run: npm run build
-      - name: Test
+      - name: Unit Test
         run: npm test
+      - name: Integration Test
+        run: npm run test:integration
