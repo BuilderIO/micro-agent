@@ -40,8 +40,15 @@ export const getSimpleCompletion = async function (options: {
   messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[];
   onChunk?: (chunk: string) => void;
 }) {
-  const { MODEL: model, MOCK_LLM_RECORD_FILE: mockLlmRecordFile } =
-    await getConfig();
+  const {
+    MODEL: model,
+    MOCK_LLM_RECORD_FILE: mockLlmRecordFile,
+    USE_MOCK_LLM: useMockLlm,
+  } = await getConfig();
+
+  if (useMockLlm) {
+    return mockedLlmCompletion(mockLlmRecordFile, options.messages);
+  }
 
   if (useOllama(model)) {
     const response = await ollama.chat({
@@ -91,8 +98,15 @@ export const getCompletion = async function (options: {
   options: RunOptions;
   useAssistant?: boolean;
 }) {
-  const { MODEL: model, MOCK_LLM_RECORD_FILE: mockLlmRecordFile } =
-    await getConfig();
+  const {
+    MODEL: model,
+    MOCK_LLM_RECORD_FILE: mockLlmRecordFile,
+    USE_MOCK_LLM: useMockLlm,
+  } = await getConfig();
+  if (useMockLlm) {
+    return mockedLlmCompletion(mockLlmRecordFile, options.messages);
+  }
+
   const useModel = model || defaultModel;
   const useOllamaChat = useOllama(useModel);
 
@@ -223,3 +237,33 @@ const captureLlmRecord = async (
     );
   }
 };
+function mockedLlmCompletion(
+  mockLlmRecordFile: string | undefined,
+  messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]
+) {
+  if (!mockLlmRecordFile) {
+    throw new KnownError(
+      'You need to set the MOCK_LLM_RECORD_FILE environment variable to use the mock LLM'
+    );
+  }
+  const mockLlmRecordFileContents = readFile(mockLlmRecordFile, 'utf-8').catch(
+    () => ''
+  );
+  let jsonLlmRecording;
+  try {
+    jsonLlmRecording = JSON.parse(mockLlmRecordFileContents.toString());
+  } catch {
+    throw new KnownError(
+      'The MOCK_LLM_RECORD_FILE file is not a valid JSON file'
+    );
+  }
+  const completion = jsonLlmRecording.completions.find((completion: { inputs: any; }) => {
+    return JSON.stringify(completion.inputs) === JSON.stringify(messages);
+  });
+  if (!completion) {
+    throw new KnownError(
+      'No completion found for the given inputs in the MOCK_LLM_RECORD_FILE'
+    );
+  }
+  return completion.output;
+}
