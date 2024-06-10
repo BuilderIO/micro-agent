@@ -147,6 +147,8 @@ export const getSimpleCompletion = async function (options: {
   const completion = await openai.chat.completions.create({
     model: model || defaultModel,
     messages: options.messages,
+    temperature: 0,
+    seed: 42,
     stream: true,
   });
 

@@ -1,10 +1,10 @@
 import { text } from '@clack/prompts';
 import { exitOnCancel } from './exit-on-cancel';
 import { RunOptions } from './run';
-import { removeBackticks } from './remove-backticks';
 import { getSimpleCompletion } from './llm';
 import { formatMessage } from './test';
 import dedent from 'dedent';
+import { getCodeBlock } from './interactive-mode';
 
 export async function iterateOnTest({
   testCode,
@@ -16,7 +16,7 @@ export async function iterateOnTest({
   options: Partial<RunOptions>;
 }) {
   process.stderr.write(formatMessage('\n'));
-  let testContents = removeBackticks(
+  let testContents = getCodeBlock(
     (await getSimpleCompletion({
       onChunk: (chunk) => {
         process.stderr.write(formatMessage(chunk));
@@ -35,7 +35,7 @@ export async function iterateOnTest({
           ${options.prompt}
           </prompt>
 
-          The test will be located at \`${options.testFile}\` and the code to test will be located at 
+          The test will be located at \`${options.testFile}\` and the code to test will be located at
           \`${options.outputFile}\`.
 
           The current test code is:
@@ -56,7 +56,7 @@ export async function iterateOnTest({
         },
       ],
     }))!
-  );
+  )!;
   console.log(formatMessage('\n'));
 
   const result = exitOnCancel(
