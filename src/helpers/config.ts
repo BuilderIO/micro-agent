@@ -38,6 +38,9 @@ const configParsers = {
   LANGUAGE(language?: string) {
     return language || 'en';
   },
+  MOCK_LLM_RECORD_FILE(filename?: string) {
+    return filename;
+  } 
 } as const;
 
 type ConfigKeys = keyof typeof configParsers;
