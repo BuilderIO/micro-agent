@@ -237,16 +237,16 @@ const captureLlmRecord = async (
     );
   }
 };
-function mockedLlmCompletion(
+const mockedLlmCompletion = async (
   mockLlmRecordFile: string | undefined,
   messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]
-) {
+) => {
   if (!mockLlmRecordFile) {
     throw new KnownError(
       'You need to set the MOCK_LLM_RECORD_FILE environment variable to use the mock LLM'
     );
   }
-  const mockLlmRecordFileContents = readFile(mockLlmRecordFile, 'utf-8').catch(
+  const mockLlmRecordFileContents = await readFile(mockLlmRecordFile, 'utf-8').catch(
     () => ''
   );
   let jsonLlmRecording;
@@ -258,12 +258,15 @@ function mockedLlmCompletion(
     );
   }
   const completion = jsonLlmRecording.completions.find((completion: { inputs: any; }) => {
-    return JSON.stringify(completion.inputs) === JSON.stringify(messages);
+    // Match on system input only
+    return JSON.stringify(completion.inputs[0]) === JSON.stringify(messages[0]);
   });
   if (!completion) {
     throw new KnownError(
-      'No completion found for the given inputs in the MOCK_LLM_RECORD_FILE'
+      `No completion found for the given system input in the MOCK_LLM_RECORD_FILE: ${JSON.stringify(messages[0])}`
     );
   }
+  process.stdout.write(formatMessage('\n'));
+  process.stderr.write(formatMessage(completion.output));
   return completion.output;
 }
