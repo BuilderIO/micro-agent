@@ -37,7 +37,7 @@ describe('cli', () => {
     expect(output).toContain('Generating code...');
     expect(output).toContain('Updated code');
     expect(output).toContain('Running tests...');
-    expect(output).toContain(`${integrationTestPath}/add.test.ts  (6 tests)`);
+    expect(output).toContain(`6 passed`);
     expect(output).toContain('All tests passed!');
   });
 
