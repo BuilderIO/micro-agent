@@ -46,6 +46,8 @@ describe('getConfig', () => {
     MODEL: 'gpt-4o',
     OPENAI_API_ENDPOINT: 'https://api.openai.com/v1',
     OPENAI_KEY: undefined,
+    USE_MOCK_LLM: false,
+    MOCK_LLM_RECORD_FILE: undefined,
   };
 
   it('should return an object with defaults and the env if no config is provided', async () => {
