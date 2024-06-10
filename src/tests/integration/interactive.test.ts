@@ -6,13 +6,16 @@ const checkConfigFileExists = async () => {
   return await lstat(`${process.env.HOME}/.micro-agent`)
     .then(() => true)
     .catch(() => false);
-}
+};
 
 describe('interactive cli', () => {
   beforeAll(async () => {
     const configFileExists = await checkConfigFileExists();
     if (!configFileExists) {
-      await writeFile(`${process.env.HOME}/.micro-agent`, 'OPENAI_KEY=sk-1234567890abcdef1234567890abcdef')
+      await writeFile(
+        `${process.env.HOME}/.micro-agent`,
+        'OPENAI_KEY=sk-1234567890abcdef1234567890abcdef'
+      );
     }
   });
   it('should start interactive mode with an intro', async () => {
