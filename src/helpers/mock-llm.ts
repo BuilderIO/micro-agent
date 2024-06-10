@@ -3,7 +3,9 @@ import { KnownError } from './error';
 import { formatMessage } from './test';
 import OpenAI from 'openai';
 
-const readMockLlmRecordFile = async (mockLlmRecordFile: string): Promise<{ completions: any[] }> => {
+const readMockLlmRecordFile = async (
+  mockLlmRecordFile: string
+): Promise<{ completions: any[] }> => {
   const mockLlmRecordFileContents = await readFile(
     mockLlmRecordFile,
     'utf-8'
