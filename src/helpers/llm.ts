@@ -183,7 +183,7 @@ export const getCompletion = async function (options: {
         })
         .on('textDone', () => {
           process.stdout.write('\n');
-          let output = removeBackticks(result);
+          const output = removeBackticks(result);
           captureLlmRecord(options.messages, output, mockLlmRecordFile);
           resolve(output);
         });
