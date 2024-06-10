@@ -37,7 +37,9 @@
     "ma": "./dist/cli.mjs"
   },
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run --exclude src/tests/integration",
+    "test:integration": "vitest run src/tests/integration --exclude src/tests/integration/add.test.ts --poolOptions.threads.singleThread",
+    "test:all": "vitest run",
     "start": "jiti ./src/cli.ts",
     "lint:fix": "prettier --write . && eslint --fix",
     "lint": "prettier --check . && eslint",
