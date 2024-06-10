@@ -1,7 +1,20 @@
 import { execaCommand } from 'execa';
-import { describe, expect, it } from 'vitest';
+import { lstat, writeFile } from 'fs/promises';
+import { beforeAll, describe, expect, it } from 'vitest';
+
+const checkConfigFileExists = async () => {
+  return await lstat(`${process.env.HOME}/.micro-agent`)
+    .then(() => true)
+    .catch(() => false);
+}
 
 describe('interactive cli', () => {
+  beforeAll(async () => {
+    const configFileExists = await checkConfigFileExists();
+    if (!configFileExists) {
+      await writeFile(`${process.env.HOME}/.micro-agent`, 'OPENAI_KEY=sk-1234567890abcdef1234567890abcdef')
+    }
+  });
   it('should start interactive mode with an intro', async () => {
     const result = await execaCommand('jiti ./src/cli.ts', {
       input: '\x03',
