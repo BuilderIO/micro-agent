@@ -4,13 +4,14 @@ import { glob } from 'glob';
 import { RunOptions, runAll } from './run';
 import { getFileSuggestion, getSimpleCompletion } from './llm';
 import { getConfig, setConfigs } from './config';
-import { readFile, writeFile } from 'fs/promises';
+import { readFile } from 'fs/promises';
 import dedent from 'dedent';
 import { removeBackticks } from './remove-backticks';
 import { formatMessage } from './test';
 import { gray, green } from 'kolorist';
 import { exitOnCancel } from './exit-on-cancel';
 import { iterateOnTest } from './iterate-on-test';
+import { outputFile } from './output-file';
 
 export async function interactiveMode(options: Partial<RunOptions>) {
   console.log('');
@@ -147,7 +148,7 @@ export async function interactiveMode(options: Partial<RunOptions>) {
   }
 
   // TODO: generate dir if one doesn't exist yet
-  await writeFile(testFilePath, testContents);
+  await outputFile(testFilePath, testContents);
   log.success(`${green('Test file generated!')} ${gray(`${testFilePath}`)}`);
   const testCommand = exitOnCancel(
     await text({
