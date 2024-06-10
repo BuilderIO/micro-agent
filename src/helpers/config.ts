@@ -43,7 +43,7 @@ const configParsers = {
   },
   USE_MOCK_LLM(useMockLlm?: string) {
     return useMockLlm === 'true';
-  }
+  },
 } as const;
 
 type ConfigKeys = keyof typeof configParsers;

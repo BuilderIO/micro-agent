@@ -43,5 +43,4 @@ describe('interactive cli', () => {
 
     expect(output).toContain('What would you like to do?');
   });
-
 });

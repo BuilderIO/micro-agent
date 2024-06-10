@@ -39,10 +39,9 @@ describe('cli', () => {
     expect(output).toContain('Running tests...');
     expect(output).toContain(`${integrationTestPath}/add.test.ts  (6 tests)`);
     expect(output).toContain('All tests passed!');
-
   });
 
-  afterAll(async () => {    
+  afterAll(async () => {
     await writeFile(`${integrationTestPath}/add.ts`, '');
     await writeFile(`${integrationTestPath}/add.test.ts`, '');
   });
