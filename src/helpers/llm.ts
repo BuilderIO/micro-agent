@@ -23,6 +23,24 @@ const useOllama = (model?: string) => {
   return model?.includes('llama') || model?.includes('phi');
 };
 
+const supportsFunctionCalling = (model?: string) => {
+  return !!{
+    'gpt-4o': true,
+    'gpt-4o-2024-05-13': true,
+    'gpt-4-turbo': true,
+    'gpt-4-turbo-2024-04-09': true,
+    'gpt-4-turbo-preview': true,
+    'gpt-4-0125-preview': true,
+    'gpt-4-1106-preview': true,
+    'gpt-4': true,
+    'gpt-4-0613': true,
+    'gpt-3.5-turbo': true,
+    'gpt-3.5-turbo-0125': true,
+    'gpt-3.5-turbo-1106': true,
+    'gpt-3.5-turbo-0613': true,
+  }[model || ''];
+};
+
 export const getOpenAi = async function () {
   const { OPENAI_KEY: openaiKey, OPENAI_API_ENDPOINT: endpoint } =
     await getConfig();
@@ -59,7 +77,7 @@ export const getFileSuggestion = async function (
     `,
   };
   const { MODEL: model } = await getConfig();
-  if (useOllama(model)) {
+  if (useOllama(model) || !supportsFunctionCalling(model)) {
     return removeInitialSlash(
       removeBackticks(
         await getSimpleCompletion({
@@ -111,7 +129,6 @@ export const getFileSuggestion = async function (
       },
       message,
     ],
-    response_format: { type: 'json_object' },
   });
   const jsonStr =
     completion.choices[0]?.message.tool_calls?.[0]?.function.arguments;
