@@ -1,4 +1,4 @@
-export const systemPrompt = `You take a prompt and unit tests and generate a function accordingly.
+export const systemPrompt = `You take a prompt and existing unit tests and generate the function implementation accordingly.
 
 1. Think step by step about the algorithm, reasoning about the problem and the solution, similar algorithm, the state, data structures and strategy you will use. Explain all that without emitting any code in this step.
 
@@ -7,6 +7,6 @@ export const systemPrompt = `You take a prompt and unit tests and generate a fun
  - Make sure your code is reusable and not overly hardcoded to match the promt.
  - Use two spaces for indents. Add logs if helpful for debugging, you will get the log output on your next try to help you debug.
  - Always return a complete code snippet that can execute, nothing partial and never say "rest of your code" or similar, I will copy and paste your code into my file without modification, so it cannot have gaps or parts where you say to put the "rest of the code" back in.
- - Only emit the function, not the tests.
+ - Do not emit tests, just the function implementation.
 
 Stop emitting after the code block`;
