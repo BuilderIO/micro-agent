@@ -271,7 +271,7 @@ export const getCompletion = async function (options: {
         })
         .on('textDone', () => {
           process.stdout.write('\n');
-          const output = getCodeBlock(result)!;
+          const output = getCodeBlock(result);
           captureLlmRecord(options.messages, output, mockLlmRecordFile);
           resolve(output);
         });

@@ -130,7 +130,7 @@ export async function interactiveMode(options: Partial<RunOptions>) {
         },
       ],
     }))!
-  )!;
+  );
 
   const result = exitOnCancel(
     await text({
@@ -184,21 +184,18 @@ export async function interactiveMode(options: Partial<RunOptions>) {
   });
 }
 
-export function getCodeBlock(output: string, markdownLang?: string) {
-  const foundCode = output.indexOf('```' + (markdownLang ?? ''));
-  if (foundCode > -1) {
-    const start = output.indexOf('\n', foundCode);
-    if (start === -1) {
-      return undefined;
-    }
-    const end = output.indexOf('```', start);
-    if (end === -1) {
-      console.error('Code block end not found');
-    }
-    return output.substring(start, end === -1 ? undefined : end).trim();
+export function getCodeBlock(output: string) {
+  const foundCode = output.indexOf('```');
+  if (foundCode === -1) {
+    return output;
   }
-  if (markdownLang && foundCode === -1) {
-    return undefined;
+  const start = output.indexOf('\n', foundCode);
+  if (start === -1) {
+    return output.slice(foundCode);
   }
-  return output;
+  const end = output.indexOf('```', start);
+  if (end === -1) {
+    console.error('Code block end not found');
+  }
+  return output.slice(start, end === -1 ? undefined : end).trim();
 }

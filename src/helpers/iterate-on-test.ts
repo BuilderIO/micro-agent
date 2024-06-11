@@ -56,7 +56,7 @@ export async function iterateOnTest({
         },
       ],
     }))!
-  )!;
+  );
   console.log(formatMessage('\n'));
 
   const result = exitOnCancel(

@@ -51,8 +51,13 @@ export const mockedLlmCompletion = async (
   const completion = jsonLlmRecording.completions.find(
     (completion: { inputs: any }) => {
       // Match on system input only
+      const content = completion.inputs[0].content;
+      if (typeof messages[0].content === 'string') {
+        return messages[0].content.includes(content);
+      }
       return (
-        JSON.stringify(completion.inputs[0]) === JSON.stringify(messages[0])
+        JSON.stringify(completion.inputs[0]) ===
+        JSON.stringify(messages[0].content)
       );
     }
   );
