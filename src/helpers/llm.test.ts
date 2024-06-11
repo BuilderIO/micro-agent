@@ -81,6 +81,8 @@ describe('getSimpleCompletion', () => {
       model: 'gpt-4o',
       messages,
       stream: true,
+      seed: 42,
+      temperature: 0,
     });
   });
 
