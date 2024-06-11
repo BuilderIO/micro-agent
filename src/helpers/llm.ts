@@ -12,6 +12,7 @@ import { removeBackticks } from './remove-backticks';
 import ollama from 'ollama';
 import dedent from 'dedent';
 import { removeInitialSlash } from './remove-initial-slash';
+import { captureLlmRecord, mockedLlmCompletion } from './mock-llm';
 
 const defaultModel = 'gpt-4o';
 export const USE_ASSISTANT = true;
@@ -124,7 +125,16 @@ export const getSimpleCompletion = async function (options: {
   messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[];
   onChunk?: (chunk: string) => void;
 }) {
-  const { MODEL: model } = await getConfig();
+  const {
+    MODEL: model,
+    MOCK_LLM_RECORD_FILE: mockLlmRecordFile,
+    USE_MOCK_LLM: useMockLlm,
+  } = await getConfig();
+
+  if (useMockLlm) {
+    return mockedLlmCompletion(mockLlmRecordFile, options.messages);
+  }
+
   if (useOllama(model)) {
     const response = await ollama.chat({
       model: model,
@@ -140,6 +150,7 @@ export const getSimpleCompletion = async function (options: {
         options.onChunk(chunk.message.content);
       }
     }
+    captureLlmRecord(options.messages, output, mockLlmRecordFile);
 
     return output;
   }
@@ -164,6 +175,8 @@ export const getSimpleCompletion = async function (options: {
     }
   }
 
+  captureLlmRecord(options.messages, output, mockLlmRecordFile);
+
   return output;
 };
 
@@ -172,7 +185,15 @@ export const getCompletion = async function (options: {
   options: RunOptions;
   useAssistant?: boolean;
 }) {
-  const { MODEL: model } = await getConfig();
+  const {
+    MODEL: model,
+    MOCK_LLM_RECORD_FILE: mockLlmRecordFile,
+    USE_MOCK_LLM: useMockLlm,
+  } = await getConfig();
+  if (useMockLlm) {
+    return mockedLlmCompletion(mockLlmRecordFile, options.messages);
+  }
+
   const useModel = model || defaultModel;
   const useOllamaChat = useOllama(useModel);
 
@@ -192,6 +213,8 @@ export const getCompletion = async function (options: {
       }
     }
     process.stdout.write('\n');
+
+    captureLlmRecord(options.messages, output, mockLlmRecordFile);
     return output;
   }
   const openai = await getOpenAi();
@@ -247,7 +270,9 @@ export const getCompletion = async function (options: {
         })
         .on('textDone', () => {
           process.stdout.write('\n');
-          resolve(removeBackticks(result));
+          const output = removeBackticks(result);
+          captureLlmRecord(options.messages, output, mockLlmRecordFile);
+          resolve(output);
         });
     });
   } else {
@@ -266,6 +291,8 @@ export const getCompletion = async function (options: {
       }
     }
     process.stdout.write('\n');
+    captureLlmRecord(options.messages, output, mockLlmRecordFile);
+
     return output;
   }
 };
