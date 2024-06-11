@@ -6,7 +6,6 @@ import { getFileSuggestion, getSimpleCompletion } from './llm';
 import { getConfig, setConfigs } from './config';
 import { readFile } from 'fs/promises';
 import dedent from 'dedent';
-import { removeBackticks } from './remove-backticks';
 import { formatMessage } from './test';
 import { gray, green } from 'kolorist';
 import { exitOnCancel } from './exit-on-cancel';
@@ -78,7 +77,7 @@ export async function interactiveMode(options: Partial<RunOptions>) {
 
   const testFilePath = filePath.replace(/.(\w+)$/, '.test.$1');
 
-  let testContents = removeBackticks(
+  let testContents = getCodeBlock(
     (await getSimpleCompletion({
       onChunk: (chunk) => {
         process.stderr.write(formatMessage(chunk));
@@ -86,13 +85,23 @@ export async function interactiveMode(options: Partial<RunOptions>) {
       messages: [
         {
           role: 'system',
-          content:
-            'You return code for a unit test only. No other words, just the code',
+          content: dedent`
+      You are an AI assistant that given a user prompt, returns a markdown for a unit test.
+      1. Think step by step before emiting any code. Think about the shape of the input and output, the behavior and special situations that are relevant to the algorithm.
+
+      2. After planning, return a code block with the test code.
+        - Start with the most basic test case and progress to more complex ones.
+        - Start with the happy path, then edge cases.
+        - Inputs that are invalid, and likely to break the algorithm.
+        - Keep the individual tests small and focused.
+        - Focus in behavior, not implementation.
+
+        Stop emitting after the code block.`,
         },
         {
           role: 'user',
           content: dedent`
-          Please give me a unit test file (can be multiple tests) for the following prompt:
+          Please prepare a unit test file (can be multiple tests) for the following prompt:
           <prompt>
           ${prompt}
           </prompt>
@@ -173,4 +182,20 @@ export async function interactiveMode(options: Partial<RunOptions>) {
     prompt,
     lastRunError: '',
   });
+}
+
+export function getCodeBlock(output: string) {
+  const foundCode = output.indexOf('```');
+  if (foundCode === -1) {
+    return output;
+  }
+  const start = output.indexOf('\n', foundCode);
+  if (start === -1) {
+    return output.slice(foundCode);
+  }
+  const end = output.indexOf('```', start);
+  if (end === -1) {
+    console.error('Code block end not found');
+  }
+  return output.slice(start, end === -1 ? undefined : end).trim();
 }

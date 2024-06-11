@@ -13,6 +13,7 @@ import ollama from 'ollama';
 import dedent from 'dedent';
 import { removeInitialSlash } from './remove-initial-slash';
 import { captureLlmRecord, mockedLlmCompletion } from './mock-llm';
+import { getCodeBlock } from './interactive-mode';
 
 const defaultModel = 'gpt-4o';
 export const USE_ASSISTANT = true;
@@ -175,6 +176,8 @@ export const getSimpleCompletion = async function (options: {
   const completion = await openai.chat.completions.create({
     model: model || defaultModel,
     messages: options.messages,
+    temperature: 0,
+    seed: 42,
     stream: true,
   });
 
@@ -285,7 +288,7 @@ export const getCompletion = async function (options: {
         })
         .on('textDone', () => {
           process.stdout.write('\n');
-          const output = removeBackticks(result);
+          const output = getCodeBlock(result);
           captureLlmRecord(options.messages, output, mockLlmRecordFile);
           resolve(output);
         });
