@@ -7,7 +7,7 @@ import { fileExists } from './file-exists';
  * parent directory.
  */
 export async function findPackageJson(
-  directory: string
+  directory = process.cwd()
 ): Promise<string | null> {
   let currentDirectory = directory;
   while (currentDirectory !== '/') {
