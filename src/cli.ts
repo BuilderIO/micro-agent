@@ -9,6 +9,8 @@ import { RunOptions, runAll } from './helpers/run';
 import { interactiveMode } from './helpers/interactive-mode';
 import { fileExists } from './helpers/file-exists';
 import { outro } from '@clack/prompts';
+import { isCorrectProject } from './helpers/validate-project';
+import { invalidProjectWarningMessage } from './helpers/invalid-project-warning';
 
 cli(
   {
@@ -83,7 +85,13 @@ cli(
     };
     try {
       if (!argv._.filePath || !argv.flags.test) {
-        await interactiveMode(runOptions);
+        const isCorrectFolderStructure = await isCorrectProject();
+
+        if (!isCorrectFolderStructure) {
+          await invalidProjectWarningMessage();
+        } else {
+          await interactiveMode(runOptions);
+        }
         return;
       }
 
