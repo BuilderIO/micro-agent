@@ -4,10 +4,9 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.0.42](https://github.com/BuilderIO/micro-agent/compare/v0.0.41...v0.0.42) (2024-06-12)
 
-
 ### Bug Fixes
 
-* default to vitest if no existing testing library ([1a71f6a](https://github.com/BuilderIO/micro-agent/commit/1a71f6a2c123ae48022b9ff66e13a80c03a6d301))
+- default to vitest if no existing testing library ([1a71f6a](https://github.com/BuilderIO/micro-agent/commit/1a71f6a2c123ae48022b9ff66e13a80c03a6d301))
 
 ### [0.0.41](https://github.com/BuilderIO/micro-agent/compare/v0.0.40...v0.0.41) (2024-06-12)
 
