@@ -36,6 +36,8 @@ export async function getTestCommand({
             <package-json>
             ${packageJson}
             </package-json>
+
+            If there are no testing libraryes in the package.json, \`npx vitest ...\` is a good option.
           `,
         },
       ],

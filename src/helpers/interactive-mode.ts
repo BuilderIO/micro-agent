@@ -126,7 +126,7 @@ export async function interactiveMode(options: Partial<RunOptions>) {
               </tests>`
                 : packageJsonContents
                 ? dedent`
-                  Here is the package.json file to help you know what testing library to use (if any, otherwise use the built-in nodejs testing tools):
+                  Here is the package.json file to help you know what testing library to use (if any, otherwise vitest is a good option):
                   <package-json>
                   ${packageJsonContents}
                   </package-json>
