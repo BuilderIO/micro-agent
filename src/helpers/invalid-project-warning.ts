@@ -1,8 +1,7 @@
-import { dim, gray, yellow } from 'kolorist';
-import { exitOnCancel } from './exit-on-cancel';
-import { outro, text } from '@clack/prompts';
-import { execaCommand } from 'execa';
 import * as p from '@clack/prompts';
+import { outro } from '@clack/prompts';
+import { execaCommand } from 'execa';
+import { dim, yellow } from 'kolorist';
 
 export async function invalidProjectWarningMessage() {
   console.warn(
@@ -12,7 +11,7 @@ export async function invalidProjectWarningMessage() {
   );
 
   const choice = await p.select({
-    message: 'Want to setup a new project' + ':',
+    message: 'Want to setup a new project?',
     options: [
       {
         label: 'Node + Vitest project',

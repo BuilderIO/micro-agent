@@ -1,13 +1,13 @@
 import fs from 'fs/promises';
 import path from 'path';
+import { findPackageJson } from './find-package-json';
 
-export async function isCorrectProject(): Promise<boolean> {
+export async function isValidProject(): Promise<boolean> {
   const currentDir = process.cwd();
-  const packageJsonPath = path.join(currentDir, 'package.json');
   const requirementsTxtPath = path.join(currentDir, 'requirements.txt');
 
   try {
-    await fs.access(packageJsonPath);
+    await findPackageJson();
     return true;
   } catch {
     // Do nothing if file doesn't exist
