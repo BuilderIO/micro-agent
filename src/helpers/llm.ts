@@ -16,7 +16,7 @@ import { captureLlmRecord, mockedLlmCompletion } from './mock-llm';
 import { getCodeBlock } from './interactive-mode';
 
 const defaultModel = 'gpt-4o';
-export const USE_ASSISTANT = false;
+export const USE_ASSISTANT = true;
 const assistantIdentifierMetadataKey = '_id';
 const assistantIdentifierMetadataValue = '@builder.io/micro-agent';
 
