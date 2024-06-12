@@ -1,8 +1,8 @@
-import { log, note, text } from '@clack/prompts';
-import { ExecaError, execaCommand } from 'execa';
+import { log, text } from '@clack/prompts';
+import { execaCommand } from 'execa';
+import { gray } from 'kolorist';
 import { exitOnCancel } from './exit-on-cancel';
 import { isInvalidCommand } from './test';
-import { gray } from 'kolorist';
 
 export async function iterateOnTestCommand({
   testCommand,
