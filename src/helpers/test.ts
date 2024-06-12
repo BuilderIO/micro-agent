@@ -35,6 +35,21 @@ export function formatMessage(message: string): string {
   return gray(message.replaceAll('\n', '\n' + '│   '));
 }
 
+export const isInvalidCommand = (output: string) => {
+  return (
+    output.includes('command not found:') ||
+    output.includes('command_not_found:') ||
+    output.includes('npm ERR! Missing script:')
+  );
+};
+
+const exitOnInvalidCommand = (output: string) => {
+  if (isInvalidCommand(output)) {
+    outro(red('Your test command is invalid. Please try again.'));
+    process.exit(1);
+  }
+};
+
 export async function test(options: RunOptions): Promise<Result> {
   let timeout: NodeJS.Timeout;
   const timeoutSeconds = 20;
@@ -72,6 +87,9 @@ export async function test(options: RunOptions): Promise<Result> {
     });
 
     const final = await result;
+    if (final.stderr) {
+      exitOnInvalidCommand(final.stderr);
+    }
     process.stdout.write('\n');
     endTimer();
 
@@ -83,6 +101,7 @@ export async function test(options: RunOptions): Promise<Result> {
     process.stdout.write('\n');
     endTimer();
     if (error instanceof ExecaError) {
+      exitOnInvalidCommand(error.stderr || error.message);
       return fail(error.stderr || error.message);
     }
     return fail(error.message);

@@ -11,6 +11,7 @@ import { gray, green } from 'kolorist';
 import { exitOnCancel } from './exit-on-cancel';
 import { iterateOnTest } from './iterate-on-test';
 import { outputFile } from './output-file';
+import { iterateOnTestCommand } from './iterate-on-test-command';
 
 export async function interactiveMode(options: Partial<RunOptions>) {
   console.log('');
@@ -34,6 +35,11 @@ export async function interactiveMode(options: Partial<RunOptions>) {
     await text({
       message: 'What would you like to do?',
       placeholder: 'A function that ...',
+      validate: (input) => {
+        if (input.trim().length < 10) {
+          return 'Please provide a complete prompt';
+        }
+      },
     })
   );
 
@@ -159,13 +165,15 @@ export async function interactiveMode(options: Partial<RunOptions>) {
   // TODO: generate dir if one doesn't exist yet
   await outputFile(testFilePath, testContents);
   log.success(`${green('Test file generated!')} ${gray(`${testFilePath}`)}`);
-  const testCommand = exitOnCancel(
+  let testCommand = exitOnCancel(
     await text({
       message: 'What command should I run to test the code?',
       defaultValue: defaultTestCommand,
       placeholder: defaultTestCommand,
     })
   );
+
+  testCommand = await iterateOnTestCommand({ testCommand });
 
   log.info(`Agent running...`);
 
@@ -181,6 +189,7 @@ export async function interactiveMode(options: Partial<RunOptions>) {
     promptFile: filePath.replace(/.(\w+)$/, '.prompt.md'),
     prompt,
     lastRunError: '',
+    interactive: true,
   });
 }
 
