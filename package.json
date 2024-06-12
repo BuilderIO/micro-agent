@@ -45,7 +45,7 @@
     "lint": "prettier --check . && eslint",
     "typecheck": "tsc",
     "build": "pkgroll",
-    "release:patch": "npm run build && standard-version --release-as patch",
+    "release:patch": "npm run build && standard-version --release-as patch git push --follow-tags origin main && npm publish",
     "standard-version:release": "standard-version",
     "standard-version:release:minor": "standard-version --release-as minor",
     "standard-version:release:major": "standard-version --release-as major",
