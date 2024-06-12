@@ -52,24 +52,54 @@ cli(
   async (argv) => {
     const filePath = argv._.filePath;
     const fileExtension = filePath?.split('.').pop();
-    const testFileExtension = ['jsx', 'tsx'].includes(fileExtension as any)
-      ? fileExtension?.replace('x', '')
-      : fileExtension;
+    const testFileExtension =
+      fileExtension && ['jsx', 'tsx'].includes(fileExtension as string)
+        ? fileExtension?.replace('x', '')
+        : fileExtension;
 
-    let testFilePath =
-      argv.flags.testFile ||
-      filePath?.replace(
-        // TODO: check .spec.ts too
+    const createReplacementFilePath = (
+      filePath: string,
+      fileExtension: string,
+      replacement: string
+    ) => {
+      return filePath.replace(
         new RegExp('\\.' + fileExtension + '$'),
+        replacement
+      );
+    };
+
+    const testFile =
+      filePath &&
+      fileExtension &&
+      createReplacementFilePath(
+        filePath,
+        fileExtension,
         `.test.${testFileExtension}`
       );
+    const specFile =
+      filePath &&
+      fileExtension &&
+      createReplacementFilePath(
+        filePath,
+        fileExtension,
+        `.spec.${testFileExtension}`
+      );
+
+    const testFileExists = async () => {
+      if (testFile && (await fileExists(testFile))) {
+        return testFile;
+      } else if (specFile && (await fileExists(specFile))) {
+        return specFile;
+      }
+      return undefined;
+    };
+
+    let testFilePath = argv.flags.testFile || (await testFileExists());
     const promptFilePath =
       argv.flags.prompt ||
       filePath?.replace(new RegExp('\\.' + fileExtension + '$'), '.prompt.md');
 
-    if (!testFilePath || !(await fileExists(testFilePath))) {
-      testFilePath = '';
-    }
+    testFilePath = testFilePath || '';
 
     const runOptions: RunOptions = {
       outputFile: filePath!,
