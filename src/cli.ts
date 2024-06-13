@@ -94,12 +94,10 @@ cli(
       return undefined;
     };
 
-    let testFilePath = argv.flags.testFile || (await testFileExists());
+    const testFilePath = argv.flags.testFile || (await testFileExists()) || '';
     const promptFilePath =
       argv.flags.prompt ||
       filePath?.replace(new RegExp('\\.' + fileExtension + '$'), '.prompt.md');
-
-    testFilePath = testFilePath || '';
 
     const runOptions: RunOptions = {
       outputFile: filePath!,
