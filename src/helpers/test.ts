@@ -1,6 +1,6 @@
 import { ExecaError, execaCommand } from 'execa';
-import { gray, red } from 'kolorist';
-import { RunOptions } from './run';
+import { gray, green, red } from 'kolorist';
+import { RunOptions, createCommandString } from './run';
 import { outro } from '@clack/prompts';
 
 type Fail = {
@@ -35,13 +35,18 @@ export const fail = (message: string) => {
   } as const;
 };
 
-const testFail = (message: string) => {
+const testFail = (message: string, options: RunOptions) => {
   prevTestFailures.push(message);
   if (hasFailedNTimesWithTheSameMessage(message)) {
     outro(
       red(
         'Your test command is failing with the same error several times. Please make sure your test command is correct. Aborting...'
       )
+    );
+    console.log(
+      `${green('To continue, run:')}\n${gray(
+        `${createCommandString(options)}`
+      )}\n`
     );
     process.exit(1);
   }
@@ -121,7 +126,7 @@ export async function test(options: RunOptions): Promise<Result> {
     endTimer();
 
     if (final.failed) {
-      return testFail(final.stderr);
+      return testFail(final.stderr, options);
     }
     return success();
   } catch (error: any) {
@@ -129,8 +134,8 @@ export async function test(options: RunOptions): Promise<Result> {
     endTimer();
     if (error instanceof ExecaError) {
       exitOnInvalidCommand(error.stderr || error.message);
-      return testFail(error.stderr || error.message);
+      return testFail(error.stderr || error.message, options);
     }
-    return testFail(error.message);
+    return testFail(error.message, options);
   }
 }

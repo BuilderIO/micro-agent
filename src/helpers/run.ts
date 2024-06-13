@@ -59,7 +59,7 @@ export type RunOptions = Options & {
 
 const useNewlinesInCommand = true;
 
-function createCommandString(options: RunOptions) {
+export function createCommandString(options: RunOptions) {
   const command = [`${commandName}`];
   if (options.outputFile) {
     command.push(options.outputFile);

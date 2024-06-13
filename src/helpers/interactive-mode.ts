@@ -13,6 +13,7 @@ import { iterateOnTest } from './iterate-on-test';
 import { outputFile } from './output-file';
 import { iterateOnTestCommand } from './iterate-on-test-command';
 import { getTestCommand } from './get-test-command';
+import { generateAsciiTree } from './generate-ascii-tree';
 
 export async function interactiveMode(options: Partial<RunOptions>) {
   console.log('');
@@ -47,7 +48,7 @@ export async function interactiveMode(options: Partial<RunOptions>) {
   let filePath = options.outputFile;
   if (!filePath) {
     const files = await glob('*/*/*', { ignore: ['node_modules/**'] });
-    const fileString = files.slice(0, 100).join('\n');
+    const fileString = generateAsciiTree(files.slice(0, 200));
     const loading = spinner();
     loading.start();
 
