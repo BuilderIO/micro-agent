@@ -14,11 +14,38 @@ type Success = {
 
 type Result = Fail | Success;
 
+const prevTestFailures: string[] = [];
+
+// Check if the last n failures had the same message
+const hasFailedNTimesWithTheSameMessage = (message: string, n = 4) => {
+  if (prevTestFailures.length < n) {
+    return false;
+  }
+
+  // If the last n failures had the same message, return true
+  return prevTestFailures
+    .slice(prevTestFailures.length - n, prevTestFailures.length)
+    .every((msg) => msg === message);
+};
+
 export const fail = (message: string) => {
   return {
     type: 'fail',
     message,
   } as const;
+};
+
+const testFail = (message: string) => {
+  prevTestFailures.push(message);
+  if (hasFailedNTimesWithTheSameMessage(message)) {
+    outro(
+      red(
+        'Your test command is failing with the same error several times. Please make sure your test command is correct. Aborting...'
+      )
+    );
+    process.exit(1);
+  }
+  return fail(message);
 };
 
 export const success = () => {
@@ -94,7 +121,7 @@ export async function test(options: RunOptions): Promise<Result> {
     endTimer();
 
     if (final.failed) {
-      return fail(final.stderr);
+      return testFail(final.stderr);
     }
     return success();
   } catch (error: any) {
@@ -102,8 +129,8 @@ export async function test(options: RunOptions): Promise<Result> {
     endTimer();
     if (error instanceof ExecaError) {
       exitOnInvalidCommand(error.stderr || error.message);
-      return fail(error.stderr || error.message);
+      return testFail(error.stderr || error.message);
     }
-    return fail(error.message);
+    return testFail(error.message);
   }
 }
