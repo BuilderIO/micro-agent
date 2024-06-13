@@ -1,6 +1,6 @@
 import { execaCommand } from 'execa';
 import { readFile, writeFile } from 'fs/promises';
-import { afterAll, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { removeBackticks } from '../../helpers/remove-backticks';
 
 const integrationTestPath = 'src/tests/integration';
@@ -42,6 +42,8 @@ describe('cli', () => {
   });
 
   it('should work on spec file', async () => {
+  await writeFile(`${integrationTestPath}/add.test.ts`, 'import { test, expect } from \'vitest\';\n\ntest(\'pass\', () => {\nexpect(true)\n});');
+
     // Write the test file using the mock LLM record
     const mockLlmRecordFile = 'test/fixtures/add.json';
     const mockLlmRecordFileContents = await readFile(
@@ -72,13 +74,13 @@ describe('cli', () => {
     expect(output).toContain('Generating code...');
     expect(output).toContain('Updated code');
     expect(output).toContain('Running tests...');
-    expect(output).toContain(`6 passed`);
+    expect(output).toContain(`7 passed`);
     expect(output).toContain('All tests passed!');
   });
 
-  afterAll(async () => {
-    await writeFile(`${integrationTestPath}/add.ts`, '');
-    await writeFile(`${integrationTestPath}/add.test.ts`, '');
-    await writeFile(`${integrationTestPath}/add.spec.ts`, '');
-  });
+    afterEach(async () => {
+        await writeFile(`${integrationTestPath}/add.ts`, '');
+        await writeFile(`${integrationTestPath}/add.test.ts`, '');
+        await writeFile(`${integrationTestPath}/add.spec.ts`, 'import {describe, test} from \'vitest\'\n describe(\'spec\', () => {test.todo(\'please pass\');});');
+    })
 });
