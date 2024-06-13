@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.45](https://github.com/BuilderIO/micro-agent/compare/v0.0.44...v0.0.45) (2024-06-13)
+
+
+### Features
+
+* abort if the same error happens on repeat ([49bb033](https://github.com/BuilderIO/micro-agent/commit/49bb03373c9c8f8a309014058fab6aadb44be585))
+
 ### [0.0.44](https://github.com/BuilderIO/micro-agent/compare/v0.0.43...v0.0.44) (2024-06-13)
 
 ### [0.0.43](https://github.com/BuilderIO/micro-agent/compare/v0.0.42...v0.0.43) (2024-06-12)
