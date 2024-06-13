@@ -4,10 +4,9 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.0.43](https://github.com/BuilderIO/micro-agent/compare/v0.0.42...v0.0.43) (2024-06-12)
 
-
 ### Features
 
-* detect if in a valid project and generate one if not ([b8a5731](https://github.com/BuilderIO/micro-agent/commit/b8a5731e82fd5541c738cdf094870fbac035386b))
+- detect if in a valid project and generate one if not ([b8a5731](https://github.com/BuilderIO/micro-agent/commit/b8a5731e82fd5541c738cdf094870fbac035386b))
 
 ### [0.0.42](https://github.com/BuilderIO/micro-agent/compare/v0.0.41...v0.0.42) (2024-06-12)
 
