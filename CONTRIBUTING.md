@@ -43,21 +43,7 @@ npm start
 First, install prettier.
 
 ```sh
-npm install -g prettier
-```
-
-Once Prettier is installed, you can run it on a single file or multiple files using the following commands:
-
-1. For a single file:
-
-```sh
-prettier --write path/to/your/file.js
-```
-
-2. For a multiple file:
-
-```sh
-prettier --write "src/**/*.js"
+npm run lint:fix
 ```
 
 If you use Vscode, It is recommended to use [prettier-vscode](https://github.com/prettier/prettier-vscode)

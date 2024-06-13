@@ -1,7 +1,7 @@
 {
   "name": "@builder.io/micro-agent",
   "description": "An AI CLI that writes code for you.",
-  "version": "0.0.34",
+  "version": "0.0.43",
   "type": "module",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.21.1",
@@ -45,7 +45,7 @@
     "lint": "prettier --check . && eslint",
     "typecheck": "tsc",
     "build": "pkgroll",
-    "release:patch": "npm run build && npm version patch && npm run build && npm publish && git push --follow-tags && standard-version --release-as patch",
+    "release:patch": "npm run build && standard-version --release-as patch git push --follow-tags origin main && npm publish",
     "standard-version:release": "standard-version",
     "standard-version:release:minor": "standard-version --release-as minor",
     "standard-version:release:major": "standard-version --release-as major",

@@ -17,6 +17,7 @@ type Options = {
   threadId: string;
   visual: string;
   prompt?: string;
+  interactive?: boolean;
 };
 
 export async function runOne(options: Options) {

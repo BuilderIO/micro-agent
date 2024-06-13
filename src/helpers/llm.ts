@@ -70,7 +70,8 @@ export const getFileSuggestion = async function (
     </prompt>
 
     Here is a preview of the files in the current directory for reference. Please
-    use these as a reference as to what a good file name and path would be:
+    use these as a reference as to what a good file name, language, and path would be
+    to match the other files in the project given the naming/folder/language conventions.
     <files>
     ${fileString}
     </files>

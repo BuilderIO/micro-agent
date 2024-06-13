@@ -195,6 +195,26 @@ All config options can be overridden as environment variables, for instance:
 MODEL=gpt-3.5-turbo micro-agent ./file-to-edit.ts -t "npm test"
 ```
 
+### Upgrading
+
+Check the installed version with:
+
+```bash
+micro-agent --version
+```
+
+If it's not the [latest version](https://github.com/BuilderIO/micro-agent/tags), run:
+
+```bash
+micro-agent update
+```
+
+Or manually update with:
+
+```bash
+npm update -g @builder.io/micro-agent
+```
+
 ## Contributing
 
 We would love your contributions to make this project better, and gladly accept PRs. Please see [./CONTRIBUTING.md](CONTRIBUTING.md) for how to contribute.
@@ -214,7 +234,6 @@ Usage:
 
 Commands:
   config        Configure the CLI
-  run           Run the micro agent from the given prompt and test script.
   update        Update Micro Agent to the latest version
 
 Flags:

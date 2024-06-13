@@ -47,10 +47,18 @@ export async function generate(options: RunOptions) {
     </package-json>`
     }
 
-    Please give me the code that satisfies the prompt and test.
+    Please update the code (or generate all new code if needed) to satisfy the prompt and test.
 
     Be sure to use good coding conventions. For instance, if you are generating a typescript
     file, use types (e.g. for function parameters, etc).
+
+    ${
+      !options.interactive &&
+      dedent`
+        If there is already existing code, strictly maintain the same coding style as the existing code.
+        Any updated code should look like its written by the same person/team that wrote the original code.
+      `
+    }
   `;
 
   if (process.env.MA_DEBUG) {
