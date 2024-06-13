@@ -4,10 +4,9 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.0.45](https://github.com/BuilderIO/micro-agent/compare/v0.0.44...v0.0.45) (2024-06-13)
 
-
 ### Features
 
-* abort if the same error happens on repeat ([49bb033](https://github.com/BuilderIO/micro-agent/commit/49bb03373c9c8f8a309014058fab6aadb44be585))
+- abort if the same error happens on repeat ([49bb033](https://github.com/BuilderIO/micro-agent/commit/49bb03373c9c8f8a309014058fab6aadb44be585))
 
 ### [0.0.44](https://github.com/BuilderIO/micro-agent/compare/v0.0.43...v0.0.44) (2024-06-13)
 
