@@ -1,5 +1,5 @@
 export function generateAsciiTree(paths: (string | null | number)[]): string {
-  if (!paths.every(path => typeof path === 'string')) {
+  if (!paths.every((path) => typeof path === 'string')) {
     throw new TypeError('All elements in the paths array must be strings.');
   }
 
@@ -17,21 +17,25 @@ export function generateAsciiTree(paths: (string | null | number)[]): string {
 
     parts.forEach((part, index) => {
       if (!current[part]) {
-        current[part] = (index === parts.length - 1) ? null : {};
+        current[part] = index === parts.length - 1 ? null : {};
       }
       current = current[part] as TreeNode;
     });
   }
 
   // Construct the tree
-  paths.forEach(path => {
+  paths.forEach((path) => {
     if (typeof path === 'string') {
       addPathToTree(path, root);
     }
   });
 
   // Function to generate ASCII tree
-  function generateTreeString(node: TreeNode, prefix: string = '', isLast: boolean = true): string {
+  function generateTreeString(
+    node: TreeNode,
+    prefix: string = '',
+    isLast: boolean = true
+  ): string {
     const keys = Object.keys(node);
     let result = '';
 
@@ -41,7 +45,11 @@ export function generateAsciiTree(paths: (string | null | number)[]): string {
 
       // Generate subtree if the current node is a directory
       if (node[key]) {
-        result += generateTreeString(node[key] as TreeNode, prefix + (isThisLast ? '    ' : '│   '), isThisLast);
+        result += generateTreeString(
+          node[key] as TreeNode,
+          prefix + (isThisLast ? '    ' : '│   '),
+          isThisLast
+        );
       }
     });
 
