@@ -4,10 +4,9 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.0.47](https://github.com/BuilderIO/micro-agent/compare/v0.0.46...v0.0.47) (2024-06-14)
 
-
 ### Bug Fixes
 
-* move sharp to be async so it doesn't throw errors when not needed ([c86f371](https://github.com/BuilderIO/micro-agent/commit/c86f3711b871099d5b6d8b06777a6477e9463468))
+- move sharp to be async so it doesn't throw errors when not needed ([c86f371](https://github.com/BuilderIO/micro-agent/commit/c86f3711b871099d5b6d8b06777a6477e9463468))
 
 ### [0.0.46](https://github.com/BuilderIO/micro-agent/compare/v0.0.45...v0.0.46) (2024-06-13)
 
