@@ -6,11 +6,11 @@ import { findVisualFile } from './find-visual-file';
 import { getScreenshot } from './get-screenshot';
 import { formatMessage } from './test';
 import dedent from 'dedent';
-import sharp from 'sharp';
 import { outputFile } from './output-file';
 
 // use sharp to combine two images, putting them side by side
 const combineTwoImages = async (image1: string, image2: string) => {
+  const { default: sharp } = await import('sharp');
   const image1Buffer = Buffer.from(image1.split(',')[1], 'base64');
   const image2Buffer = Buffer.from(image2.split(',')[1], 'base64');
 
