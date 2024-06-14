@@ -10,6 +10,10 @@ import { green } from 'kolorist';
 import { formatMessage } from './test';
 import { removeBackticks } from './remove-backticks';
 import ollama from 'ollama';
+import dedent from 'dedent';
+import { removeInitialSlash } from './remove-initial-slash';
+import { captureLlmRecord, mockedLlmCompletion } from './mock-llm';
+import { getCodeBlock } from './interactive-mode';
 
 const defaultModel = 'gpt-4o';
 export const USE_ASSISTANT = true;
@@ -18,6 +22,24 @@ const assistantIdentifierMetadataValue = '@builder.io/micro-agent';
 
 const useOllama = (model?: string) => {
   return model?.includes('llama') || model?.includes('phi');
+};
+
+const supportsFunctionCalling = (model?: string) => {
+  return !!{
+    'gpt-4o': true,
+    'gpt-4o-2024-05-13': true,
+    'gpt-4-turbo': true,
+    'gpt-4-turbo-2024-04-09': true,
+    'gpt-4-turbo-preview': true,
+    'gpt-4-0125-preview': true,
+    'gpt-4-1106-preview': true,
+    'gpt-4': true,
+    'gpt-4-0613': true,
+    'gpt-3.5-turbo': true,
+    'gpt-3.5-turbo-0125': true,
+    'gpt-3.5-turbo-1106': true,
+    'gpt-3.5-turbo-0613': true,
+  }[model || ''];
 };
 
 export const getOpenAi = async function () {
@@ -35,11 +57,103 @@ export const getOpenAi = async function () {
   return openai;
 };
 
+export const getFileSuggestion = async function (
+  prompt: string,
+  fileString: string
+) {
+  const message = {
+    role: 'user' as const,
+    content: dedent`
+    Please give me a recommended file path for the following prompt:
+    <prompt>
+    ${prompt}
+    </prompt>
+
+    Here is a preview of the files in the current directory for reference. Please
+    use these as a reference as to what a good file name, language, and path would be
+    to match the other files in the project given the naming/folder/language conventions.
+    <files>
+    ${fileString}
+    </files>
+
+    `,
+  };
+  const { MODEL: model } = await getConfig();
+  if (useOllama(model) || !supportsFunctionCalling(model)) {
+    return removeInitialSlash(
+      removeBackticks(
+        await getSimpleCompletion({
+          messages: [
+            {
+              role: 'system' as const,
+              content:
+                'You are an assistant that given a snapshot of the current filesystem suggests a relative file path for the code algorithm mentioned in the prompt. No other words, just one file path',
+            },
+            message,
+          ],
+        })
+      )
+    );
+  }
+  const openai = await getOpenAi();
+  const completion = await openai.chat.completions.create({
+    model: model || defaultModel,
+    tool_choice: {
+      type: 'function',
+      function: { name: 'file_suggestion' },
+    },
+    tools: [
+      {
+        type: 'function',
+        function: {
+          name: 'file_suggestion',
+          description:
+            'Given a prompt and a list of files, suggest a file path',
+          parameters: {
+            type: 'object',
+            properties: {
+              filePath: {
+                type: 'string',
+                description:
+                  'Relative file path to the file that the code algorithm should be written in, in case of doubt the extension should be .js',
+              },
+            },
+            required: ['filePath'],
+          },
+        },
+      },
+    ],
+    messages: [
+      {
+        role: 'system' as const,
+        content:
+          'You are an assistant that given a snapshot of the current filesystem suggests a relative file path for the code algorithm mentioned in the prompt.',
+      },
+      message,
+    ],
+  });
+  const jsonStr =
+    completion.choices[0]?.message.tool_calls?.[0]?.function.arguments;
+  if (!jsonStr) {
+    return 'src/algorithm.js';
+  }
+  return removeInitialSlash(JSON.parse(jsonStr).filePath);
+};
+
 export const getSimpleCompletion = async function (options: {
   messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[];
   onChunk?: (chunk: string) => void;
 }) {
-  const { MODEL: model } = await getConfig();
+  const {
+    MODEL: model,
+    MOCK_LLM_RECORD_FILE: mockLlmRecordFile,
+    USE_MOCK_LLM: useMockLlm,
+  } = await getConfig();
+
+  if (useMockLlm) {
+    return mockedLlmCompletion(mockLlmRecordFile, options.messages);
+  }
+
   if (useOllama(model)) {
     const response = await ollama.chat({
       model: model,
@@ -55,6 +169,7 @@ export const getSimpleCompletion = async function (options: {
         options.onChunk(chunk.message.content);
       }
     }
+    captureLlmRecord(options.messages, output, mockLlmRecordFile);
 
     return output;
   }
@@ -62,6 +177,8 @@ export const getSimpleCompletion = async function (options: {
   const completion = await openai.chat.completions.create({
     model: model || defaultModel,
     messages: options.messages,
+    temperature: 0,
+    seed: 42,
     stream: true,
   });
 
@@ -77,6 +194,8 @@ export const getSimpleCompletion = async function (options: {
     }
   }
 
+  captureLlmRecord(options.messages, output, mockLlmRecordFile);
+
   return output;
 };
 
@@ -85,7 +204,15 @@ export const getCompletion = async function (options: {
   options: RunOptions;
   useAssistant?: boolean;
 }) {
-  const { MODEL: model } = await getConfig();
+  const {
+    MODEL: model,
+    MOCK_LLM_RECORD_FILE: mockLlmRecordFile,
+    USE_MOCK_LLM: useMockLlm,
+  } = await getConfig();
+  if (useMockLlm) {
+    return mockedLlmCompletion(mockLlmRecordFile, options.messages);
+  }
+
   const useModel = model || defaultModel;
   const useOllamaChat = useOllama(useModel);
 
@@ -105,6 +232,8 @@ export const getCompletion = async function (options: {
       }
     }
     process.stdout.write('\n');
+
+    captureLlmRecord(options.messages, output, mockLlmRecordFile);
     return output;
   }
   const openai = await getOpenAi();
@@ -160,7 +289,9 @@ export const getCompletion = async function (options: {
         })
         .on('textDone', () => {
           process.stdout.write('\n');
-          resolve(removeBackticks(result));
+          const output = getCodeBlock(result);
+          captureLlmRecord(options.messages, output, mockLlmRecordFile);
+          resolve(output);
         });
     });
   } else {
@@ -179,6 +310,8 @@ export const getCompletion = async function (options: {
       }
     }
     process.stdout.write('\n');
+    captureLlmRecord(options.messages, output, mockLlmRecordFile);
+
     return output;
   }
 };

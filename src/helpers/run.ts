@@ -1,11 +1,11 @@
 import { intro, note, outro, log } from '@clack/prompts';
 import { generate } from './generate';
 import { isFail, test } from './test';
-import { writeFile } from 'fs/promises';
 import { green, yellow } from 'kolorist';
 import { commandName } from './constants';
 import { visualGenerate } from './visual-generate';
 import { fileExists } from './file-exists';
+import { outputFile } from './output-file';
 
 type Options = {
   outputFile: string;
@@ -17,6 +17,7 @@ type Options = {
   threadId: string;
   visual: string;
   prompt?: string;
+  interactive?: boolean;
 };
 
 export async function runOne(options: Options) {
@@ -25,7 +26,7 @@ export async function runOne(options: Options) {
     const result = await visualGenerate(options);
     if (isFail(result.testResult)) {
       const code = result.code;
-      await writeFile(options.outputFile, code);
+      await outputFile(options.outputFile, code);
       return {
         code,
         testResult: result.testResult,
@@ -40,7 +41,7 @@ export async function runOne(options: Options) {
   // TODO: parse any imports in the prompt file and include them in the prompt as context
   const result = await generate(options);
 
-  await writeFile(options.outputFile, result);
+  await outputFile(options.outputFile, result);
   log.step('Updated code');
 
   log.step('Running tests...');
@@ -102,7 +103,7 @@ export async function* run(options: RunOptions) {
   if (!passed) {
     log.message(yellow(`Max runs of ${maxRuns} reached.`));
     if (options.prompt && !(await fileExists(options.promptFile))) {
-      await writeFile(options.promptFile, options.prompt);
+      await outputFile(options.promptFile, options.prompt);
     }
     note(
       `${createCommandString(options)}`,

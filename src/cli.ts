@@ -9,6 +9,8 @@ import { RunOptions, runAll } from './helpers/run';
 import { interactiveMode } from './helpers/interactive-mode';
 import { fileExists } from './helpers/file-exists';
 import { outro } from '@clack/prompts';
+import { isValidProject } from './helpers/validate-project';
+import { invalidProjectWarningMessage } from './helpers/invalid-project-warning';
 
 cli(
   {
@@ -52,24 +54,52 @@ cli(
   async (argv) => {
     const filePath = argv._.filePath;
     const fileExtension = filePath?.split('.').pop();
-    const testFileExtension = ['jsx', 'tsx'].includes(fileExtension as any)
-      ? fileExtension?.replace('x', '')
-      : fileExtension;
+    const testFileExtension =
+      fileExtension && ['jsx', 'tsx'].includes(fileExtension as string)
+        ? fileExtension?.replace('x', '')
+        : fileExtension;
 
-    let testFilePath =
-      argv.flags.testFile ||
-      filePath?.replace(
-        // TODO: check .spec.ts too
+    const createReplacementFilePath = (
+      filePath: string,
+      fileExtension: string,
+      replacement: string
+    ) => {
+      return filePath.replace(
         new RegExp('\\.' + fileExtension + '$'),
+        replacement
+      );
+    };
+
+    const testFile =
+      filePath &&
+      fileExtension &&
+      createReplacementFilePath(
+        filePath,
+        fileExtension,
         `.test.${testFileExtension}`
       );
+    const specFile =
+      filePath &&
+      fileExtension &&
+      createReplacementFilePath(
+        filePath,
+        fileExtension,
+        `.spec.${testFileExtension}`
+      );
+
+    const testFileExists = async () => {
+      if (testFile && (await fileExists(testFile))) {
+        return testFile;
+      } else if (specFile && (await fileExists(specFile))) {
+        return specFile;
+      }
+      return undefined;
+    };
+
+    const testFilePath = argv.flags.testFile || (await testFileExists()) || '';
     const promptFilePath =
       argv.flags.prompt ||
       filePath?.replace(new RegExp('\\.' + fileExtension + '$'), '.prompt.md');
-
-    if (!testFilePath || !(await fileExists(testFilePath))) {
-      testFilePath = '';
-    }
 
     const runOptions: RunOptions = {
       outputFile: filePath!,
@@ -83,7 +113,13 @@ cli(
     };
     try {
       if (!argv._.filePath || !argv.flags.test) {
-        await interactiveMode(runOptions);
+        const isValidproject = await isValidProject();
+
+        if (!isValidproject) {
+          await invalidProjectWarningMessage();
+        } else {
+          await interactiveMode(runOptions);
+        }
         return;
       }
 

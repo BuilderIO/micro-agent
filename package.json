@@ -1,7 +1,7 @@
 {
   "name": "@builder.io/micro-agent",
   "description": "An AI CLI that writes code for you.",
-  "version": "0.0.26",
+  "version": "0.0.45",
   "type": "module",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.21.1",
@@ -37,16 +37,19 @@
     "ma": "./dist/cli.mjs"
   },
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run --exclude src/tests/integration",
+    "test:integration": "vitest run src/tests/integration --exclude src/tests/integration/add.test.ts --poolOptions.threads.singleThread",
+    "test:all": "vitest run",
     "start": "jiti ./src/cli.ts",
     "lint:fix": "prettier --write . && eslint --fix",
     "lint": "prettier --check . && eslint",
     "typecheck": "tsc",
     "build": "pkgroll",
-    "release:patch": "npm run build && npm version patch && npm run build && npm publish && git push --follow-tags && standard-version --release-as patch",
-    "release": "standard-version",
-    "release:minor": "standard-version --release-as minor",
-    "release:major": "standard-version --release-as major",
+    "release:patch": "npm run build && standard-version --release-as patch git push --follow-tags origin main && npm publish",
+    "standard-version:release": "standard-version",
+    "standard-version:release:minor": "standard-version --release-as minor",
+    "standard-version:release:major": "standard-version --release-as major",
+    "standard-version:release:patch": "standard-version --release-as patch",
     "postinstall": "npx playwright install",
     "prepare": "husky install"
   },
