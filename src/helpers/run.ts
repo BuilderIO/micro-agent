@@ -105,10 +105,8 @@ export async function* run(options: RunOptions) {
     if (options.prompt && !(await fileExists(options.promptFile))) {
       await outputFile(options.promptFile, options.prompt);
     }
-    note(
-      `${createCommandString(options)}`,
-      'You can resume with this command with:'
-    );
+    log.info('You can resume with this command with:');
+    console.log(`\n${createCommandString(options)}\n`);
     outro(yellow('Stopping.'));
     console.log('\n');
   }
