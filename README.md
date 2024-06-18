@@ -36,6 +36,8 @@ The idea of a micro agent is to
 1. Create a definitive test case that can give clear feedback if the code works as intended or not, and
 2. Iterate on code until all test cases pass
 
+<img width="1026" alt="Micro Agent Diagram" src="https://github.com/BuilderIO/micro-agent/assets/844291/c201e3a1-2d27-47ed-b2b0-9ef8b7425a39">
+
 ### What this project is not
 
 This project is not trying to be an end-to-end developer. AI agents are not capable enough to reliably try to be that yet (or probably very soon). This project won't install modules, read and write multiple files, or do anything else that is highly likely to cause havoc when it inevitably fails.
