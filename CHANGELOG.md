@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.49](https://github.com/BuilderIO/micro-agent/compare/v0.0.48...v0.0.49) (2024-06-18)
+
 ### [0.0.48](https://github.com/BuilderIO/micro-agent/compare/v0.0.47...v0.0.48) (2024-06-17)
 
 ### [0.0.47](https://github.com/BuilderIO/micro-agent/compare/v0.0.46...v0.0.47) (2024-06-14)
