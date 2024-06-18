@@ -14,6 +14,7 @@ import dedent from 'dedent';
 import { removeInitialSlash } from './remove-initial-slash';
 import { captureLlmRecord, mockedLlmCompletion } from './mock-llm';
 import { getCodeBlock } from './interactive-mode';
+import Anthropic from '@anthropic-ai/sdk';
 
 const defaultModel = 'gpt-4o';
 export const USE_ASSISTANT = true;
@@ -22,6 +23,10 @@ const assistantIdentifierMetadataValue = '@builder.io/micro-agent';
 
 const useOllama = (model?: string) => {
   return model?.includes('llama') || model?.includes('phi');
+};
+
+const useAnthropic = (model?: string) => {
+  return model?.includes('claude');
 };
 
 const supportsFunctionCalling = (model?: string) => {
@@ -57,6 +62,19 @@ export const getOpenAi = async function () {
   return openai;
 };
 
+export const getAnthropic = async function () {
+  const { ANTHROPIC_KEY: anthropicKey } = await getConfig();
+  if (!anthropicKey) {
+    throw new KnownError(
+      `Missing Anthropic key. Use \`${commandName} config\` to set it.`
+    );
+  }
+  const anthropic = new Anthropic({
+    apiKey: anthropicKey,
+  });
+  return anthropic;
+};
+
 export const getFileSuggestion = async function (
   prompt: string,
   fileString: string
@@ -72,14 +90,22 @@ export const getFileSuggestion = async function (
     Here is a preview of the files in the current directory for reference. Please
     use these as a reference as to what a good file name, language, and path would be
     to match the other files in the project given the naming/folder/language conventions.
+
+    For instance, if the other files are in TypeScript, the file path should end in .ts.
+    And if the most common casing in the file tree is dash-case, the file path should be dash-case.
     <files>
     ${fileString}
     </files>
 
+
     `,
   };
   const { MODEL: model } = await getConfig();
-  if (useOllama(model) || !supportsFunctionCalling(model)) {
+  if (
+    useOllama(model) ||
+    useAnthropic(model) ||
+    !supportsFunctionCalling(model)
+  ) {
     return removeInitialSlash(
       removeBackticks(
         await getSimpleCompletion({
@@ -154,6 +180,34 @@ export const getSimpleCompletion = async function (options: {
     return mockedLlmCompletion(mockLlmRecordFile, options.messages);
   }
 
+  if (useAnthropic(model)) {
+    let output = '';
+    const anthropic = await getAnthropic();
+    const systemMessage = options.messages.find(
+      (message) => message.role === 'system'
+    );
+    const result = anthropic.messages
+      .stream({
+        model:
+          (model as string) === 'claude' ? 'claude-3-opus-20240229' : model,
+        max_tokens: 4096,
+        system: systemMessage?.content as string,
+        messages: options.messages.filter(
+          (message) => message.role !== 'system'
+        ) as any[],
+      })
+      .on('text', (text) => {
+        output += text;
+        if (options.onChunk) {
+          options.onChunk(text);
+        }
+      });
+
+    await result.done();
+    captureLlmRecord(options.messages, output, mockLlmRecordFile);
+    return output;
+  }
+
   if (useOllama(model)) {
     const response = await ollama.chat({
       model: model,
@@ -216,24 +270,27 @@ export const getCompletion = async function (options: {
   const useModel = model || defaultModel;
   const useOllamaChat = useOllama(useModel);
 
-  if (useOllamaChat) {
-    const completion = await ollama.chat({
-      model: model || defaultModel,
-      messages: options.messages as any[],
-      stream: true,
-    });
-    let output = '';
+  if (useAnthropic(useModel)) {
     process.stdout.write(formatMessage('\n'));
-    for await (const chunk of completion) {
-      const str = chunk.message.content;
-      if (str) {
-        output += str;
-        process.stderr.write(formatMessage(str));
-      }
-    }
-    process.stdout.write('\n');
+    const output = await getSimpleCompletion({
+      messages: options.messages,
+      onChunk: (chunk) => {
+        process.stderr.write(formatMessage(chunk));
+      },
+    });
+    process.stdout.write(formatMessage('\n'));
+    return output;
+  }
 
-    captureLlmRecord(options.messages, output, mockLlmRecordFile);
+  if (useOllamaChat) {
+    process.stdout.write(formatMessage('\n'));
+    const output = await getSimpleCompletion({
+      messages: options.messages,
+      onChunk: (chunk) => {
+        process.stderr.write(formatMessage(chunk));
+      },
+    });
+    process.stdout.write(formatMessage('\n'));
     return output;
   }
   const openai = await getOpenAi();

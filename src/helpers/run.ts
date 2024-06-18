@@ -1,4 +1,4 @@
-import { intro, note, outro, log } from '@clack/prompts';
+import { intro, outro, log } from '@clack/prompts';
 import { generate } from './generate';
 import { isFail, test } from './test';
 import { green, yellow } from 'kolorist';
@@ -6,6 +6,7 @@ import { commandName } from './constants';
 import { visualGenerate } from './visual-generate';
 import { fileExists } from './file-exists';
 import { outputFile } from './output-file';
+import { removeBackticks } from './remove-backticks';
 
 type Options = {
   outputFile: string;
@@ -39,7 +40,7 @@ export async function runOne(options: Options) {
   log.step('Generating code...');
 
   // TODO: parse any imports in the prompt file and include them in the prompt as context
-  const result = await generate(options);
+  const result = removeBackticks(await generate(options));
 
   await outputFile(options.outputFile, result);
   log.step('Updated code');
