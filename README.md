@@ -36,7 +36,8 @@ The idea of a micro agent is to
 1. Create a definitive test case that can give clear feedback if the code works as intended or not, and
 2. Iterate on code until all test cases pass
 
-<img width="1026" alt="Micro Agent Diagram" src="https://github.com/BuilderIO/micro-agent/assets/844291/c201e3a1-2d27-47ed-b2b0-9ef8b7425a39">
+<img width="1270" alt="Micro Agent Diagram" src="https://github.com/BuilderIO/micro-agent/assets/844291/406496dd-3be8-491b-a5f0-2960dd924013">
+
 
 ### What this project is not
 
