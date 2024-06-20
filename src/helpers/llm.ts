@@ -261,6 +261,7 @@ export const getCompletion = async function (options: {
     MODEL: model,
     MOCK_LLM_RECORD_FILE: mockLlmRecordFile,
     USE_MOCK_LLM: useMockLlm,
+    OPENAI_API_ENDPOINT: endpoint,
     USE_ASSISTANT,
   } = await getConfig();
   if (useMockLlm) {
@@ -295,7 +296,7 @@ export const getCompletion = async function (options: {
   }
   const openai = await getOpenAi();
 
-  if (options.useAssistant ?? USE_ASSISTANT) {
+  if (options.useAssistant ?? (USE_ASSISTANT && !endpoint)) {
     let assistantId: string;
     const assistants = await openai.beta.assistants.list({
       limit: 100,
