@@ -189,7 +189,7 @@ export const getSimpleCompletion = async function (options: {
     const result = anthropic.messages
       .stream({
         model:
-          (model as string) === 'claude' ? 'claude-3-opus-20240229' : model,
+          (model as string) === 'claude' ? 'claude-3-5-sonnet-20240620' : model,
         max_tokens: 4096,
         system: systemMessage?.content as string,
         messages: options.messages.filter(

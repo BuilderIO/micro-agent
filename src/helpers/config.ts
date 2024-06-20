@@ -27,7 +27,7 @@ const configParsers = {
   },
   ANTHROPIC_MODEL(model?: string) {
     if (!model || model.length === 0) {
-      return 'claude-3-opus-20240229';
+      return 'claude-3-5-sonnet-20240620';
     }
 
     return model;
