@@ -19,7 +19,7 @@
 
 # Micro Agent
 
-Just run `micro-agent`, give it a prompt, and it'll generate a test and then iterate on code until all test case passes. 
+Just run `micro-agent`, give it a prompt, and it'll generate a test and then iterate on code until all test case passes.
 
 ## Why?
 
@@ -39,7 +39,6 @@ The idea of a micro agent is to
 Read more on [why Micro Agent exists](https://www.builder.io/blog/micro-agent).
 
 <img width="1270" alt="Micro Agent Diagram" src="https://github.com/BuilderIO/micro-agent/assets/844291/406496dd-3be8-491b-a5f0-2960dd924013">
-
 
 ### What this project is not
 

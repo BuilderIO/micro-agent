@@ -32,6 +32,9 @@ const configParsers = {
 
     return model;
   },
+  USE_ASSISTANT(useAssistant?: string) {
+    return useAssistant !== 'false';
+  },
   OPENAI_API_ENDPOINT(apiEndpoint?: string) {
     return apiEndpoint || 'https://api.openai.com/v1';
   },

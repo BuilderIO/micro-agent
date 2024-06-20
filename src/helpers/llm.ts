@@ -17,7 +17,6 @@ import { getCodeBlock } from './interactive-mode';
 import Anthropic from '@anthropic-ai/sdk';
 
 const defaultModel = 'gpt-4o';
-export const USE_ASSISTANT = true;
 const assistantIdentifierMetadataKey = '_id';
 const assistantIdentifierMetadataValue = '@builder.io/micro-agent';
 
@@ -262,6 +261,7 @@ export const getCompletion = async function (options: {
     MODEL: model,
     MOCK_LLM_RECORD_FILE: mockLlmRecordFile,
     USE_MOCK_LLM: useMockLlm,
+    USE_ASSISTANT,
   } = await getConfig();
   if (useMockLlm) {
     return mockedLlmCompletion(mockLlmRecordFile, options.messages);

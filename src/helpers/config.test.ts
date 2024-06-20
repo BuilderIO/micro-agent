@@ -41,6 +41,7 @@ const configFilePath = path.join(os.homedir(), '.micro-agent');
 describe('getConfig', () => {
   const defaultConfig = {
     ANTHROPIC_KEY: undefined,
+    USE_ASSISTANT: true,
     ANTHROPIC_MODEL: 'claude-3-5-sonnet-20240620',
     LANGUAGE: 'en',
     MODEL: 'gpt-4o',
