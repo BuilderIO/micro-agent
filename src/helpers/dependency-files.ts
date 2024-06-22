@@ -29,7 +29,7 @@ export async function getDependencyFile(
       }
       filePath = getDependenciesFilePath(directory, 'js');
       if (await fileExists(filePath)) {
-        return getDependenciesFileContent(directory, language);
+        return getDependenciesFileContent(directory, 'js');
       }
     }
     currentDirectory = path.dirname(currentDirectory);
