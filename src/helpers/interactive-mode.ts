@@ -200,23 +200,6 @@ export async function interactiveMode(options: Partial<RunOptions>) {
   });
 }
 
-export async function getDependenciesFileContent(language?: string): Promise<string> {
-  let fileName;
-  switch (language) {
-    case 'py':
-      fileName = 'requirements.txt';
-      break;
-    case 'rb':
-      fileName = 'Gemfile';
-      break;
-    default:
-      fileName = 'package.json';
-      break;
-  }
-
-  const fileContent = await readFile(fileName, 'utf8');
-  return fileContent;
-}
 export function getCodeBlock(output: string) {
   const foundCode = output.indexOf('```');
   if (foundCode === -1) {
