@@ -41,7 +41,8 @@ const configFilePath = path.join(os.homedir(), '.micro-agent');
 describe('getConfig', () => {
   const defaultConfig = {
     ANTHROPIC_KEY: undefined,
-    ANTHROPIC_MODEL: 'claude-3-opus-20240229',
+    USE_ASSISTANT: true,
+    ANTHROPIC_MODEL: 'claude-3-5-sonnet-20240620',
     LANGUAGE: 'en',
     MODEL: 'gpt-4o',
     OPENAI_API_ENDPOINT: 'https://api.openai.com/v1',

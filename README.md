@@ -19,7 +19,7 @@
 
 # Micro Agent
 
-Point Micro Agent at a file and a test (or screenshot), and it will write code for you until your tests pass or it more closely matches your design screenshot.
+Just run `micro-agent`, give it a prompt, and it'll generate a test and then iterate on code until all test case passes.
 
 ## Why?
 
@@ -35,6 +35,10 @@ The idea of a micro agent is to
 
 1. Create a definitive test case that can give clear feedback if the code works as intended or not, and
 2. Iterate on code until all test cases pass
+
+Read more on [why Micro Agent exists](https://www.builder.io/blog/micro-agent).
+
+<img width="1270" alt="Micro Agent Diagram" src="https://github.com/BuilderIO/micro-agent/assets/844291/406496dd-3be8-491b-a5f0-2960dd924013">
 
 ### What this project is not
 

@@ -27,10 +27,13 @@ const configParsers = {
   },
   ANTHROPIC_MODEL(model?: string) {
     if (!model || model.length === 0) {
-      return 'claude-3-opus-20240229';
+      return 'claude-3-5-sonnet-20240620';
     }
 
     return model;
+  },
+  USE_ASSISTANT(useAssistant?: string) {
+    return useAssistant !== 'false';
   },
   OPENAI_API_ENDPOINT(apiEndpoint?: string) {
     return apiEndpoint || 'https://api.openai.com/v1';

@@ -6,11 +6,11 @@ import { findVisualFile } from './find-visual-file';
 import { getScreenshot } from './get-screenshot';
 import { formatMessage } from './test';
 import dedent from 'dedent';
-import sharp from 'sharp';
 import { outputFile } from './output-file';
 
 // use sharp to combine two images, putting them side by side
 const combineTwoImages = async (image1: string, image2: string) => {
+  const { default: sharp } = await import('sharp');
   const image1Buffer = Buffer.from(image1.split(',')[1], 'base64');
   const image2Buffer = Buffer.from(image2.split(',')[1], 'base64');
 
@@ -87,7 +87,7 @@ export async function visualTest(options: RunOptions) {
     process.stdout.write(formatMessage('\n'));
     anthropic.messages
       .stream({
-        model: 'claude-3-opus-20240229',
+        model: 'claude-3-5-sonnet-20240620',
         max_tokens: 4096,
         messages: [
           {

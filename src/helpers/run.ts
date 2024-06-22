@@ -1,4 +1,4 @@
-import { intro, note, outro, log } from '@clack/prompts';
+import { intro, outro, log } from '@clack/prompts';
 import { generate } from './generate';
 import { isFail, test } from './test';
 import { green, yellow } from 'kolorist';
@@ -6,6 +6,7 @@ import { commandName } from './constants';
 import { visualGenerate } from './visual-generate';
 import { fileExists } from './file-exists';
 import { outputFile } from './output-file';
+import { removeBackticks } from './remove-backticks';
 
 type Options = {
   outputFile: string;
@@ -39,7 +40,7 @@ export async function runOne(options: Options) {
   log.step('Generating code...');
 
   // TODO: parse any imports in the prompt file and include them in the prompt as context
-  const result = await generate(options);
+  const result = removeBackticks(await generate(options));
 
   await outputFile(options.outputFile, result);
   log.step('Updated code');
@@ -59,7 +60,7 @@ export type RunOptions = Options & {
 
 const useNewlinesInCommand = true;
 
-function createCommandString(options: RunOptions) {
+export function createCommandString(options: RunOptions) {
   const command = [`${commandName}`];
   if (options.outputFile) {
     command.push(options.outputFile);
@@ -105,10 +106,8 @@ export async function* run(options: RunOptions) {
     if (options.prompt && !(await fileExists(options.promptFile))) {
       await outputFile(options.promptFile, options.prompt);
     }
-    note(
-      `${createCommandString(options)}`,
-      'You can resume with this command with:'
-    );
+    log.info('You can resume with this command with:');
+    console.log(`\n${createCommandString(options)}\n`);
     outro(yellow('Stopping.'));
     console.log('\n');
   }

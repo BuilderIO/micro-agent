@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/BuilderIO/micro-agent/compare/v0.1.1...v0.1.2) (2024-06-20)
+
+### [0.1.1](https://github.com/BuilderIO/micro-agent/compare/v0.1.0...v0.1.1) (2024-06-20)
+
+### [0.0.49](https://github.com/BuilderIO/micro-agent/compare/v0.0.48...v0.0.49) (2024-06-18)
+
+### [0.0.48](https://github.com/BuilderIO/micro-agent/compare/v0.0.47...v0.0.48) (2024-06-17)
+
+### [0.0.47](https://github.com/BuilderIO/micro-agent/compare/v0.0.46...v0.0.47) (2024-06-14)
+
+### Bug Fixes
+
+- move sharp to be async so it doesn't throw errors when not needed ([c86f371](https://github.com/BuilderIO/micro-agent/commit/c86f3711b871099d5b6d8b06777a6477e9463468))
+
+### [0.0.46](https://github.com/BuilderIO/micro-agent/compare/v0.0.45...v0.0.46) (2024-06-13)
+
 ### [0.0.45](https://github.com/BuilderIO/micro-agent/compare/v0.0.44...v0.0.45) (2024-06-13)
 
 ### Features
