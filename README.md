@@ -66,12 +66,26 @@ Look at that, you're now a test-driven developer. You're welcome.
 
 ## Running Manually
 
-### Add an OpenAI API key
+### Add an LLM API key
 
-Micro Agent uses the OpenAI API to generate code. You need to add your API key to the CLI:
+Micro Agent works with Claude, OpenAI, Ollama, or any OpenAI compatible provider such as Groq. You need to add your API key to the CLI:
 
 ```bash
 micro-agent config set OPENAI_KEY=<your token>
+micro-agent config set MODEL=GPT-4o
+```
+
+Or, for Claude:
+
+```bash
+micro-agent config set ANTHROPIC_KEY=<your token>
+micro-agent config set MODEL=claude
+```
+
+To use a custom OpenAI API endpoint, such as for use with Ollama or Groq, you can set the endpoint with:
+
+```bash
+micro-agent config set OPENAI_API_ENDPOINT=<your endpoint>
 ```
 
 ### Unit test matching
@@ -166,10 +180,22 @@ You can configure the CLI with the `config` command, for instance to set your Op
 micro-agent config set OPENAI_KEY=<your token>
 ```
 
+or to set an Anthropic key:
+
+```bash
+micro-agent config set ANTHROPIC_KEY=<your token>
+```
+
 By default Micro Agent uses `gpt-4o` as the model, but you can override it with the `MODEL` config option (or environment variable):
 
 ```bash
 micro-agent config set MODEL=gpt-3.5-turbo
+```
+
+or, if you supply an Anthropic key, you can use any Claude model. by default `claude` is an alias to `claude-3-5-sonnet-20240620`:
+
+```bash
+micro-agent config set MODEL=claude
 ```
 
 #### Config UI
@@ -185,8 +211,9 @@ To get an interactive UI like below:
 ```bash
 ◆  Set config:
 │  ○ OpenAI Key
+│  ○ Anthropic Key
 │  ○ OpenAI API Endpoint
-│  ● Model (gpt-3.5-turbo)
+│  ● Model (gpt-4o)
 │  ○ Done
 └
 ```
