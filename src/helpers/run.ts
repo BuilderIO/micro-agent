@@ -27,6 +27,14 @@ export async function runOne(options: Options) {
     log.step('Running...');
     const result = await visualGenerate(options);
     if (isFail(result.testResult)) {
+      if (result.testResult.message.includes('Adding logs to the code')) {
+        const codeWithLogs = await addLogsToCode(options);
+        await outputFile(options.outputFile, codeWithLogs);
+        return {
+          code: codeWithLogs,
+          testResult: result.testResult,
+        };
+      }
       const code = result.code;
       await outputFile(options.outputFile, code);
       return {
