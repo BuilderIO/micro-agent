@@ -38,17 +38,22 @@ export const fail = (message: string) => {
 const testFail = (message: string, options: RunOptions) => {
   prevTestFailures.push(message);
   if (hasFailedNTimesWithTheSameMessage(message)) {
-    outro(
-      red(
-        'Your test command is failing with the same error several times. Please make sure your test command is correct. Aborting...'
-      )
-    );
-    console.log(
-      `${green('To continue, run:')}\n${gray(
-        `${createCommandString(options)}`
-      )}\n`
-    );
-    process.exit(1);
+    if (!options.addedLogs) {
+      options.addedLogs = true;
+      return fail('Repeated test failures detected. Adding logs to the code.');
+    } else {
+      outro(
+        red(
+          'Your test command is failing with the same error several times. Please make sure your test command is correct. Aborting...'
+        )
+      );
+      console.log(
+        `${green('To continue, run:')}\n${gray(
+          `${createCommandString(options)}`
+        )}\n`
+      );
+      process.exit(1);
+    }
   }
   return fail(message);
 };
