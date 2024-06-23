@@ -198,14 +198,19 @@ describe('showConfigUI', () => {
           hint: 'sk-...',
         },
         {
-          label: 'OpenAI API Endpoint',
-          value: 'OPENAI_API_ENDPOINT',
-          hint: 'https://api.openai.com/v1',
+          label: 'Anthropic Key',
+          value: 'ANTHROPIC_KEY',
+          hint: 'sk-ant-...',
         },
         {
           label: 'Model',
           value: 'MODEL',
           hint: 'gpt-4o',
+        },
+        {
+          label: 'OpenAI API Endpoint',
+          value: 'OPENAI_API_ENDPOINT',
+          hint: 'https://api.openai.com/v1',
         },
         {
           label: 'Done',

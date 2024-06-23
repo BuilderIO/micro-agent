@@ -122,16 +122,24 @@ export const showConfigUI = async () => {
             : '(not set)',
         },
         {
-          label: 'OpenAI API Endpoint',
-          value: 'OPENAI_API_ENDPOINT',
-          hint: hasOwn(config, 'OPENAI_API_ENDPOINT')
-            ? config.OPENAI_API_ENDPOINT
+          label: 'Anthropic Key',
+          value: 'ANTHROPIC_KEY',
+          hint: hasOwn(config, 'ANTHROPIC_KEY')
+            ? // Obfuscate the key
+              'sk-ant-...' + (config.ANTHROPIC_KEY?.slice(-3) || '')
             : '(not set)',
         },
         {
           label: 'Model',
           value: 'MODEL',
           hint: hasOwn(config, 'MODEL') ? config.MODEL : '(not set)',
+        },
+        {
+          label: 'OpenAI API Endpoint',
+          value: 'OPENAI_API_ENDPOINT',
+          hint: hasOwn(config, 'OPENAI_API_ENDPOINT')
+            ? config.OPENAI_API_ENDPOINT
+            : '(not set)',
         },
         {
           label: 'Done',
