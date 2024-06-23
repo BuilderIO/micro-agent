@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/BuilderIO/micro-agent/compare/v0.1.3...v0.1.4) (2024-06-23)
+
+
+### Features
+
+* add anthropic key to interactive config UI ([af0cd1f](https://github.com/BuilderIO/micro-agent/commit/af0cd1f3f49077a3a5d3e8935c614e16d1ee745c))
+
 ### [0.1.3](https://github.com/BuilderIO/micro-agent/compare/v0.1.2...v0.1.3) (2024-06-23)
 
 ### [0.1.2](https://github.com/BuilderIO/micro-agent/compare/v0.1.1...v0.1.2) (2024-06-20)
