@@ -19,6 +19,7 @@ type Options = {
   visual: string;
   prompt?: string;
   interactive?: boolean;
+  addedLogs?: boolean;
 };
 
 export async function runOne(options: Options) {
