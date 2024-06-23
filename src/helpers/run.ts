@@ -7,6 +7,7 @@ import { visualGenerate } from './visual-generate';
 import { fileExists } from './file-exists';
 import { outputFile } from './output-file';
 import { removeBackticks } from './remove-backticks';
+import { getSimpleCompletion } from './llm';
 
 type Options = {
   outputFile: string;
@@ -148,4 +149,39 @@ export async function runAll(
     results.push(result);
   }
   return results;
+}
+
+async function addLogsToCode(options: Options): Promise<string> {
+  const codeWithLogs = await getSimpleCompletion({
+    messages: [
+      {
+        role: 'system',
+        content:
+          'You are an assistant that helps improve code by adding logs for debugging.',
+      },
+      {
+        role: 'user',
+        content: `Please add detailed logs to the following code to help debug repeated test failures:\n\n${options.priorCode}`,
+      },
+    ],
+  });
+
+  return codeWithLogs;
+}
+
+async function removeLogsFromCode(options: Options): Promise<string> {
+  const codeWithoutLogs = await getSimpleCompletion({
+    messages: [
+      {
+        role: 'system',
+        content:
+          'You are an assistant that helps clean up code by removing logs.',
+      },
+      {
+        role: 'user',
+        content: `Please remove all logs from the following code:\n\n${options.priorCode}`,
+      },
+    ],
+  });
+  return codeWithoutLogs;
 }
