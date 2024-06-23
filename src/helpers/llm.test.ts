@@ -1,4 +1,9 @@
-import { getCompletion, getOpenAi, getSimpleCompletion } from './llm';
+import {
+  getCompletion,
+  getOpenAi,
+  getSimpleCompletion,
+  getFileSuggestion,
+} from './llm';
 import { KnownError } from './error';
 import { expect, describe, it, vi } from 'vitest';
 import OpenAI from 'openai';
@@ -175,5 +180,30 @@ describe('getCompletion', () => {
     expect(stdOutWriteMock).toHaveBeenNthCalledWith(2, '\n');
     expect(stdErrWriteMock).toHaveBeenCalledWith(gray('Hello'));
     expect(stdErrWriteMock).toHaveBeenCalledWith(gray('World'));
+  });
+});
+
+describe('getFileSuggestion', () => {
+  it('should return a valid file suggestion based on input', async () => {
+    mocks.getConfig.mockResolvedValue({
+      ...defaultConfig,
+      MODEL: 'gpt-4o',
+    });
+    mocks.create.mockResolvedValueOnce({
+      choices: [
+        {
+          message: {
+            tool_calls: [
+              { function: { arguments: '{ "filePath": "/src/add.test.ts"}' } },
+            ],
+          },
+        },
+      ],
+    });
+    const prompt = 'a function that adds numbers';
+    const fileString = 'src/add.ts\nsrc/subtract.ts\nsrc/multiply.ts';
+    const expectedResult = 'src/add.test.ts';
+    const result = await getFileSuggestion(prompt, fileString);
+    expect(result).to.equal(expectedResult);
   });
 });
