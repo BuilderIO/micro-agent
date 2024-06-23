@@ -138,6 +138,11 @@ export async function runAll(
     testResult = await test(options);
 
     if (testResult.type === 'success') {
+      if (options.addedLogs) {
+        const codeWithoutLogs = await removeLogsFromCode(options);
+        await outputFile(options.outputFile, codeWithoutLogs);
+        options.addedLogs = false;
+      }
       outro(green('All tests passed!'));
       return;
     }
