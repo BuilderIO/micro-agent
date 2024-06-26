@@ -86,6 +86,7 @@ To use a custom OpenAI API endpoint, such as for use with Ollama or Groq, you ca
 
 ```bash
 micro-agent config set OPENAI_API_ENDPOINT=<your endpoint>
+micro-agent config set OPENAI_API_ENDPOINT=https://api.groq.com/openai/v1
 ```
 
 ### Unit test matching
