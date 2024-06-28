@@ -166,7 +166,7 @@ async function addLogsToCode(options: Options): Promise<string> {
       },
       {
         role: 'user',
-        content: `Please add detailed logs to the following code to help debug repeated test failures:\n\n${options.priorCode}\n\nThe error you received on that code was:\n\n${options.lastRunError}`,
+        content: `Please add detailed logs to the following code to help debug repeated test failures:\n\n<code>${options.priorCode}</code>\n\nThe error you received on that code was:\n\n<error>${options.lastRunError}</error>`,
       },
     ],
   });
