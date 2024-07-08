@@ -19,7 +19,7 @@
 
 # Micro Agent
 
-Just run `micro-agent`, give it a prompt, and it'll generate a test and then iterate on code until all test case passes.
+Just run `micro-agent`, give it a prompt, and it'll generate a test and then iterate on code until all test cases pass.
 
 ## Why?
 
