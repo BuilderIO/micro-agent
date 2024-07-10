@@ -12,6 +12,15 @@ import { outro } from '@clack/prompts';
 import { isValidProject } from './helpers/validate-project';
 import { invalidProjectWarningMessage } from './helpers/invalid-project-warning';
 
+// Suppress punnycode warnings
+const originalEmit = process.emitWarning;
+process.emitWarning = function (...args) {
+  const [warning] = args;
+  const warningString = warning.toString();
+  if (warningString.includes('punnycode')) return;
+  return originalEmit.apply(process, args as any);
+};
+
 cli(
   {
     name: commandName,
