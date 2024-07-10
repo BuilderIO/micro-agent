@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/BuilderIO/micro-agent/compare/v0.1.4...v0.1.5) (2024-07-10)
+
+
+### Bug Fixes
+
+* suppress punnycode warnings ([ab9f1b5](https://github.com/BuilderIO/micro-agent/commit/ab9f1b5af52d769e020104915cf052c1b045ad0c))
+
 ### [0.1.4](https://github.com/BuilderIO/micro-agent/compare/v0.1.3...v0.1.4) (2024-06-23)
 
 
