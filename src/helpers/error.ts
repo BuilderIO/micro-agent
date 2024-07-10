@@ -1,5 +1,6 @@
 import { dim } from 'kolorist';
 import { version } from '../../package.json';
+import { commandName } from './constants';
 
 export class KnownError extends Error {}
 
@@ -10,7 +11,7 @@ export const handleCliError = (error: any) => {
     if (error.stack) {
       console.error(dim(error.stack.split('\n').slice(1).join('\n')));
     }
-    console.error(`\n${indent}${dim(`micro-agent v${version}`)}`);
+    console.error(`\n${indent}${dim(`${commandName} v${version}`)}`);
     console.error(
       `\n${indent}Please open a Bug report with the information above:`
     );
