@@ -17,6 +17,8 @@ const originalEmit = process.emitWarning;
 process.emitWarning = function (...args) {
   const [warning] = args;
   const warningString = warning.toString();
+  // Ignore annoying "punnycode is deprecated" warning that comes
+  // from one of our dependencies
   if (warningString.includes('punnycode')) return;
   return originalEmit.apply(process, args as any);
 };
