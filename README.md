@@ -48,7 +48,7 @@ It's a micro agent. It's small, focused, and does one thing as well as possible:
 
 ## Installation
 
-> Micro Agent requires [Node.js](https://nodejs.org/) v14 or later.
+> Micro Agent requires [Node.js](https://nodejs.org/) v20 or later.
 
 ```bash
 npm install -g @builder.io/micro-agent
