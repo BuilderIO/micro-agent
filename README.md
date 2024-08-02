@@ -48,7 +48,7 @@ It's a micro agent. It's small, focused, and does one thing as well as possible:
 
 ## Installation
 
-> Micro Agent requires [Node.js](https://nodejs.org/) v20 or later.
+> Micro Agent requires [Node.js](https://nodejs.org/) v18 or later.
 
 ```bash
 npm install -g @builder.io/micro-agent
@@ -72,7 +72,7 @@ Micro Agent works with Claude, OpenAI, Ollama, or any OpenAI compatible provider
 
 ```bash
 micro-agent config set OPENAI_KEY=<your token>
-micro-agent config set MODEL=GPT-4o
+micro-agent config set MODEL=gpt-4o
 ```
 
 Or, for Claude:
