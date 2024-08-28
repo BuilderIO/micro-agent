@@ -131,7 +131,7 @@ Micro Agent can also help you match a design. To do this, you need to provide a 
 micro-agent ./app/about/page.tsx --visual localhost:3000/about
 ```
 
-Micro agent will then generate code until the rendered output of your code matches more closely matches a screenshot file that you place next to the code you are editing (in this case, it would be `./app/about/page.png`).
+Micro agent will then generate code until the rendered output of your code more closely matches a screenshot file that you place next to the code you are editing (in this case, it would be `./app/about/page.png`).
 
 The above assumes the following file structure:
 
