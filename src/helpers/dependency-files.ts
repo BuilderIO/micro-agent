@@ -1,4 +1,4 @@
-import * as fs from 'fs/promises';
+import { readFile } from 'fs/promises';
 import * as path from 'path';
 import { fileExists } from './file-exists';
 
@@ -11,7 +11,8 @@ export async function getDependencyFile(
   language?: string
 ): Promise<string | null> {
   let currentDirectory = directory;
-  while (currentDirectory !== '/') {
+  const rootDirectory = path.parse(directory).root;
+  while (currentDirectory !== rootDirectory || rootDirectory == '') {
     if (language) {
       const filePath = getDependenciesFilePath(directory, language);
 
@@ -63,6 +64,6 @@ async function getDependenciesFileContent(
   language?: string
 ): Promise<string> {
   const filePath = getDependenciesFilePath(directory, language);
-  const fileContent = await fs.readFile(filePath, 'utf8');
+  const fileContent = await readFile(filePath, 'utf8');
   return fileContent;
 }

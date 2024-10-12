@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { getDependencyFile, getDependencyFileName } from './dependency-files';
+import path from 'path';
 
 const mocks = vi.hoisted(() => {
   return {
@@ -60,9 +61,9 @@ describe('getDependencyFile', () => {
 
     const result = await getDependencyFile('/src');
     expect(mocks.fileExists).toHaveBeenCalledTimes(3);
-    expect(mocks.fileExists).toHaveBeenCalledWith('/src/package.json');
-    expect(mocks.fileExists).toHaveBeenCalledWith('/src/requirements.txt');
-    expect(mocks.fileExists).toHaveBeenCalledWith('/src/Gemfile');
+    expect(mocks.fileExists).toHaveBeenCalledWith(path.join('/src', 'package.json'));
+    expect(mocks.fileExists).toHaveBeenCalledWith(path.join('/src', 'requirements.txt'));
+    expect(mocks.fileExists).toHaveBeenCalledWith(path.join('/src', 'Gemfile'));
   });
 
   it('should return null if package.json file does not exist', async () => {

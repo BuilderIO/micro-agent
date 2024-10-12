@@ -37,6 +37,7 @@ const realProcess = process;
 global.process = { ...realProcess, exit: mocks.exit };
 
 const configFilePath = path.join(os.homedir(), '.micro-agent');
+const newline = os.platform() === 'win32' ? '\r\n' : '\n';
 
 describe('getConfig', () => {
   const defaultConfig = {
@@ -121,7 +122,7 @@ describe('getConfig', () => {
     };
     mocks.lstat.mockResolvedValueOnce(true);
     mocks.readFile.mockResolvedValueOnce(
-      'OPENAI_KEY=my-openai-key\nMODEL=gpt-3.5-turbo\nLANGUAGE=en\n'
+      `OPENAI_KEY=my-openai-key${newline}MODEL=gpt-3.5-turbo${newline}LANGUAGE=en${newline}`
     );
 
     const result = await getConfig();
@@ -161,7 +162,7 @@ describe('setConfigs', () => {
 
     expect(mocks.writeFile).toHaveBeenCalledWith(
       configFilePath,
-      'OPENAI_KEY=my-openai-key\nMODEL=gpt-3.5-turbo\nLANGUAGE=en\n',
+      `OPENAI_KEY=my-openai-key${newline}MODEL=gpt-3.5-turbo${newline}LANGUAGE=en${newline}`,
       'utf8'
     );
   });
@@ -262,7 +263,7 @@ describe('showConfigUI', () => {
     expect(mocks.writeFile).toHaveBeenCalledTimes(1);
     expect(mocks.writeFile).toHaveBeenCalledWith(
       configFilePath,
-      'OPENAI_KEY=my-openai-key\n',
+      `OPENAI_KEY=my-openai-key${newline}`,
       'utf8'
     );
   });
@@ -298,7 +299,7 @@ describe('showConfigUI', () => {
     expect(mocks.writeFile).toHaveBeenCalledTimes(1);
     expect(mocks.writeFile).toHaveBeenCalledWith(
       configFilePath,
-      'OPENAI_API_ENDPOINT=https://api.openai.com/v1\n',
+      `OPENAI_API_ENDPOINT=https://api.openai.com/v1${newline}`,
       'utf8'
     );
   });
@@ -330,7 +331,7 @@ describe('showConfigUI', () => {
     expect(mocks.writeFile).toHaveBeenCalledTimes(1);
     expect(mocks.writeFile).toHaveBeenCalledWith(
       configFilePath,
-      'MODEL=gpt-4o\n',
+      `MODEL=gpt-4o${newline}`,
       'utf8'
     );
   });
