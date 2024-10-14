@@ -61,8 +61,12 @@ describe('getDependencyFile', () => {
 
     const result = await getDependencyFile('/src');
     expect(mocks.fileExists).toHaveBeenCalledTimes(3);
-    expect(mocks.fileExists).toHaveBeenCalledWith(path.join('/src', 'package.json'));
-    expect(mocks.fileExists).toHaveBeenCalledWith(path.join('/src', 'requirements.txt'));
+    expect(mocks.fileExists).toHaveBeenCalledWith(
+      path.join('/src', 'package.json')
+    );
+    expect(mocks.fileExists).toHaveBeenCalledWith(
+      path.join('/src', 'requirements.txt')
+    );
     expect(mocks.fileExists).toHaveBeenCalledWith(path.join('/src', 'Gemfile'));
   });
 
