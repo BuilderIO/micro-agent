@@ -57,12 +57,12 @@ export const getOpenAi = async function () {
   if (endpoint.indexOf('.openai.azure.com/openai') > 0) {
     const deploymentName = endpoint.split('/deployments/')[1].split('/')[0];
     const apiVersion = endpoint.split('api-version=')[1];
-    if(!deploymentName || !apiVersion) {
+    if (!deploymentName || !apiVersion) {
       throw new KnownError(
         `Invalid Azure OpenAI endpoint. Use \`${commandName} config\` to set ` +
-        'your Azure OpenAI deployment endpoint as your OpenAI API endpoint. ' +
-        'Use the format: https://<hub>.openai.azure.com/openai/' +
-        'deployments/<deployment_name>/chat/completions?api-version=<api_version>'
+          'your Azure OpenAI deployment endpoint as your OpenAI API endpoint. ' +
+          'Use the format: https://<hub>.openai.azure.com/openai/' +
+          'deployments/<deployment_name>/chat/completions?api-version=<api_version>'
       );
     }
     return new AzureOpenAI({
