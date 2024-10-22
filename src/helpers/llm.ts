@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+import OpenAI, { AzureOpenAI } from 'openai';
 import { getConfig } from './config';
 import { KnownError } from './error';
 import { commandName } from './constants';
@@ -54,11 +54,29 @@ export const getOpenAi = async function () {
       `Missing OpenAI key. Use \`${commandName} config\` to set it.`
     );
   }
-  const openai = new OpenAI({
-    apiKey: openaiKey,
-    baseURL: endpoint,
-  });
-  return openai;
+  if (endpoint.indexOf('.openai.azure.com/openai') > 0) {
+    const deploymentName = endpoint.split('/deployments/')[1].split('/')[0];
+    const apiVersion = endpoint.split('api-version=')[1];
+    if (!deploymentName || !apiVersion) {
+      throw new KnownError(
+        `Invalid Azure OpenAI endpoint. Use \`${commandName} config\` to set ` +
+          'your Azure OpenAI deployment endpoint as your OpenAI API endpoint. ' +
+          'Use the format: https://<hub>.openai.azure.com/openai/' +
+          'deployments/<deployment_name>/chat/completions?api-version=<api_version>'
+      );
+    }
+    return new AzureOpenAI({
+      apiKey: openaiKey,
+      endpoint: endpoint,
+      deployment: `/deployments/${deploymentName}`,
+      apiVersion: apiVersion,
+    });
+  } else {
+    return new OpenAI({
+      apiKey: openaiKey,
+      baseURL: endpoint,
+    });
+  }
 };
 
 export const getAnthropic = async function () {
