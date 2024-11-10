@@ -126,7 +126,7 @@ export async function visualGenerate(options: RunOptions) {
       process.stdout.write(formatMessage('\n'));
       anthropic.messages
         .stream({
-          model: ANTHROPIC_MODEL || 'claude-3-5-sonnet-20240620',
+          model: ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022',
           max_tokens: 4096,
           system: systemPrompt,
           messages: [
