@@ -193,7 +193,7 @@ By default Micro Agent uses `gpt-4o` as the model, but you can override it with 
 micro-agent config set MODEL=gpt-3.5-turbo
 ```
 
-or, if you supply an Anthropic key, you can use any Claude model. by default `claude` is an alias to `claude-3-5-sonnet-20240620`:
+or, if you supply an Anthropic key, you can use any Claude model. by default `claude` is an alias to `claude-3-5-sonnet-20241022`:
 
 ```bash
 micro-agent config set MODEL=claude
