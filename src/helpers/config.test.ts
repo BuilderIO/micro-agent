@@ -1,7 +1,13 @@
 import os from 'os';
 import path from 'path';
 import { expect, describe, it, vi, afterEach } from 'vitest';
-import { getConfig, setConfigs, showConfigUI } from './config';
+import {
+  getConfig,
+  hasOpenAiKey,
+  normalizeOpenAiKey,
+  setConfigs,
+  showConfigUI,
+} from './config';
 
 const mocks = vi.hoisted(() => {
   return {
@@ -38,6 +44,29 @@ global.process = { ...realProcess, exit: mocks.exit };
 
 const configFilePath = path.join(os.homedir(), '.micro-agent');
 const newline = os.platform() === 'win32' ? '\r\n' : '\n';
+
+describe('normalizeOpenAiKey', () => {
+  it('should trim whitespace around the key', () => {
+    expect(normalizeOpenAiKey('  sk-test-key  ')).toBe('sk-test-key');
+  });
+});
+
+describe('hasOpenAiKey', () => {
+  it('should return false for empty key values', () => {
+    expect(hasOpenAiKey('')).toBe(false);
+    expect(hasOpenAiKey('   ')).toBe(false);
+    expect(hasOpenAiKey(undefined)).toBe(false);
+  });
+
+  it('should return false when key is cancel', () => {
+    expect(hasOpenAiKey('cancel')).toBe(false);
+    expect(hasOpenAiKey(' CANCEL ')).toBe(false);
+  });
+
+  it('should return true for valid key values', () => {
+    expect(hasOpenAiKey('sk-test-key')).toBe(true);
+  });
+});
 
 describe('getConfig', () => {
   const defaultConfig = {

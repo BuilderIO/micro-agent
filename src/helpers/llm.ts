@@ -1,5 +1,5 @@
 import OpenAI, { AzureOpenAI } from 'openai';
-import { getConfig } from './config';
+import { getConfig, hasOpenAiKey, normalizeOpenAiKey } from './config';
 import { KnownError } from './error';
 import { commandName } from './constants';
 import { systemPrompt } from './systemPrompt';
@@ -49,11 +49,12 @@ const supportsFunctionCalling = (model?: string) => {
 export const getOpenAi = async function () {
   const { OPENAI_KEY: openaiKey, OPENAI_API_ENDPOINT: endpoint } =
     await getConfig();
-  if (!openaiKey) {
+  if (!hasOpenAiKey(openaiKey)) {
     throw new KnownError(
-      `Missing OpenAI key. Use \`${commandName} config\` to set it.`
+      `Missing or invalid OpenAI key. Use \`${commandName} config\` to set it.`
     );
   }
+  const normalizedOpenAiKey = normalizeOpenAiKey(openaiKey)!;
   if (endpoint.indexOf('.openai.azure.com/openai') > 0) {
     const deploymentName = endpoint.split('/deployments/')[1].split('/')[0];
     const apiVersion = endpoint.split('api-version=')[1];
@@ -66,14 +67,14 @@ export const getOpenAi = async function () {
       );
     }
     return new AzureOpenAI({
-      apiKey: openaiKey,
+      apiKey: normalizedOpenAiKey,
       endpoint: endpoint,
       deployment: `/deployments/${deploymentName}`,
       apiVersion: apiVersion,
     });
   } else {
     return new OpenAI({
-      apiKey: openaiKey,
+      apiKey: normalizedOpenAiKey,
       baseURL: endpoint,
     });
   }

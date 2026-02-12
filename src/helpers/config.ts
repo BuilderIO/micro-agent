@@ -11,9 +11,16 @@ const { hasOwnProperty } = Object.prototype;
 export const hasOwn = (object: unknown, key: PropertyKey) =>
   hasOwnProperty.call(object, key);
 
+export const normalizeOpenAiKey = (key?: string) => key?.trim();
+
+export const hasOpenAiKey = (key?: string) => {
+  const normalizedKey = normalizeOpenAiKey(key);
+  return !!normalizedKey && normalizedKey.toLowerCase() !== 'cancel';
+};
+
 const configParsers = {
   OPENAI_KEY(key?: string) {
-    return key;
+    return normalizeOpenAiKey(key);
   },
   ANTHROPIC_KEY(key?: string) {
     return key;
@@ -155,13 +162,17 @@ export const showConfigUI = async () => {
       const key = await p.text({
         message: 'Enter your OpenAI API key',
         validate: (value) => {
-          if (!value.length) {
+          const normalizedKey = normalizeOpenAiKey(value);
+          if (!normalizedKey) {
             return 'Please enter a key';
+          }
+          if (normalizedKey.toLowerCase() === 'cancel') {
+            return 'Press Ctrl+C to cancel';
           }
         },
       });
       if (p.isCancel(key)) return;
-      await setConfigs([['OPENAI_KEY', key]]);
+      await setConfigs([['OPENAI_KEY', normalizeOpenAiKey(key as string)!]]);
     } else if (choice === 'OPENAI_API_ENDPOINT') {
       const apiEndpoint = await p.text({
         message: 'Enter your OpenAI API Endpoint',

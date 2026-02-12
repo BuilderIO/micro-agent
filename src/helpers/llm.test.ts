@@ -15,6 +15,8 @@ const mocks = vi.hoisted(() => {
   return {
     openAIConstructor: vi.fn(),
     getConfig: vi.fn(),
+    hasOpenAiKey: vi.fn(),
+    normalizeOpenAiKey: vi.fn(),
     create: vi.fn(),
   };
 });
@@ -22,6 +24,8 @@ const mocks = vi.hoisted(() => {
 vi.mock('./config', () => {
   return {
     getConfig: mocks.getConfig,
+    hasOpenAiKey: mocks.hasOpenAiKey,
+    normalizeOpenAiKey: mocks.normalizeOpenAiKey,
   };
 });
 
@@ -41,6 +45,9 @@ mocks.openAIConstructor.mockImplementation(() => {
   };
 });
 
+mocks.hasOpenAiKey.mockImplementation((key?: string) => !!key);
+mocks.normalizeOpenAiKey.mockImplementation((key?: string) => key?.trim());
+
 const defaultConfig = {
   OPENAI_KEY: 'my-openai-key',
   OPENAI_API_ENDPOINT: 'https://api.openai.com/v1',
@@ -51,15 +58,25 @@ describe('getOpenAi', () => {
     mocks.getConfig
       .mockResolvedValueOnce({ OPENAI_KEY: '' })
       .mockResolvedValueOnce({ OPENAI_KEY: '' });
+    mocks.hasOpenAiKey.mockReturnValueOnce(false).mockReturnValueOnce(false);
 
     await expect(getOpenAi()).rejects.toThrow(KnownError);
     await expect(getOpenAi()).rejects.toThrow(
-      'Missing OpenAI key. Use `micro-agent config` to set it.'
+      'Missing or invalid OpenAI key. Use `micro-agent config` to set it.'
     );
+  });
+
+  it('should throw a KnownError if OPENAI_KEY is cancel', async () => {
+    mocks.getConfig.mockResolvedValueOnce({ OPENAI_KEY: 'cancel' });
+    mocks.hasOpenAiKey.mockReturnValueOnce(false);
+
+    await expect(getOpenAi()).rejects.toThrow(KnownError);
   });
 
   it('should create a new OpenAI instance with the provided key and endpoint', async () => {
     mocks.getConfig.mockResolvedValueOnce(defaultConfig);
+    mocks.hasOpenAiKey.mockReturnValueOnce(true);
+    mocks.normalizeOpenAiKey.mockReturnValueOnce('my-openai-key');
 
     await getOpenAi();
 
