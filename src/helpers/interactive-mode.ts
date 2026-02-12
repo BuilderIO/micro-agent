@@ -3,7 +3,12 @@ import { intro, log, spinner, text } from '@clack/prompts';
 import { glob } from 'glob';
 import { RunOptions, runAll } from './run';
 import { getFileSuggestion, getSimpleCompletion } from './llm';
-import { getConfig, setConfigs } from './config';
+import {
+  getConfig,
+  hasOpenAiKey,
+  normalizeOpenAiKey,
+  setConfigs,
+} from './config';
 import { readFile } from 'fs/promises';
 import dedent from 'dedent';
 import { formatMessage } from './test';
@@ -21,16 +26,27 @@ export async function interactiveMode(options: Partial<RunOptions>) {
 
   const config = await getConfig();
 
-  if (!config.OPENAI_KEY) {
+  if (!hasOpenAiKey(config.OPENAI_KEY)) {
     const openaiKey = exitOnCancel(
       await text({
         message: `Welcome newcomer! What is your OpenAI key? ${gray(
-          '(this is kept private)'
+          '(this is kept private, press Ctrl+C to cancel)'
         )}`,
+        validate: (value) => {
+          const normalizedKey = normalizeOpenAiKey(value);
+          if (!normalizedKey) {
+            return 'Please enter an API key';
+          }
+          if (normalizedKey.toLowerCase() === 'cancel') {
+            return 'Press Ctrl+C to cancel';
+          }
+        },
       })
     );
 
-    await setConfigs([['OPENAI_KEY', openaiKey as string]]);
+    await setConfigs([
+      ['OPENAI_KEY', normalizeOpenAiKey(openaiKey as string) ?? ''],
+    ]);
   }
 
   const prompt = exitOnCancel(
