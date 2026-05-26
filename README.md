@@ -289,3 +289,102 @@ Flags:
        </picture>
    </a>
 </p>
+
+## ❓ FAQ
+
+### What is Micro Agent?
+
+Micro Agent is an AI agent that writes and fixes code for you. It creates test cases and iterates on code until all tests pass, following a test-driven development approach.
+
+### Key Features
+
+| Feature | Description |
+|---------|-------------|
+| **Test-Driven** | Creates definitive test cases first, then generates code |
+| **Iterative Fixing** | Automatically fixes code until all tests pass |
+| **Micro Focus** | Does one thing well - write code that passes tests |
+| **Interactive Mode** | Asks questions and uses feedback to improve |
+| **Multi-LLM Support** | Works with Claude, OpenAI, Ollama, Groq, etc. |
+| **Unit Test Matching** | Run with existing test scripts |
+
+### Why "Micro" Agent?
+
+General-purpose coding agents often fail with compounding errors. Micro Agent focuses on one specific task: creating tests and generating code that passes them. This focused approach is more reliable than agents that try to do everything.
+
+### Getting Started
+
+```bash
+# Install
+npm install -g @builder.io/micro-agent
+
+# Run interactive mode (recommended)
+micro-agent
+
+# Configure API key
+micro-agent config set OPENAI_KEY=<your token>
+micro-agent config set MODEL=gpt-4o
+
+# Or for Claude
+micro-agent config set ANTHROPIC_KEY=<your token>
+micro-agent config set MODEL=claude
+```
+
+### Supported LLM Providers
+
+| Provider | Key Config | Model Examples |
+|----------|------------|----------------|
+| **OpenAI** | `OPENAI_KEY` | gpt-4o, gpt-4 |
+| **Claude** | `ANTHROPIC_KEY` | claude, claude-3 |
+| **Ollama** | Custom endpoint | Local models |
+| **Groq** | `OPENAI_API_ENDPOINT` | mixtral, llama |
+
+### What This Project Is NOT
+
+Micro Agent is NOT:
+- An end-to-end developer replacement
+- A multi-file editor
+- A module installer
+- A general-purpose coding assistant
+
+It's a focused tool that writes tests and generates code to pass them.
+
+### Common Commands
+
+```bash
+# Interactive mode
+micro-agent
+
+# Run on a specific file
+micro-agent ./file-to-edit.ts -t "npm test"
+
+# Set max iterations
+micro-agent ./file.ts -t "npm test" -m 10
+
+# Visual matching mode
+micro-agent ./file.ts -v "http://example.com"
+
+# Resume a thread
+micro-agent --thread <thread-id>
+```
+
+### How Does It Work?
+
+1. **Prompt Input**: You provide what code you want
+2. **Test Generation**: Micro Agent creates test cases
+3. **Code Generation**: Initial code is generated
+4. **Test Execution**: Tests run against the code
+5. **Iteration**: Code is refined until all tests pass
+
+### Requirements
+
+- Node.js v18 or later
+- API key for your chosen LLM provider
+- Test script (for unit test matching mode)
+
+### License & Resources
+
+- **License**: MIT
+- **Documentation**: [Builder.io Blog](https://www.builder.io/blog/micro-agent)
+- **Issues**: [GitHub Issues](https://github.com/BuilderIO/micro-agent/issues)
+- **Twitter**: [@steve8708](https://twitter.com/steve8708)
+- **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md)
