@@ -8,8 +8,12 @@ import { fileExists } from './file-exists';
 import { outputFile } from './output-file';
 import { removeBackticks } from './remove-backticks';
 import { getSimpleCompletion } from './llm';
+import {
+  DocumentationSearchOptions,
+  getDocumentationContext,
+} from './documentation-search';
 
-type Options = {
+type Options = DocumentationSearchOptions & {
   outputFile: string;
   promptFile: string;
   testCommand: string;
@@ -21,6 +25,7 @@ type Options = {
   prompt?: string;
   interactive?: boolean;
   addedLogs?: boolean;
+  documentationContext?: string;
 };
 
 export async function runOne(options: Options) {
@@ -98,6 +103,7 @@ export function createCommandString(options: RunOptions) {
 }
 
 export async function* run(options: RunOptions) {
+  options.documentationContext = await getDocumentationContext(options);
   let passed = false;
   const maxRuns = options.maxRuns ?? 20;
   for (let i = 0; i < maxRuns; i++) {
