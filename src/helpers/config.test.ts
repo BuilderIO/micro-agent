@@ -45,6 +45,7 @@ describe('getConfig', () => {
     USE_ASSISTANT: true,
     ANTHROPIC_MODEL: 'claude-3-5-sonnet-20241022',
     LANGUAGE: 'en',
+    SEARCH_PROVIDER: 'parallel',
     MODEL: 'gpt-4o',
     OPENAI_API_ENDPOINT: 'https://api.openai.com/v1',
     OPENAI_KEY: undefined,

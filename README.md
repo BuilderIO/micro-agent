@@ -118,6 +118,42 @@ If this is not the case, you can specify the test file with the `-f` flag. You c
 micro-agent ./file-to-edit.ts -t "npm test" -f ./file-to-edit.spec.ts -p ./path-to-prompt.prompt.md
 ```
 
+### Documentation context
+
+Use a public library/API query to give code generation current documentation with
+[Parallel Search MCP](https://docs.parallel.ai/integrations/mcp/search-mcp):
+
+```bash
+micro-agent ./file-to-edit.ts -t "npm test" --search-query "date-fns parseISO API documentation"
+```
+
+Parallel is the default provider for approved documentation searches. It uses
+Fast mode anonymously, with no Parallel account or API key. The query is your
+permission to send exactly that text to Parallel, including when using Ollama or
+a custom model endpoint. Micro Agent does not derive a query from your prompt,
+source code, tests, or test output. Without `--search-query`, it makes no search
+requests and keeps the existing generation flow.
+
+A single lookup after the initial failing test supplies source URLs and excerpts
+to code generation across its test iterations. Retrieved text is untrusted
+reference material. Search supports unit test matching; it is not available in
+visual mode. A search error or a 15-second timeout stops generation with an error;
+retry the query or explicitly disable search to continue without that context.
+The anonymous service has rate limits.
+
+Disable documentation search with `--search-provider none`, or save the choice:
+
+```bash
+micro-agent config set SEARCH_PROVIDER=none
+```
+
+`--search-provider parallel` overrides saved or environment settings for one run.
+Otherwise, `SEARCH_PROVIDER` in the environment overrides the saved setting;
+`parallel` is the unconfigured default. `none` makes no search requests even when
+a query is supplied. Model credentials, endpoints, and selections remain as
+configured. Queries and per-run overrides are not saved; repeat them when
+resuming with the printed command.
+
 ### Visual matching (experimental)
 
 ![Visual Demo](https://cdn.builder.io/api/v1/file/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fe90f6d4158b44a8fb9adeee3be3dbe82)

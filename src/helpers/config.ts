@@ -41,6 +41,12 @@ const configParsers = {
   LANGUAGE(language?: string) {
     return language || 'en';
   },
+  SEARCH_PROVIDER(provider?: string) {
+    if (provider && provider !== 'parallel' && provider !== 'none') {
+      throw new KnownError('SEARCH_PROVIDER must be parallel or none.');
+    }
+    return provider || 'parallel';
+  },
   MOCK_LLM_RECORD_FILE(filename?: string) {
     return filename;
   },

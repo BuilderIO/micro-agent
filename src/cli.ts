@@ -53,6 +53,15 @@ cli(
         type: String,
         description: 'Thread ID to resume',
       },
+      searchQuery: {
+        type: String,
+        description:
+          'Send this public documentation query to the search provider',
+      },
+      searchProvider: {
+        type: String,
+        description: 'Documentation search provider: parallel or none',
+      },
       visual: {
         type: String,
         description:
@@ -121,6 +130,8 @@ cli(
       maxRuns: argv.flags.maxRuns,
       threadId: argv.flags.thread || '',
       visual: argv.flags.visual || '',
+      searchQuery: argv.flags.searchQuery,
+      searchProvider: argv.flags.searchProvider,
     };
     try {
       if (!argv._.filePath || !argv.flags.test) {
