@@ -27,10 +27,15 @@ export async function interactiveMode(options: Partial<RunOptions>) {
         message: `Welcome newcomer! What is your OpenAI key? ${gray(
           '(this is kept private)'
         )}`,
+        validate: (input) => {
+          if (!input?.trim()) {
+            return 'Please enter a key';
+          }
+        },
       })
     );
 
-    await setConfigs([['OPENAI_KEY', openaiKey as string]]);
+    await setConfigs([['OPENAI_KEY', openaiKey.trim()]]);
   }
 
   const prompt = exitOnCancel(

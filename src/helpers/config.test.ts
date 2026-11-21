@@ -249,6 +249,24 @@ describe('showConfigUI', () => {
     });
   });
 
+  it('should not accept an empty OpenAI key', async () => {
+    mocks.lstat.mockRejectedValue(
+      new Error('ENOENT: no such file or directory')
+    );
+    mocks.select
+      .mockResolvedValueOnce('OPENAI_KEY')
+      .mockResolvedValueOnce('cancel');
+    mocks.text.mockResolvedValueOnce('my-openai-key');
+
+    await showConfigUI();
+
+    const { validate } = mocks.text.mock.calls[0][0];
+    expect(validate(undefined)).toBe('Please enter a key');
+    expect(validate('')).toBe('Please enter a key');
+    expect(validate('   ')).toBe('Please enter a key');
+    expect(validate('my-openai-key')).toBeUndefined();
+  });
+
   it('should set the OpenAI key if the user provides one', async () => {
     mocks.lstat.mockRejectedValue(
       new Error('ENOENT: no such file or directory')

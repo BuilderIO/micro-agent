@@ -155,7 +155,7 @@ export const showConfigUI = async () => {
       const key = await p.text({
         message: 'Enter your OpenAI API key',
         validate: (value) => {
-          if (!value.length) {
+          if (!value?.trim()) {
             return 'Please enter a key';
           }
         },
